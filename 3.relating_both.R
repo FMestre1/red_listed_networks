@@ -102,6 +102,28 @@ fw_species_with_red_list_status$europeanRegionalRedListCategory[is.na(fw_species
 fw_species_with_red_list_status$endemic_to_europe[is.na(fw_species_with_red_list_status$endemic_to_europe)] <- "not_listed"
 #View(fw_species_with_red_list_status)
 
+#SAVE
 save(fw_species_with_red_list_status, file = "fw_species_with_red_list_status_09_FEV_2023.RData")
 
+unique(fw_species_with_red_list_status$europeanRegionalRedListCategory)
 
+
+grouped_status <- c()
+
+for(i in 1:nrow(fw_species_with_red_list_status)){
+  
+  st1 <- fw_species_with_red_list_status$europeanRegionalRedListCategory[i]
+  if(st1 == "not_listed") grouped_status[i] <- "not_listed"
+  if(st1 == "DD") grouped_status[i] <- "data_deficient"
+  if(st1 == "LC") grouped_status[i] <- "not_threatened"
+  if(st1 == "NT") grouped_status[i] <- "not_threatened"
+  if(st1 == "VU") grouped_status[i] <- "threatened"
+  if(st1 == "EN") grouped_status[i] <- "threatened"
+  if(st1 == "CR") grouped_status[i] <- "threatened"
+  if(st1 == "NE") grouped_status[i] <- "not_evaluated"
+  if(st1 == "RE") grouped_status[i] <- "regionally_extinct"
+
+}
+
+fw_species_with_red_list_combined_status <- data.frame(fw_species_with_red_list_status, grouped_status)
+View(fw_species_with_red_list_combined_status)

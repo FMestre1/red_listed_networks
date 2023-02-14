@@ -1,21 +1,6 @@
 #FMestre
 #07-02-2023
 
-library(terra)
-
-grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europa_10km/europe_10km.shp")
-crs(grid)
-
-europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
-crs(europe)
-
-#Convert CRS
-grid_wgs84 <- terra::project(grid, europe)
-
-plot(europe)
-plot(grid_wgs84, add=TRUE)
-
-
 ####Load data
 #C:\Users\FMest\Documents\0. Artigos\IUCN_networks\data\data_nuria
 
@@ -31,7 +16,8 @@ for(i in 1:length(files_folder)){
   message(i)
 }
 #
-save(fw_list, file = "fw_list.RData")
+#save(fw_list, file = "fw_list.RData")
+#load("fw_list.RData")
 
 #Get the species names
 species_names <- c()
@@ -50,3 +36,5 @@ length(species_names)
 length(species_names2)
 
 save(species_names2, file = "species_names2.RData")
+
+fw_list[[1]]
