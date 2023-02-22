@@ -103,10 +103,9 @@ fw_species_with_red_list_status$endemic_to_europe[is.na(fw_species_with_red_list
 #View(fw_species_with_red_list_status)
 
 #SAVE
-save(fw_species_with_red_list_status, file = "fw_species_with_red_list_status_09_FEV_2023.RData")
+save(fw_species_with_red_list_status, file = "fw_species_with_red_list_status_15_FEV_2023.RData")
 
 unique(fw_species_with_red_list_status$europeanRegionalRedListCategory)
-
 
 grouped_status <- c()
 
@@ -127,3 +126,96 @@ for(i in 1:nrow(fw_species_with_red_list_status)){
 
 fw_species_with_red_list_combined_status <- data.frame(fw_species_with_red_list_status, grouped_status)
 View(fw_species_with_red_list_combined_status)
+
+
+##########################################
+
+#Get the metrics per status in all trophic structures
+
+#names(fw_list[[1]])[-1]
+dd_table <- as.data.frame(matrix(ncol = 7))
+lc_table <- as.data.frame(matrix(ncol = 7))
+nt_table <- as.data.frame(matrix(ncol = 7))
+vu_table <- as.data.frame(matrix(ncol = 7))
+en_table <- as.data.frame(matrix(ncol = 7))
+cr_table <- as.data.frame(matrix(ncol = 7))
+ne_table <- as.data.frame(matrix(ncol = 7))
+re_table <- as.data.frame(matrix(ncol = 7))
+names(dd_table) <- names(lc_table) <- names(nt_table) <- names(vu_table) <- names(en_table) <- names(cr_table) <- names(ne_table) <- names(re_table) <- names(fw_list[[1]])[-1]  
+
+for(i in 1:length(fw_list)){
+  
+  net1 <- fw_list[[i]]
+  species_net1 <- fw_list[[i]]$SP_NAME
+  species_net1 <- stringr::str_replace(species_net1, "_", " ")
+  
+  if(any(species_net1 %in% fw_species_with_red_list_combined_status$full_name)){
+
+    listed_species <- species_net1[species_net1 %in% fw_species_with_red_list_combined_status$full_name]
+    n_species <- length(listed_species)
+    listed_species_status <- fw_species_with_red_list_combined_status[fw_species_with_red_list_combined_status$full_name %in% listed_species,]
+    
+    if(any(listed_species_status$europeanRegionalRedListCategory == "DD")){
+      species_dd <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "DD",]
+      species_dd <- species_dd$full_name
+      species_dd <- stringr::str_replace(species_dd, " ", "_")
+      dd_table <- rbind(dd_table, net1[net1$SP_NAME %in% species_dd,][,-1])      
+      }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "LC")){
+      species_lc <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "LC",]
+      species_lc <- species_lc$full_name
+      species_lc <- stringr::str_replace(species_lc, " ", "_")
+      lc_table <- rbind(lc_table, net1[net1$SP_NAME %in% species_lc,][,-1])
+      }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "NT")){
+      species_nt <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "NT",]
+      species_nt <- species_nt$full_name
+      species_nt <- stringr::str_replace(species_nt, " ", "_")
+      nt_table <- rbind(nt_table, net1[net1$SP_NAME %in% species_nt,][,-1])
+    }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "VU")){
+      species_vu <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "VU",]
+      species_vu <- species_vu$full_name
+      species_vu <- stringr::str_replace(species_vu, " ", "_")
+      vu_table <- rbind(vu_table, net1[net1$SP_NAME %in% species_vu,][,-1])
+    }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "EN")){
+      species_en <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "EN",]
+      species_en <- species_en$full_name
+      species_en <- stringr::str_replace(species_en, " ", "_")
+      en_table <- rbind(en_table, net1[net1$SP_NAME %in% species_en,][,-1])
+    }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "CR")){
+      species_cr <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "CR",]
+      species_cr <- species_cr$full_name
+      species_cr <- stringr::str_replace(species_cr, " ", "_")
+      cr_table <- rbind(cr_table, net1[net1$SP_NAME %in% species_cr,][,-1])
+    }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "NE")){
+      species_ne <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "NE",]
+      species_ne <- species_ne$full_name
+      species_ne <- stringr::str_replace(species_ne, " ", "_")
+      ne_table <- rbind(ne_table, net1[net1$SP_NAME %in% species_ne,][,-1])
+    }
+    if(any(listed_species_status$europeanRegionalRedListCategory == "RE")){
+      species_re <- listed_species_status[listed_species_status$europeanRegionalRedListCategory == "RE",]
+      species_re <- species_re$full_name
+      species_re <- stringr::str_replace(species_re, " ", "_")
+      re_table <- rbind(re_table, net1[net1$SP_NAME %in% species_re,][,-1])
+    }
+   }
+
+  message(i)
+  
+  
+}
+
+#Saving of partial tables
+save(dd_table, file = "dd_table_CORRECTEC_19.RData")
+save(lc_table, file = "lc_table_CORRECTEC_19.RData")
+save(nt_table, file = "nt_table_CORRECTEC_19.RData")
+save(vu_table, file = "vu_table_CORRECTEC_19.RData")
+save(en_table, file = "en_table_CORRECTEC_19.RData")
+save(cr_table, file = "cr_table_CORRECTEC_19.RData")
+save(ne_table, file = "ne_table_CORRECTEC_19.RData")
+save(re_table, file = "re_table_CORRECTEC_19.RData")
