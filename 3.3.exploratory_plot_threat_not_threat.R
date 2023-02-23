@@ -12,7 +12,6 @@ threatened <- rbind(vu_table,
                     en_table,
                     cr_table)
 
-
 #in-degree #####################################################################
 
 t_in<-data.frame(rep("threatened", nrow(threatened)), threatened$indegree)
