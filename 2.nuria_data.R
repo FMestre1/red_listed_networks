@@ -37,4 +37,4 @@ length(species_names2)
 
 save(species_names2, file = "species_names2.RData")
 
-fw_list[[1]]
+#fw_list[[1]]

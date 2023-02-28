@@ -143,13 +143,79 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 ivi_nt <- data.frame(names(fw_list_with_status_aggreg), ivi_nt)
 names(ivi_nt) <- c("grid", "ivi")
+head(ivi_nt)
+#hist(ivi_nt$ivi)
 
 ivi_nt_spatial <- merge(europeRaster_poly, ivi_nt, by.x = "PageName", by.y = "grid")
 plot(ivi_nt_spatial)
 plot(europeRaster_poly)
 
 writeVector(ivi_nt_spatial, 
-            filename = "ivi_nt_spatial.shp",
+            filename = "ivi_nt_spatial_second_version.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=FALSE, 
+            options="ENCODING=UTF-8"
+)
+
+#IVI - THREATENED ##############################################################
+
+
+ivi_t <- rep(NA, length(fw_list_with_status_aggreg))
+
+for(i in 1:length(fw_list_with_status_aggreg)){
+  
+  ivi_fw2 <- fw_list_with_status_aggreg[[i]]
+  fw_t_ivi2 <- ivi_fw2[ivi_fw2$aggreg_IUCN == "threatened",]$ivi
+  if(length(fw_t_ivi2)!=0) ivi_t[i] <- mean(fw_t_ivi2)
+  
+  message(i)
+  
+}
+
+ivi_t <- data.frame(names(fw_list_with_status_aggreg), ivi_t)
+names(ivi_t) <- c("grid", "ivi")
+head(ivi_t)
+#hist(ivi_t$ivi)
+
+ivi_t_spatial <- merge(europeRaster_poly, ivi_t, by.x = "PageName", by.y = "grid")
+plot(ivi_t_spatial)
+
+writeVector(ivi_t_spatial, 
+            filename = "ivi_t_spatial_second_version.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=FALSE, 
+            options="ENCODING=UTF-8"
+)
+
+#CENTRALITY - THREATENED #######################################################
+
+
+centrality_t <- rep(NA, length(fw_list_with_status_aggreg))
+
+for(i in 1:length(fw_list_with_status_aggreg)){
+  
+  cent_fw2 <- fw_list_with_status_aggreg[[i]]
+  fw_t_cent2 <- cent_fw2[cent_fw2$aggreg_IUCN == "threatened",]$centrality
+  if(length(fw_t_cent2)!=0) centrality_t[i] <- mean(fw_t_cent2)
+  
+  message(i)
+  
+}
+
+centrality_t <- data.frame(names(fw_list_with_status_aggreg), centrality_t)
+names(centrality_t) <- c("grid", "centrality")
+head(centrality_t)
+#hist(centrality_t$centrality)
+
+centrality_t_spatial <- merge(europeRaster_poly, centrality_t, by.x = "PageName", by.y = "grid")
+plot(centrality_t_spatial)
+
+writeVector(centrality_t_spatial, 
+            filename = "centrality_t_spatial.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
