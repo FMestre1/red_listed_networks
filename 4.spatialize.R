@@ -55,8 +55,8 @@ nrow(cells_info)
 #To vector
 europeRaster_poly <- terra::as.polygons(europeRaster, values = TRUE, extent=FALSE)
 europeRaster_poly <- merge(europeRaster_poly, cells_info)
-plot(europeRaster_poly)
-head(europeRaster_poly)
+#plot(europeRaster_poly)
+#head(europeRaster_poly)
 europeRaster_poly_wgs84 <- terra::project(europeRaster_poly, europe)
 #
 europeRaster_poly_wgs84_coords <- crds(europeRaster_poly_wgs84, df=TRUE)
@@ -75,7 +75,7 @@ fw_list
 
 fw_list_with_status <- fw_list
 
-#Add ICUN status
+#Add IUCN status
 for(i in 1:length(fw_list_with_status)){
   
   fw3 <- fw_list_with_status[[i]]
@@ -135,7 +135,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   ivi_fw <- fw_list_with_status_aggreg[[i]]
   fw_nt_ivi <- ivi_fw[ivi_fw$aggreg_IUCN == "non-threatened",]$ivi
-  if(length(fw_nt_ivi)!=0) ivi_nt[i] <- mean(fw_nt_ivi)
+  if(length(fw_nt_ivi)!=0) ivi_nt[i] <- mean(fw_nt_ivi, na.rm=TRUE)
   
   message(i)
   
@@ -143,24 +143,23 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 ivi_nt <- data.frame(names(fw_list_with_status_aggreg), ivi_nt)
 names(ivi_nt) <- c("grid", "ivi")
-head(ivi_nt)
+#head(ivi_nt)
 #hist(ivi_nt$ivi)
 
 ivi_nt_spatial <- merge(europeRaster_poly, ivi_nt, by.x = "PageName", by.y = "grid")
-plot(ivi_nt_spatial)
-plot(europeRaster_poly)
+#plot(ivi_nt_spatial)
+#plot(europeRaster_poly)
 
 writeVector(ivi_nt_spatial, 
             filename = "ivi_nt_spatial_second_version.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
 #IVI - THREATENED ##############################################################
-
 
 ivi_t <- rep(NA, length(fw_list_with_status_aggreg))
 
@@ -168,7 +167,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   ivi_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_t_ivi2 <- ivi_fw2[ivi_fw2$aggreg_IUCN == "threatened",]$ivi
-  if(length(fw_t_ivi2)!=0) ivi_t[i] <- mean(fw_t_ivi2)
+  if(length(fw_t_ivi2)!=0) ivi_t[i] <- mean(fw_t_ivi2, na.rm=TRUE)
   
   message(i)
   
@@ -176,23 +175,22 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 ivi_t <- data.frame(names(fw_list_with_status_aggreg), ivi_t)
 names(ivi_t) <- c("grid", "ivi")
-head(ivi_t)
+#head(ivi_t)
 #hist(ivi_t$ivi)
 
 ivi_t_spatial <- merge(europeRaster_poly, ivi_t, by.x = "PageName", by.y = "grid")
-plot(ivi_t_spatial)
+#plot(ivi_t_spatial)
 
 writeVector(ivi_t_spatial, 
             filename = "ivi_t_spatial_second_version.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
 #CENTRALITY - NON-THREATENED #######################################################
-
 
 centrality_nt <- rep(NA, length(fw_list_with_status_aggreg))
 
@@ -200,7 +198,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   cent_nt_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_nt_cent2 <- cent_nt_fw2[cent_nt_fw2$aggreg_IUCN == "non-threatened",]$centrality
-  if(length(fw_nt_cent2)!=0) centrality_nt[i] <- mean(fw_nt_cent2)
+  if(length(fw_nt_cent2)!=0) centrality_nt[i] <- mean(fw_nt_cent2, na.rm=TRUE)
   
   message(i)
   
@@ -208,7 +206,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 centrality_nt <- data.frame(names(fw_list_with_status_aggreg), centrality_nt)
 names(centrality_nt) <- c("grid", "centrality")
-head(centrality_nt)
+#head(centrality_nt)
 #hist(centrality_nt$centrality)
 
 centrality_nt_spatial <- merge(europeRaster_poly, centrality_nt, by.x = "PageName", by.y = "grid")
@@ -219,11 +217,9 @@ writeVector(centrality_nt_spatial,
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
-
-
 
 #CENTRALITY - THREATENED #######################################################
 
@@ -233,7 +229,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   cent_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_t_cent2 <- cent_fw2[cent_fw2$aggreg_IUCN == "threatened",]$centrality
-  if(length(fw_t_cent2)!=0) centrality_t[i] <- mean(fw_t_cent2)
+  if(length(fw_t_cent2)!=0) centrality_t[i] <- mean(fw_t_cent2, na.rm=TRUE)
   
   message(i)
   
@@ -241,24 +237,23 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 centrality_t <- data.frame(names(fw_list_with_status_aggreg), centrality_t)
 names(centrality_t) <- c("grid", "centrality")
-head(centrality_t)
+#head(centrality_t)
 #hist(centrality_t$centrality)
 
 centrality_t_spatial <- merge(europeRaster_poly, centrality_t, by.x = "PageName", by.y = "grid")
-plot(centrality_t_spatial)
+#plot(centrality_t_spatial)
 
 writeVector(centrality_t_spatial, 
             filename = "centrality_t_spatial.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
 
 #IN-DEGREE - THREATENED ########################################################
-
 
 indegree_t <- rep(NA, length(fw_list_with_status_aggreg))
 
@@ -266,7 +261,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   indeg_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_t_indeg2 <- indeg_fw2[indeg_fw2$aggreg_IUCN == "threatened",]$indegree
-  if(length(fw_t_indeg2)!=0) indegree_t[i] <- mean(fw_t_indeg2)
+  if(length(fw_t_indeg2)!=0) indegree_t[i] <- mean(fw_t_indeg2, na.rm=TRUE)
   
   message(i)
   
@@ -274,24 +269,23 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 indegree_t <- data.frame(names(fw_list_with_status_aggreg), indegree_t)
 names(indegree_t) <- c("grid", "indegree")
-head(indegree_t)
+#head(indegree_t)
 #hist(indegree_t$indegree)
 
 indegree_t_spatial <- merge(europeRaster_poly, indegree_t, by.x = "PageName", by.y = "grid")
-plot(indegree_t_spatial)
+#plot(indegree_t_spatial)
 
 writeVector(indegree_t_spatial, 
             filename = "indegree_t_spatial.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
 
 #IN-DEGREE - NON-THREATENED ####################################################
-
 
 indegree_nt <- rep(NA, length(fw_list_with_status_aggreg))
 
@@ -299,7 +293,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   indeg_nt_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_nt_indeg2 <- indeg_nt_fw2[indeg_nt_fw2$aggreg_IUCN == "non-threatened",]$indegree
-  if(length(fw_nt_indeg2)!=0) indegree_nt[i] <- mean(fw_nt_indeg2)
+  if(length(fw_nt_indeg2)!=0) indegree_nt[i] <- mean(fw_nt_indeg2, na.rm=TRUE)
   
   message(i)
   
@@ -307,7 +301,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 indegree_nt <- data.frame(names(fw_list_with_status_aggreg), indegree_nt)
 names(indegree_nt) <- c("grid", "indegree")
-head(indegree_nt)
+#head(indegree_nt)
 #hist(indegree_nt$indegree)
 
 indegree_nt_spatial <- merge(europeRaster_poly, indegree_nt, by.x = "PageName", by.y = "grid")
@@ -318,13 +312,12 @@ writeVector(indegree_nt_spatial,
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
 
 #CLOSENESS - THREATENED ########################################################
-
 
 closeness_t <- rep(NA, length(fw_list_with_status_aggreg))
 
@@ -332,7 +325,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   close_t_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_t_close2 <- close_t_fw2[close_t_fw2$aggreg_IUCN == "threatened",]$closeness
-  if(length(fw_t_close2)!=0) closeness_t[i] <- mean(fw_t_close2)
+  if(length(fw_t_close2)!=0) closeness_t[i] <- mean(fw_t_close2, na.rm=TRUE)
   
   message(i)
   
@@ -340,7 +333,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 closeness_t <- data.frame(names(fw_list_with_status_aggreg), closeness_t)
 names(closeness_t) <- c("grid", "closeness")
-head(closeness_t)
+#head(closeness_t)
 #hist(closeness_t$closeness)
 
 closeness_t_spatial <- merge(europeRaster_poly, closeness_t, by.x = "PageName", by.y = "grid")
@@ -351,7 +344,7 @@ writeVector(closeness_t_spatial,
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
@@ -363,7 +356,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   close_nt_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_nt_close2 <- close_nt_fw2[close_nt_fw2$aggreg_IUCN == "non-threatened",]$closeness
-  if(length(fw_nt_close2)!=0) closeness_nt[i] <- mean(fw_nt_close2)
+  if(length(fw_nt_close2)!=0) closeness_nt[i] <- mean(fw_nt_close2, na.rm=TRUE)
   
   message(i)
   
@@ -371,7 +364,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 closeness_nt <- data.frame(names(fw_list_with_status_aggreg), closeness_nt)
 names(closeness_nt) <- c("grid", "closeness")
-head(closeness_nt)
+#head(closeness_nt)
 #hist(closeness_nt$closeness)
 
 closeness_nt_spatial <- merge(europeRaster_poly, closeness_nt, by.x = "PageName", by.y = "grid")
@@ -382,7 +375,7 @@ writeVector(closeness_nt_spatial,
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
@@ -395,7 +388,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   tl_nt_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_nt_TL2 <- tl_nt_fw2[tl_nt_fw2$aggreg_IUCN == "non-threatened",]$TL
-  if(length(fw_nt_TL2)!=0) TL_nt[i] <- mean(fw_nt_TL2)
+  if(length(fw_nt_TL2)!=0) TL_nt[i] <- mean(fw_nt_TL2, na.rm=TRUE)
   
   message(i)
   
@@ -403,7 +396,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 TL_nt <- data.frame(names(fw_list_with_status_aggreg), TL_nt)
 names(TL_nt) <- c("grid", "trophic_level")
-head(TL_nt)
+#head(TL_nt)
 #hist(TL_nt$trophic_level)
 
 tl_nt_spatial <- merge(europeRaster_poly, TL_nt, by.x = "PageName", by.y = "grid")
@@ -414,7 +407,7 @@ writeVector(tl_nt_spatial,
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
@@ -427,7 +420,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
   tl_t_fw2 <- fw_list_with_status_aggreg[[i]]
   fw_t_TL2 <- tl_t_fw2[tl_t_fw2$aggreg_IUCN == "threatened",]$TL
-  if(length(fw_t_TL2)!=0) TL_t[i] <- mean(fw_t_TL2)
+  if(length(fw_t_TL2)!=0) TL_t[i] <- mean(fw_t_TL2, na.rm=TRUE)
   
   message(i)
   
@@ -435,7 +428,7 @@ for(i in 1:length(fw_list_with_status_aggreg)){
 
 TL_t <- data.frame(names(fw_list_with_status_aggreg), TL_t)
 names(TL_t) <- c("grid", "trophic_level")
-head(TL_t)
+#head(TL_t)
 #hist(TL_t$trophic_level)
 
 tl_t_spatial <- merge(europeRaster_poly, TL_t, by.x = "PageName", by.y = "grid")
@@ -446,7 +439,41 @@ writeVector(tl_t_spatial,
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
-            overwrite=FALSE, 
+            overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
 
+#PROPORTION OF THREATENED SPECIES ##############################################
+
+propT <- rep(NA, length(fw_list_with_status_aggreg))
+
+for(i in 1:length(fw_list_with_status_aggreg)){
+  
+  propT_fw2 <- fw_list_with_status_aggreg[[i]]
+  prop <- propT_fw2$aggreg_IUCN
+  n_t <- length(prop[prop=="threatened"])
+  n_total <- length(prop)
+  propT[i] <- n_t/n_total
+  
+  #if(length(fw_t_TL2)!=0) TL_t[i] <- mean(fw_t_TL2)
+  
+  message(i)
+  
+}
+
+propT <- data.frame(names(fw_list_with_status_aggreg), propT)
+names(propT) <- c("grid", "proportion")
+#head(propT)
+#hist(propT$proportion)
+
+proportion_spatial <- merge(europeRaster_poly, propT, by.x = "PageName", by.y = "grid")
+#plot(proportion_spatial)
+
+writeVector(proportion_spatial, 
+            filename = "proportion_spatial.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
