@@ -477,3 +477,7 @@ writeVector(proportion_spatial,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
+
+
+#df123 <- plyr::ldply(fw_list_with_status_aggreg, data.frame)
+#table(df123$aggreg_IUCN)

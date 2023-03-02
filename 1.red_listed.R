@@ -42,8 +42,6 @@ for(i in 1:nrow(red_listed)){
   
 }  
   
-
-
 #combine with the previous data frame
 red_listed_2 <- data.frame(full_name, red_listed)
 rownames(red_listed_2) <- 1:nrow(red_listed_2)
