@@ -149,6 +149,7 @@ names(ivi_nt) <- c("grid", "ivi")
 ivi_nt_spatial <- merge(europeRaster_poly, ivi_nt, by.x = "PageName", by.y = "grid")
 #plot(ivi_nt_spatial)
 #plot(europeRaster_poly)
+#save(ivi_nt_spatial, file = "ivi_nt_spatial.Rdata")
 
 writeVector(ivi_nt_spatial, 
             filename = "ivi_nt_spatial_second_version.shp",
@@ -180,6 +181,7 @@ names(ivi_t) <- c("grid", "ivi")
 
 ivi_t_spatial <- merge(europeRaster_poly, ivi_t, by.x = "PageName", by.y = "grid")
 #plot(ivi_t_spatial)
+#save(ivi_t_spatial, file = "ivi_t_spatial.Rdata")
 
 writeVector(ivi_t_spatial, 
             filename = "ivi_t_spatial_second_version.shp",
@@ -211,6 +213,7 @@ names(centrality_nt) <- c("grid", "centrality")
 
 centrality_nt_spatial <- merge(europeRaster_poly, centrality_nt, by.x = "PageName", by.y = "grid")
 #plot(centrality_nt_spatial)
+#save(centrality_nt_spatial, file = "centrality_nt_spatial.Rdata")
 
 writeVector(centrality_nt_spatial, 
             filename = "centrality_nt_spatial.shp",
@@ -242,6 +245,7 @@ names(centrality_t) <- c("grid", "centrality")
 
 centrality_t_spatial <- merge(europeRaster_poly, centrality_t, by.x = "PageName", by.y = "grid")
 #plot(centrality_t_spatial)
+#save(centrality_t_spatial, file = "centrality_t_spatial.Rdata")
 
 writeVector(centrality_t_spatial, 
             filename = "centrality_t_spatial.shp",
@@ -274,6 +278,7 @@ names(indegree_t) <- c("grid", "indegree")
 
 indegree_t_spatial <- merge(europeRaster_poly, indegree_t, by.x = "PageName", by.y = "grid")
 #plot(indegree_t_spatial)
+#save(indegree_t_spatial, file = "indegree_t_spatial.Rdata")
 
 writeVector(indegree_t_spatial, 
             filename = "indegree_t_spatial.shp",
@@ -306,6 +311,7 @@ names(indegree_nt) <- c("grid", "indegree")
 
 indegree_nt_spatial <- merge(europeRaster_poly, indegree_nt, by.x = "PageName", by.y = "grid")
 #plot(indegree_nt_spatial)
+#save(indegree_nt_spatial, file = "indegree_nt_spatial.Rdata")
 
 writeVector(indegree_nt_spatial, 
             filename = "indegree_nt_spatial.shp",
@@ -338,6 +344,7 @@ names(closeness_t) <- c("grid", "closeness")
 
 closeness_t_spatial <- merge(europeRaster_poly, closeness_t, by.x = "PageName", by.y = "grid")
 #plot(closeness_t_spatial)
+#save(closeness_t_spatial, file = "closeness_t_spatial.Rdata")
 
 writeVector(closeness_t_spatial, 
             filename = "closeness_t_spatial.shp",
@@ -368,7 +375,8 @@ names(closeness_nt) <- c("grid", "closeness")
 #hist(closeness_nt$closeness)
 
 closeness_nt_spatial <- merge(europeRaster_poly, closeness_nt, by.x = "PageName", by.y = "grid")
-#plot(closeness_t_spatial)
+#plot(closeness_nt_spatial)
+#save(closeness_nt_spatial, file = "closeness_nt_spatial.Rdata")
 
 writeVector(closeness_nt_spatial, 
             filename = "closeness_nt_spatial.shp",
@@ -401,6 +409,7 @@ names(TL_nt) <- c("grid", "trophic_level")
 
 tl_nt_spatial <- merge(europeRaster_poly, TL_nt, by.x = "PageName", by.y = "grid")
 #plot(closeness_t_spatial)
+#save(tl_nt_spatial, file = "tl_nt_spatial.Rdata")
 
 writeVector(tl_nt_spatial, 
             filename = "tl_nt_spatial.shp",
@@ -433,6 +442,7 @@ names(TL_t) <- c("grid", "trophic_level")
 
 tl_t_spatial <- merge(europeRaster_poly, TL_t, by.x = "PageName", by.y = "grid")
 #plot(closeness_t_spatial)
+#save(tl_t_spatial, file = "tl_t_spatial.Rdata")
 
 writeVector(tl_t_spatial, 
             filename = "tl_t_spatial.shp",
@@ -468,6 +478,7 @@ names(propT) <- c("grid", "proportion")
 
 proportion_spatial <- merge(europeRaster_poly, propT, by.x = "PageName", by.y = "grid")
 #plot(proportion_spatial)
+#save(proportion_spatial, file = "proportion_spatial.Rdata")
 
 writeVector(proportion_spatial, 
             filename = "proportion_spatial.shp",
@@ -479,5 +490,58 @@ writeVector(proportion_spatial,
 )
 
 
-#df123 <- plyr::ldply(fw_list_with_status_aggreg, data.frame)
-#table(df123$aggreg_IUCN)
+##################################################################################################################
+#                                                #STANDARDIZE MAPS
+##################################################################################################################
+
+#FMestre
+#09-03-2023
+
+library(vegan)
+library(terra)
+
+load("C:/Users/FMest/Documents/github/red_listed_networks/ivi_nt_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/ivi_t_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/centrality_t_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/indegree_t_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/indegree_nt_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/closeness_t_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/closeness_nt_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/tl_nt_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/tl_t_spatial.Rdata")
+load("C:/Users/FMest/Documents/github/red_listed_networks/proportion_spatial.Rdata")
+
+###########
+#   IVI
+###########
+
+#NT
+
+ivi_nt_std_vector <- as.vector(vegan::decostand(ivi_nt_spatial$ivi, method = "standardize", na.rm = TRUE))
+ivi_nt_spatial_STD <- ivi_nt_spatial
+ivi_nt_spatial_STD$ivi_STD <- ivi_nt_std_vector
+#
+writeVector(ivi_nt_spatial_STD, 
+            filename = "ivi_nt_spatial_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+#T
+
+ivi_t_std_vector <- as.vector(vegan::decostand(ivi_t_spatial$ivi, method = "standardize", na.rm = TRUE))
+ivi_t_spatial_STD <- ivi_t_spatial
+ivi_t_spatial_STD$ivi_STD <- ivi_t_std_vector
+#
+writeVector(ivi_t_spatial_STD, 
+            filename = "ivi_t_spatial_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
