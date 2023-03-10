@@ -256,7 +256,6 @@ writeVector(centrality_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-
 #IN-DEGREE - THREATENED ########################################################
 
 indegree_t <- rep(NA, length(fw_list_with_status_aggreg))
@@ -322,6 +321,70 @@ writeVector(indegree_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
+#OUT-DEGREE - THREATENED ########################################################
+
+outegree_t <- rep(NA, length(fw_list_with_status_aggreg))
+
+for(i in 1:length(fw_list_with_status_aggreg)){
+  
+  outdeg_fw2 <- fw_list_with_status_aggreg[[i]]
+  fw_t_outdeg2 <- outdeg_fw2[outdeg_fw2$aggreg_IUCN == "threatened",]$outdegree
+  if(length(fw_t_outdeg2)!=0) outegree_t[i] <- mean(fw_t_outdeg2, na.rm=TRUE)
+  
+  message(i)
+  
+}
+
+outdegree_t <- data.frame(names(fw_list_with_status_aggreg), outegree_t)
+names(outdegree_t) <- c("grid", "outdegree")
+#head(outdegree_t)
+#hist(outdegree_t$outdegree)
+
+outdegree_t_spatial <- merge(europeRaster_poly, outdegree_t, by.x = "PageName", by.y = "grid")
+#plot(outdegree_t_spatial)
+#save(outdegree_t_spatial, file = "outdegree_t_spatial.Rdata")
+
+writeVector(outdegree_t_spatial, 
+            filename = "outdegree_t_spatial.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+
+#IN-DEGREE - NON-THREATENED ####################################################
+
+outegree_nt <- rep(NA, length(fw_list_with_status_aggreg))
+
+for(i in 1:length(fw_list_with_status_aggreg)){
+  
+  outdeg_fw2 <- fw_list_with_status_aggreg[[i]]
+  fw_nt_outdeg2 <- outdeg_fw2[outdeg_fw2$aggreg_IUCN == "non-threatened",]$outdegree
+  if(length(fw_nt_outdeg2)!=0) outegree_nt[i] <- mean(fw_nt_outdeg2, na.rm=TRUE)
+  
+  message(i)
+  
+}
+
+outdegree_nt <- data.frame(names(fw_list_with_status_aggreg), outegree_nt)
+names(outdegree_nt) <- c("grid", "outdegree")
+#head(outdegree_nt)
+#hist(outdegree_nt$outdegree)
+
+outdegree_nt_spatial <- merge(europeRaster_poly, outdegree_nt, by.x = "PageName", by.y = "grid")
+#plot(outdegree_nt_spatial)
+#save(outdegree_nt_spatial, file = "outdegree_nt_spatial.Rdata")
+
+writeVector(outdegree_nt_spatial, 
+            filename = "outdegree_nt_spatial.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
 
 #CLOSENESS - THREATENED ########################################################
 
@@ -539,6 +602,150 @@ ivi_t_spatial_STD$ivi_STD <- ivi_t_std_vector
 #
 writeVector(ivi_t_spatial_STD, 
             filename = "ivi_t_spatial_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+###########
+#CENTRALITY
+###########
+
+#NT
+
+centrality_nt_std_vector <- as.vector(vegan::decostand(centrality_nt_spatial$centrality, method = "standardize", na.rm = TRUE))
+centrality_nt_std_vector_STD <- centrality_nt_spatial
+centrality_nt_std_vector_STD$centrality_STD <- centrality_nt_std_vector
+#
+writeVector(centrality_nt_std_vector_STD, 
+            filename = "centrality_nt_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+#T
+
+centrality_t_std_vector <- as.vector(vegan::decostand(centrality_t_spatial$centrality, method = "standardize", na.rm = TRUE))
+centrality_t_std_vector_STD <- centrality_t_spatial
+centrality_t_std_vector_STD$centrality_STD <- centrality_t_std_vector
+#
+writeVector(centrality_t_std_vector_STD, 
+            filename = "centrality_t_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+
+###########
+#IN-DEGREE
+###########
+
+#NT
+
+indegree_nt_std_vector <- as.vector(vegan::decostand(indegree_nt_spatial$indegree, method = "standardize", na.rm = TRUE))
+indegree_nt_std_vector_STD <- indegree_nt_spatial
+indegree_nt_std_vector_STD$indegree_STD <- indegree_nt_std_vector
+#
+writeVector(indegree_nt_std_vector_STD, 
+            filename = "indegree_nt_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+#T
+
+indegree_t_std_vector <- as.vector(vegan::decostand(indegree_t_spatial$indegree, method = "standardize", na.rm = TRUE))
+indegree_t_std_vector_STD <- indegree_t_spatial
+indegree_t_std_vector_STD$indegree_STD <- indegree_t_std_vector
+#
+writeVector(indegree_t_std_vector_STD, 
+            filename = "indegree_t_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+
+###########
+#OUT-DEGREE
+###########
+
+#NT
+
+outdegree_nt_std_vector <- as.vector(vegan::decostand(outdegree_nt_spatial$outdegree, method = "standardize", na.rm = TRUE))
+outdegree_nt_std_vector_STD <- outdegree_nt_spatial
+outdegree_nt_std_vector_STD$outdegree_STD <- outdegree_nt_std_vector
+#
+writeVector(outdegree_nt_std_vector_STD, 
+            filename = "outdegree_nt_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+#T
+
+outdegree_t_std_vector <- as.vector(vegan::decostand(outdegree_t_spatial$outdegree, method = "standardize", na.rm = TRUE))
+outdegree_t_std_vector_STD <- outdegree_t_spatial
+outdegree_t_std_vector_STD$outdegree_STD <- outdegree_t_std_vector
+#
+writeVector(outdegree_t_std_vector_STD, 
+            filename = "outdegree_t_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+
+
+
+
+closeness_t_spatial
+
+###########
+#CLOSENESS
+###########
+
+#NT
+
+closeness_nt_std_vector <- as.vector(vegan::decostand(closeness_nt_spatial$closeness, method = "standardize", na.rm = TRUE))
+closeness_nt_std_vector_STD <- closeness_nt_spatial
+closeness_nt_std_vector_STD$closeness_STD <- closeness_nt_std_vector
+#
+writeVector(closeness_nt_std_vector_STD, 
+            filename = "closeness_nt_std_vector_STD.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+#T
+
+closeness_t_std_vector <- as.vector(vegan::decostand(closeness_t_spatial$closeness, method = "standardize", na.rm = TRUE))
+closeness_t_std_vector_STD <- closeness_t_spatial
+closeness_t_std_vector_STD$closeness_STD <- closeness_t_std_vector
+#
+writeVector(closeness_t_std_vector_STD, 
+            filename = "closeness_t_std_vector_STD.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
