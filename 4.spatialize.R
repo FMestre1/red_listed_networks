@@ -752,3 +752,38 @@ writeVector(closeness_t_std_vector_STD,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
+
+
+################################################################################
+#                                   COMPARE MAPS
+################################################################################
+
+#FMestre
+#15-03-2023
+
+#IVI
+
+ivi_t_spatial$ivi
+ivi_nt_spatial$ivi
+
+cor.test(ivi_t_spatial$ivi, ivi_nt_spatial$ivi, method = "spearman", use = "complete.obs")
+
+#CLOSENESS
+closeness_t_spatial$closeness
+closeness_nt_spatial$closeness
+
+cor.test(closeness_t_spatial$closeness, closeness_nt_spatial$closeness, method = "spearman", use = "complete.obs")
+
+#CENTRALITY
+centrality_t_spatial$centrality
+centrality_nt_spatial$centrality
+
+cor.test(centrality_t_spatial$centrality, centrality_nt_spatial$centrality, method = "spearman", use = "complete.obs")
+
+
+
+
+
+
+
+
