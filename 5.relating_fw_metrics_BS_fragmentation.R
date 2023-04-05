@@ -10,7 +10,6 @@ metrics_dataset_3
 
 #Fragmentation or habitat structure
 
-
 ################################################################################
 #                              RELATING WITH BODY SIZE
 ################################################################################
@@ -115,7 +114,7 @@ for(i in 1:nrow(all_species_status_body_mass_amph_2)){
 all_species_status_body_mass_amph_3 <- data.frame(all_species_status_body_mass_amph_2[,1:3], unified_bs)#gathering information from animaltraits and amphibio
 #table(!is.na(all_species_status_body_mass_amph_3$unified_bs))
 
-#Getting Elton traits in...
+#Elton Traits
 
 mamm_elton <- read.delim("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\elton_traits\\MamFuncDat.txt")
 bird_elton <- read.delim("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\elton_traits\\BirdFuncDat.txt")
@@ -155,8 +154,209 @@ for(i in 1:nrow(all_species_status_body_mass_amph_4)){
 all_species_status_body_mass_amph_5 <- data.frame(all_species_status_body_mass_amph_4, unified_bs_2)
 all_species_status_body_mass_amph_6 <- all_species_status_body_mass_amph_5[,-c(4:5)]
 #View(all_species_status_body_mass_amph_6)
-#table(is.na(all_species_status_body_mass_amph_6$unified_bs_2))
+#table(is.na(all_species_status_body_mass_amph_6$unified_bs_2)) #TRUE são as que não têm dados de body size!
 #save(all_species_status_body_mass_amph_6, file = "all_species_status_body_mass_amph_6.RData")
+#Which don'tn have BS info?
+#View(all_species_status_body_mass_amph_6[is.na(all_species_status_body_mass_amph_6$unified_bs_2),])
 
+
+  #Reptiles database
+
+#reptile_id <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Life-history trait database of European reptile species\\Species.csv", sep = ";")
+#reptile_bs <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Life-history trait database of European reptile species\\mass.csv", sep = ";")
+#head(reptile_id)
+#head(reptile_bs)
+#unique(reptile_bs$Who)
+#reptile_bs_2 <- reptile_bs[reptile_bs$Who %in% c("adult females", "adult males"),]
+#View(reptile_bs_2)
+#reptile_id_unique <- unique(reptile_bs_2$Species_ID)
+
+#reptile_bs_3 <- data.frame()
+
+#reptile_bs_matched <- merge(x = reptile_id, 
+#                            all.x = TRUE, 
+#                            y = reptile_bs, 
+#                            by.x = "Species.ID", 
+#                            by.y = "Species_ID"
+#                            )
+
+
+#lacerta <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Traits of lizards\\Appendix S1 - Lizard data version 1.0.csv")
+#rm(lacerta)
+
+meiri_data <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Meiri_et_al_2021\\meiri_et_al._2021_appendix.csv", sep = ";")
+View(meiri_data)
+names(meiri_data)
+meiri_data <- data.frame(meiri_data$binomial_2020, meiri_data$binomial_.original.files., meiri_data$adult_body_mass..g.)
+names(meiri_data) <- c("binomial_2020", "data_binomial_original", "bmass_g")
+head(meiri_data)
+
+unified_bs_3 <- data.frame(rep(NA, nrow(all_species_status_body_mass_amph_6)), rep(NA, nrow(all_species_status_body_mass_amph_6)))
+names(unified_bs_3) <- c("bs_A", "bs_B")
+
+for(i in 1:nrow(all_species_status_body_mass_amph_6)){
+  
+  species_reptiles <- all_species_status_body_mass_amph_6$species[i]
+  
+  if(species_reptiles %in%  meiri_data$binomial_2020 | species_reptiles %in%  meiri_data$data_binomial_original){
+    
+   if(length(meiri_data[which(species_reptiles ==  meiri_data$binomial_2020),]$bmass_g)!=0) {
+     unified_bs_3$bs_A[i] <- meiri_data[which(species_reptiles ==  meiri_data$binomial_2020),]$bmass_g
+   } else unified_bs_3$bs_A[i] <- NA
+
+   if(length(meiri_data[which(species_reptiles ==  meiri_data$data_binomial_original),]$bmass_g)!=0) {    
+    unified_bs_3$bs_B[i] <- meiri_data[which(species_reptiles ==  meiri_data$data_binomial_original),]$bmass_g
+   } else unified_bs_3$bs_B[i] <- NA
+  }
+ 
+  
+}
+
+#table(unified_bs_3 == unified_bs_3)
+
+all_species_status_body_mass_amph_7 <- data.frame(all_species_status_body_mass_amph_6, unified_bs_3$bs_A)
+head(all_species_status_body_mass_amph_7)
+
+unified_bs_4 <- c()
+
+for(i in 1:nrow(all_species_status_body_mass_amph_7)){
+  
+  all_species_status_body_mass_amph_7[i,]
+
+  if(!is.na(all_species_status_body_mass_amph_7$unified_bs_2[i])) unified_bs_4[i] <- all_species_status_body_mass_amph_7$unified_bs_2[i]
+  if(is.na(all_species_status_body_mass_amph_7$unified_bs_2[i])) unified_bs_4[i] <- all_species_status_body_mass_amph_7$unified_bs_3.bs_A[i]
+  
+}
+
+all_species_status_body_mass_amph_8 <- data.frame(all_species_status_body_mass_amph_7[,1:3], unified_bs_4)
+
+#sum(is.na(all_species_status_body_mass_amph_8$unified_bs_4))
+#Which?
+
+missing_species_bs <- all_species_status_body_mass_amph_8[is.na(all_species_status_body_mass_amph_8$unified_bs_4),]$species
+
+
+#I have to check this with the synonyms, resorting to taxize
+library(taxize)
+
+#Gather all the BS info from previously used sources
+
+#taxize::use_entrez()
+#usethis::edit_r_environ()
+#ENTREZ_KEY='fafd2118668fc6bacdf37d11c7c1885f5308'#mykey - have to reload R
+#all_species_status_body_mass_amph_6[is.na(all_species_status_body_mass_amph_6$unified_bs_2),][,1][1]
+
+syn_list <- rep(NA, length(missing_species_bs))
+
+for(i in 1:length(missing_species_bs)){
+
+species1 <- missing_species_bs[i]
+
+#try(df1 <- get_nbnid(
+#  sci_com = species1,
+#  ask = TRUE,
+#  rank = "species",
+#  #rows = 1,
+#  rec_only = TRUE
+#  ), 
+#  silent = TRUE)
+
+#try(df1 <- get_ids(
+#  sci = species1,
+#  db= "gbif",
+#  ask = TRUE,
+#  rank = "species",
+#  #rows = 1,
+#  rec_only = TRUE
+#), 
+#silent = TRUE)
+
+try(df1 <- get_gbifid(species1, rank="species"),
+    silent = TRUE)
+
+syn <- id2name(id = df1[1], db = "gbif")
+syn <- syn[[1]]$name
+syn_list[i] <- syn
+
+#if(exists("df1")){
+#syn1 <- taxize::synonyms(id = df1[1])
+#syn1 <- syn1$nameString
+#if(is.null(syn1)) syn_list[i] <- "no synonym"
+#if(!is.null(syn1)) syn_list[i] <- syn1
+#}
+
+#delete
+if(exists("df1"))rm(df1)
+if(exists("species1"))rm(species1)
+if(exists("syn"))rm(syn)
+
+message("########## Did ", i, "! ##########")
+
+}
+
+names(syn_list) <- missing_species_bs
+
+#length(syn_list)
+#length(missing_species_bs)
+#head(syn_list)
+#syn_list == missing_species_bs
+
+syn_list %in% traits$traits.species
+syn_list %in% amph$amph.Species
+syn_list %in% meiri_data$binomial_2020
+syn_list %in% meiri_data$data_binomial_original
+
+
+synonym_table <- data.frame(missing_species_bs, syn_list, syn_list == missing_species_bs, NA)
+names(synonym_table) <- c("original_name", "synonym", "match", "bs")
+#head(synonym_table)
+
+for(i in 1:nrow(synonym_table)){
+
+synonym_row <- synonym_table[i,]
+
+synonym2 <- synonym_row$synonym
+
+if (synonym2 %in% amph$amph.Species) bs_syn <- amph[which(synonym2 == amph$amph.Species),]$amph.Body_mass_g
+if (synonym2 %in% meiri_data$binomial_2020) bs_syn <- meiri_data[meiri_data$binomial_2020==synonym2,]$bmass_g
+if (synonym2 %in% meiri_data$data_binomial_original) bs_syn <- meiri_data[meiri_data$data_binomial_original==synonym2,]$bmass_g
+
+if(exists("bs_syn")) synonym_table[i,4] <- bs_syn
+if(!exists("bs_syn")) synonym_table[i,4] <- NA
+
+if(exists("bs_syn"))rm(bs_syn)
+
+}
+
+#finally get the body mass of these synonyms into the main table 
+
+all_species_status_body_mass_amph_9 <- data.frame(all_species_status_body_mass_amph_8, NA)
+names(all_species_status_body_mass_amph_9)[5] <- "synonym"
+
+for(i in 1:nrow(all_species_status_body_mass_amph_9)){
+
+  species_to_evaluate <- all_species_status_body_mass_amph_9[i,]$species
+  
+  if(species_to_evaluate %in% synonym_table$original_name){
+    
+    all_species_status_body_mass_amph_9[i,]$synonym <- synonym_table[which(synonym_table$original_name == species_to_evaluate),]$synonym
+    all_species_status_body_mass_amph_9[i,]$unified_bs_4 <-synonym_table[which(synonym_table$original_name == species_to_evaluate),]$bs
+    
+    
+  }
+  
+}
+
+#sum(is.na(all_species_status_body_mass_amph_8$unified_bs_4))
+#sum(is.na(all_species_status_body_mass_amph_9$unified_bs_4))
+
+all_species_status_body_mass_amph_9[is.na(all_species_status_body_mass_amph_9$synonym),]$synonym <- "NA"
+#nrow(all_species_status_body_mass_amph_9)
+#View(all_species_status_body_mass_amph_9)
 
   #Fragmentation or habitat structure
+    #getting the variable in...
+
+
+
+
