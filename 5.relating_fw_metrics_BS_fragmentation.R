@@ -306,7 +306,6 @@ syn_list %in% amph$amph.Species
 syn_list %in% meiri_data$binomial_2020
 syn_list %in% meiri_data$data_binomial_original
 
-
 synonym_table <- data.frame(missing_species_bs, syn_list, syn_list == missing_species_bs, NA)
 names(synonym_table) <- c("original_name", "synonym", "match", "bs")
 #head(synonym_table)
@@ -354,9 +353,55 @@ all_species_status_body_mass_amph_9[is.na(all_species_status_body_mass_amph_9$sy
 #nrow(all_species_status_body_mass_amph_9)
 #View(all_species_status_body_mass_amph_9)
 
-  #Fragmentation or habitat structure
-    #getting the variable in...
+################################################################################
+## Fragmentation or habitat structure ##########################################
+################################################################################
 
+#FMestre
+#05-04-2023
 
+library(terra)
 
+grid_europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/grid_10_EUROPE.shp")
+crs(grid_europe)
 
+europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
+crs(europe)
+
+grid_europe_wgs84 <- terra::project(grid_europe, europe)
+crs(grid_europe_wgs84)
+
+europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
+crs(europe)
+
+################################################################################
+#                                      FGA
+################################################################################
+
+FGA2_2009 <- terra::rast("C:\\fw_space\\fragmentation\\eea_r_3035_100_m_fga2-s-2009_p_2009-2016_v01_r00\\FGA2_S_2009_v3.tif")
+#plot(FGA2_2009)
+#terra::crs(FGA2_2009)
+
+FGA2_2018 <- terra::rast("C:\\fw_space\\fragmentation\\eea_r_3035_100_m_fga2-s-2018_p_2017-2019_v01_r00\\SEFF_2018_10m.tif")
+#plot(FGA2_2018)
+#terra::crs(FGA2_2018)
+
+FGA2_2009_2 <- terra::crop(FGA2_2009, FGA2_2018)
+#terra::ext(FGA2_2009_2)
+#terra::ext(FGA2_2018)
+
+FGA2_mean <- terra::mean(FGA2_2009_2, FGA2_2018)
+plot(FGA2_mean)
+plot(grid_europe, add = TRUE)
+crs(FGA2_mean)
+#
+#FGA2_mean_wgs84 <- terra::project(FGA2_mean, europe)
+
+crs(FGA2_mean_wgs84)
+
+################################################################################
+#                                  CORINE
+################################################################################
+
+#corine_wgs84 <- terra::rast("C:\\fw_space\\Corine\\corine_5classes_wgs84.tif")
+#plot(corine_wgs84)
