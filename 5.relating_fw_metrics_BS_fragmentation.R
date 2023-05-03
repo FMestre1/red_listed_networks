@@ -7,8 +7,41 @@
 
 #The FW metrics
 metrics_dataset_3
+head(metrics_dataset_3)
 
-#Fragmentation or habitat structure
+#Fragmentation or habitat structure (a proxy of it might be "human footprint")
+
+hfootprint <- terra::rast("D:\\fw_space\\human_footprint_1993-2009\\2009\\wildareas-v3-2009-human-footprint.tif")
+#plot(hfootprint)
+#crs(hfootprint)
+
+#Extract zonal stats for grids
+hfootprint_wgs84 <- terra::project(hfootprint, crs(europe))
+#plot(hfootprint_wgs84)
+terra::writeRaster(hfootprint_wgs84, filename = "hfootprint_wgs84.tif")
+
+#Getting all the values above 50 to NA
+myFunction <- function(x){ x[x >= 50] <- NA; return(x)}
+hfootprint_wgs84_v2 <- app(hfootprint_wgs84, fun= myFunction)
+plot(hfootprint_wgs84_v2)
+
+hfootprint_wgs84_v2_grid <- terra::zonal(hfootprint_wgs84_v2, fun=mean,  terra::rasterize(europeRaster_poly_wgs84, hfootprint_wgs84_v2, "PageName"))
+#head(hfootprint_wgs84_v2_grid)
+#hist(hfootprint_wgs84_v2_grid$lyr.1)
+names(hfootprint_wgs84_v2_grid)[2] <- "hfootprint"
+#head(metrics_dataset_3)
+#head(hfootprint_wgs84_v2_grid)
+
+metrics_hfootprint <- merge(x = metrics_dataset_3, all.x = TRUE, y = hfootprint_wgs84_v2_grid, 
+                            by.x = "grid_code", by.y = "PageName")
+
+#head(metrics_hfootprint)
+#plot(metrics_hfootprint$modularity, metrics_hfootprint$hfootprint)
+
+europeRaster_poly_wgs84_2 <- merge(x = europeRaster_poly_wgs84, all.x = TRUE, y = metrics_hfootprint, 
+                            by.x = "PageName", by.y = "grid_code")
+#terra::writeVector(europeRaster_poly_wgs84_2, filename = "europeRaster_poly_wgs84_2.shp")
+#europeRaster_poly_wgs84_2 <- terra::vect("europeRaster_poly_wgs84_2.shp")
 
 ################################################################################
 #                              RELATING WITH BODY SIZE
@@ -17,9 +50,9 @@ metrics_dataset_3
 #BS here is a proxy of dispersal distance and resistance to fragmentation
 #Find references for both in the four groups...
 
-
 #The FW metrics
 metrics_dataset_3
+head(metrics_dataset_3)
 
 #Species names
   #red_listed_3 #These are the threatened
@@ -27,11 +60,9 @@ metrics_dataset_3
   #threatened #non-threatened
   all_species_names <- stringr::str_replace(species_names2, "_", " ")#These are the names in the list of the metrics per network
   all_species_names <- data.frame(all_species_names,1)
-  
-  red_listed_3$full_name
+  #  red_listed_3$full_name
   
   all_species_status <- merge(x = all_species_names, all.x = TRUE, y = red_listed_3, by.x = "all_species_names", by.y = "full_name")
-  View(all_species_status)
   all_species_status <- all_species_status[,c(1,4)]
   all_species_status[is.na(all_species_status$europeanRegionalRedListCategory),][,2] <- "not_listed"
   
@@ -47,9 +78,8 @@ metrics_dataset_3
   }
   
   all_species_status <- data.frame(all_species_status, agreg_ts)
-  View(all_species_status)
+  #head(all_species_status)
   
-
 #Body size of all the species - sources (in kg)
 traits <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\AnimalTraits - a curated animal trait database for body mass, metabolic rate and brain size\\observations.csv")
 traits <- traits[traits$phylum == "Chordata",]
@@ -58,10 +88,9 @@ traits <- traits[traits$phylum == "Chordata",]
 traits <- data.frame(traits$species, traits$body.mass)
 #View(traits)
 traits <- traits[!is.na(traits$traits.body.mass),]
-traits$traits.body.mass*1000
+#traits$traits.body.mass*1000
 
-
-#Now... the painful task of merging both...
+#Now... the (very) painful task of merging both...
 
 #Há um erro qq neste merge.... dá tão poucos matches...
 
@@ -113,9 +142,9 @@ for(i in 1:nrow(all_species_status_body_mass_amph_2)){
 
 all_species_status_body_mass_amph_3 <- data.frame(all_species_status_body_mass_amph_2[,1:3], unified_bs)#gathering information from animaltraits and amphibio
 #table(!is.na(all_species_status_body_mass_amph_3$unified_bs))
+View(all_species_status_body_mass_amph_3)
 
 #Elton Traits
-
 mamm_elton <- read.delim("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\elton_traits\\MamFuncDat.txt")
 bird_elton <- read.delim("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\elton_traits\\BirdFuncDat.txt")
 #
@@ -123,7 +152,7 @@ mamm_elton <- mamm_elton[, c(2, 24)]
 bird_elton <- bird_elton[, c(8, 36)] 
 #
 bird_mammal_elton <- rbind(bird_elton, mamm_elton)
-nrow(bird_mammal_elton)
+#nrow(bird_mammal_elton)
 
 elton_vector <- c()
 
@@ -137,7 +166,7 @@ for(i in 1:nrow(all_species_status_body_mass_amph_3)){
 }
 
 all_species_status_body_mass_amph_4 <- data.frame(all_species_status_body_mass_amph_3, elton_vector)
-View(all_species_status_body_mass_amph_4)
+#View(all_species_status_body_mass_amph_4)
 
 unified_bs_2 <- c()
 
@@ -159,37 +188,13 @@ all_species_status_body_mass_amph_6 <- all_species_status_body_mass_amph_5[,-c(4
 #Which don'tn have BS info?
 #View(all_species_status_body_mass_amph_6[is.na(all_species_status_body_mass_amph_6$unified_bs_2),])
 
-
-  #Reptiles database
-
-#reptile_id <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Life-history trait database of European reptile species\\Species.csv", sep = ";")
-#reptile_bs <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Life-history trait database of European reptile species\\mass.csv", sep = ";")
-#head(reptile_id)
-#head(reptile_bs)
-#unique(reptile_bs$Who)
-#reptile_bs_2 <- reptile_bs[reptile_bs$Who %in% c("adult females", "adult males"),]
-#View(reptile_bs_2)
-#reptile_id_unique <- unique(reptile_bs_2$Species_ID)
-
-#reptile_bs_3 <- data.frame()
-
-#reptile_bs_matched <- merge(x = reptile_id, 
-#                            all.x = TRUE, 
-#                            y = reptile_bs, 
-#                            by.x = "Species.ID", 
-#                            by.y = "Species_ID"
-#                            )
-
-
-#lacerta <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Traits of lizards\\Appendix S1 - Lizard data version 1.0.csv")
-#rm(lacerta)
-
+#Meiri et al data
 meiri_data <- read.csv("C:\\Users\\FMest\\Documents\\0. Posdoc\\CONTRATO\\species_databases\\Meiri_et_al_2021\\meiri_et_al._2021_appendix.csv", sep = ";")
-View(meiri_data)
-names(meiri_data)
+#View(meiri_data)
+#names(meiri_data)
 meiri_data <- data.frame(meiri_data$binomial_2020, meiri_data$binomial_.original.files., meiri_data$adult_body_mass..g.)
 names(meiri_data) <- c("binomial_2020", "data_binomial_original", "bmass_g")
-head(meiri_data)
+#head(meiri_data)
 
 unified_bs_3 <- data.frame(rep(NA, nrow(all_species_status_body_mass_amph_6)), rep(NA, nrow(all_species_status_body_mass_amph_6)))
 names(unified_bs_3) <- c("bs_A", "bs_B")
@@ -229,12 +234,10 @@ for(i in 1:nrow(all_species_status_body_mass_amph_7)){
 }
 
 all_species_status_body_mass_amph_8 <- data.frame(all_species_status_body_mass_amph_7[,1:3], unified_bs_4)
-
-#sum(is.na(all_species_status_body_mass_amph_8$unified_bs_4))
-#Which?
+#View(all_species_status_body_mass_amph_8)
+#sum(is.na(all_species_status_body_mass_amph_8$unified_bs_4)) #How many missing?
 
 missing_species_bs <- all_species_status_body_mass_amph_8[is.na(all_species_status_body_mass_amph_8$unified_bs_4),]$species
-
 
 #I have to check this with the synonyms, resorting to taxize
 library(taxize)
@@ -293,22 +296,15 @@ if(exists("syn"))rm(syn)
 message("########## Did ", i, "! ##########")
 
 }
-
-names(syn_list) <- missing_species_bs
-
-#length(syn_list)
-#length(missing_species_bs)
-#head(syn_list)
-#syn_list == missing_species_bs
-
-syn_list %in% traits$traits.species
-syn_list %in% amph$amph.Species
-syn_list %in% meiri_data$binomial_2020
-syn_list %in% meiri_data$data_binomial_original
+#
+any(syn_list %in% traits$traits.species)
+any(syn_list %in% amph$amph.Species)
+any(syn_list %in% meiri_data$binomial_2020)
+any(syn_list %in% meiri_data$data_binomial_original)
 
 synonym_table <- data.frame(missing_species_bs, syn_list, syn_list == missing_species_bs, NA)
 names(synonym_table) <- c("original_name", "synonym", "match", "bs")
-#head(synonym_table)
+#View(synonym_table)
 
 for(i in 1:nrow(synonym_table)){
 
@@ -353,55 +349,96 @@ all_species_status_body_mass_amph_9[is.na(all_species_status_body_mass_amph_9$sy
 #nrow(all_species_status_body_mass_amph_9)
 #View(all_species_status_body_mass_amph_9)
 
+
 ################################################################################
-## Fragmentation or habitat structure ##########################################
+################################################################################
+#                              CONDUCTING THE ANALYSIS                         #   
+################################################################################
 ################################################################################
 
 #FMestre
-#05-04-2023
+#28-04-2023
 
-library(terra)
+#Having the:
 
-grid_europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/grid_10_EUROPE.shp")
-crs(grid_europe)
+  #modularity & human footprint (proxy of habitat disturbance)
+modularity_hfootprint <- as.data.frame(europeRaster_poly_wgs84_2)
+modularity_hfootprint
 
-europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
-crs(europe)
+  #body size (proxy of dispersal) & threat level
+View(all_species_status_body_mass_amph_9)
+names(all_species_status_body_mass_amph_9)
+head(all_species_status_body_mass_amph_9)
+str(all_species_status_body_mass_amph_9)
 
-grid_europe_wgs84 <- terra::project(grid_europe, europe)
-crs(grid_europe_wgs84)
+all_species_status_body_mass_amph_10 <- all_species_status_body_mass_amph_9
+all_species_status_body_mass_amph_10$status <- as.factor(all_species_status_body_mass_amph_10$status)
+all_species_status_body_mass_amph_10$agreg_ts <- as.factor(all_species_status_body_mass_amph_10$agreg_ts)
+str(all_species_status_body_mass_amph_10)
 
-europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
-crs(europe)
+all_species_status_body_mass_amph_11 <- all_species_status_body_mass_amph_10[complete.cases(all_species_status_body_mass_amph_10),]
 
-################################################################################
-#                                      FGA
-################################################################################
+#nrow(all_species_status_body_mass_amph_11)
+#nrow(unique(all_species_status_body_mass_amph_11))
 
-FGA2_2009 <- terra::rast("C:\\fw_space\\fragmentation\\eea_r_3035_100_m_fga2-s-2009_p_2009-2016_v01_r00\\FGA2_S_2009_v3.tif")
-#plot(FGA2_2009)
-#terra::crs(FGA2_2009)
+all_species_status_body_mass_amph_12 <- unique(all_species_status_body_mass_amph_11)
 
-FGA2_2018 <- terra::rast("C:\\fw_space\\fragmentation\\eea_r_3035_100_m_fga2-s-2018_p_2017-2019_v01_r00\\SEFF_2018_10m.tif")
-#plot(FGA2_2018)
-#terra::crs(FGA2_2018)
-
-FGA2_2009_2 <- terra::crop(FGA2_2009, FGA2_2018)
-#terra::ext(FGA2_2009_2)
-#terra::ext(FGA2_2018)
-
-FGA2_mean <- terra::mean(FGA2_2009_2, FGA2_2018)
-plot(FGA2_mean)
-plot(grid_europe, add = TRUE)
-crs(FGA2_mean)
+boxplot(unified_bs_4~status,data=all_species_status_body_mass_amph_12, main="Body size per IUCN status",
+        xlab="status", ylab="body size")
 #
-#FGA2_mean_wgs84 <- terra::project(FGA2_mean, europe)
+aggregate(x = all_species_status_body_mass_amph_12$unified_bs_4,      
+          by = list(all_species_status_body_mass_amph_12$status),              
+          FUN = mean)  
 
-crs(FGA2_mean_wgs84)
+boxplot(unified_bs_4~agreg_ts,data=all_species_status_body_mass_amph_12, main="Body size per aggregated IUCN status",
+        xlab="status", ylab="body size")
+#
+aggregate(x = all_species_status_body_mass_amph_12$unified_bs_4,      
+          by = list(all_species_status_body_mass_amph_12$agreg_ts),              
+          FUN = mean)
 
-################################################################################
-#                                  CORINE
-################################################################################
 
-#corine_wgs84 <- terra::rast("C:\\fw_space\\Corine\\corine_5classes_wgs84.tif")
-#plot(corine_wgs84)
+  #which species are in each square grid
+fw_list[[200]]
+fw_list_with_status_aggreg[[200]]
+
+
+
+ #Adding BS information
+fw_list_with_status_aggreg_BS <- fw_list_with_status_aggreg
+
+for(i in 1:length(fw_list_with_status_aggreg_BS)){
+  
+  fw1 <- fw_list_with_status_aggreg_BS[[i]]
+  
+  #which(all_species_status_body_mass_amph_11$species %in% fw1$SP_NAME)
+  
+  #all_species_status_body_mass_amph_11[fw1$SP_NAME == all_species_status_body_mass_amph_11$species,]
+  fw1_bs <- all_species_status_body_mass_amph_12[which(all_species_status_body_mass_amph_12$species %in% fw1$SP_NAME),]
+  
+  if(nrow(fw1_bs)!=0) {fw2 <- merge(x =fw1, y = fw1_bs, by.x = "SP_NAME", by.y = "species", all = TRUE)
+  #names(fw2)
+  fw2 <- fw2[,-c(10,12)]
+  names(fw2)[12] <- "aggregated_status"
+  names(fw2)[13] <- "body_size"
+  
+  fw_list_with_status_aggreg_BS[[i]] <- fw2
+  }
+  
+  message(i)
+}
+
+#### Two questions:
+  #1. Why is there a gradient SW-NE in the centrality?
+  #2. Why is this gradient more intense in the threatened species than in the non-threatened?
+
+
+
+
+
+
+
+
+
+
+
