@@ -445,12 +445,241 @@ for(i in 1:length(fw_list_with_status_aggreg_BS)){
   #1. Why is there a gradient SW-NE in the centrality?
   #2. Why is this gradient more intense in the threatened species than in the non-threatened?
 
+############# Create a species richness vector ############# START
+  #Get grids
+europeRaster_poly_wgs84
+#plot(europeRaster_poly_wgs84)
+#nrow(europeRaster_poly_wgs84)
 
-#Create a species richness raster
+species_richness_df <- as.data.frame(matrix(nrow = nrow(europeRaster_poly_wgs84), ncol = 2))
+names(species_richness_df) <- c("grid_code", "sp_richness")
+
+#Extract the number of species
+for(i in 1:nrow(europeRaster_poly_wgs84)){
+  
+  grid_name <- as.data.frame(europeRaster_poly_wgs84[i,])[,1]
+  grid_richness <- nrow(fw_list_with_status_aggreg_BS[[grid_name]])
+  
+  species_richness_df[i,1] <- grid_name
+  if(!is.null(grid_richness)) species_richness_df[i,2] <- grid_richness  
+  
+  message(i)
+  
+}
+
+sp_richness <- terra::merge(x=europeRaster_poly_wgs84, y=species_richness_df, by.x = "PageName", by.y = "grid_code")
+#crs(sp_richness)
+#writeVector(sp_richness, filename ="sp_richness.shp", overwrite=TRUE, filetype = "ESRI Shapefile")
+
+#species_richness_df[species_richness_df$grid_code == "MF430",]
+#nrow(fw_list_with_status_aggreg_BS$MF430)
+
+
+############# Create a species richness vector ############# END
+
+
+############# Relating species richness and the FW metrics ############# START
+
+# 1. Getting data
+
+#Centrality - T
+centrality_t_spatial <- terra::vect("centrality_t_spatial.shp")
+
+#Centrality - NT
+centrality_nt_spatial <- terra::vect("centrality_nt_spatial.shp")
+
+#IVI - T
+ivi_t_spatial <- terra::vect("ivi_t_spatial_second_version.shp")
+
+#IVI - NT
+ivi_nt_spatial <- terra::vect("ivi_nt_spatial_second_version.shp")
+
+#Closeness - T
+closeness_t_spatial <- terra::vect("closeness_t_spatial.shp")
+
+#Closeness - NT
+closeness_nt_spatial <- terra::vect("closeness_nt_spatial.shp")
+
+#In-degree - T
+indegree_t_spatial <- terra::vect("indegree_t_spatial.shp")
+
+#In-degree - NT
+indegree_nt_spatial <- terra::vect("indegree_nt_spatial.shp")
+
+#Out-degree - T
+outdegree_t_spatial <- terra::vect("outdegree_t_spatial.shp")
+
+#Out-degree - NT
+outdegree_nt_spatial <- terra::vect("outdegree_nt_spatial.shp")
+
+#Trophic level - T
+tl_t_spatial <- terra::vect("tl_t_spatial.shp")
+
+#Trophic level - NT
+tl_nt_spatial <- terra::vect("tl_nt_spatial.shp")
+
+#Proportion of threatened species
+proportion_spatial <- terra::vect("proportion_spatial.shp")
+
+
+# 2. Test significant relationships
+
+#Centrality - T
+
+length(sp_richness$sp_richness)
+length(centrality_t_spatial$centrality)
+#
+species_richness_vs_centrality_T <- merge(x = sp_richness, y = centrality_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_centrality_T <- as.data.frame(species_richness_vs_centrality_T)
+#
+wilcox.test(species_richness_vs_centrality_T$sp_richness, 
+            species_richness_vs_centrality_T$centrality, 
+            paired = TRUE)
+
+#Centrality - NT
+length(sp_richness$sp_richness)
+length(centrality_nt_spatial$centrality)
+#
+species_richness_vs_centrality_NT <- merge(x = sp_richness, y = centrality_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_centrality_NT <- as.data.frame(species_richness_vs_centrality_NT)
+#
+wilcox.test(species_richness_vs_centrality_NT$sp_richness, 
+            species_richness_vs_centrality_NT$centrality, 
+            paired = TRUE)
+
+
+#IVI - T
+length(sp_richness$sp_richness)
+length(ivi_t_spatial$ivi)
+#
+species_richness_vs_ivi_T <- merge(x = sp_richness, y = ivi_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_ivi_T <- as.data.frame(species_richness_vs_ivi_T)
+#
+wilcox.test(species_richness_vs_ivi_T$sp_richness, 
+            species_richness_vs_ivi_T$ivi, 
+            paired = TRUE)
+
+
+#IVI - NT
+length(sp_richness$sp_richness)
+length(ivi_nt_spatial$ivi)
+#
+species_richness_vs_ivi_NT <- merge(x = sp_richness, y = ivi_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_ivi_NT <- as.data.frame(species_richness_vs_ivi_NT)
+#
+wilcox.test(species_richness_vs_ivi_NT$sp_richness, 
+            species_richness_vs_ivi_NT$ivi, 
+            paired = TRUE)
+
+
+#Closeness - T
+length(sp_richness$sp_richness)
+length(closeness_t_spatial$closeness)
+#
+species_richness_vs_closeness_T <- merge(x = sp_richness, y = closeness_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_closeness_T <- as.data.frame(species_richness_vs_closeness_T)
+#
+wilcox.test(species_richness_vs_closeness_T$sp_richness, 
+            species_richness_vs_closeness_T$closeness, 
+            paired = TRUE)
+
+
+#Closeness - NT
+length(sp_richness$sp_richness)
+length(closeness_nt_spatial$closeness)
+#
+species_richness_vs_closeness_NT <- merge(x = sp_richness, y = closeness_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_closeness_NT <- as.data.frame(species_richness_vs_closeness_NT)
+#
+wilcox.test(species_richness_vs_closeness_NT$sp_richness, 
+            species_richness_vs_closeness_NT$closeness, 
+            paired = TRUE)
+
+#In-degree - T
+length(sp_richness$sp_richness)
+length(indegree_t_spatial$indegree)
+#
+species_richness_vs_indegree_T <- merge(x = sp_richness, y = indegree_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_indegree_T <- as.data.frame(species_richness_vs_indegree_T)
+#
+wilcox.test(species_richness_vs_indegree_T$sp_richness, 
+            species_richness_vs_indegree_T$indegree, 
+            paired = TRUE)
+
+#In-degree - NT
+length(sp_richness$sp_richness)
+length(indegree_nt_spatial$indegree)
+#
+species_richness_vs_indegree_NT <- merge(x = sp_richness, y = indegree_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_indegree_NT <- as.data.frame(species_richness_vs_indegree_NT)
+#
+wilcox.test(species_richness_vs_indegree_NT$sp_richness, 
+            species_richness_vs_indegree_NT$indegree, 
+            paired = TRUE)
+
+#Out-degree - T
+length(sp_richness$sp_richness)
+length(outdegree_t_spatial$outdegree)
+#
+species_richness_vs_outdegree_T <- merge(x = sp_richness, y = outdegree_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_outdegree_T <- as.data.frame(species_richness_vs_outdegree_T)
+#
+wilcox.test(species_richness_vs_outdegree_T$sp_richness, 
+            species_richness_vs_outdegree_T$outdegree, 
+            paired = TRUE)
+
+
+#Out-degree - NT
+length(sp_richness$sp_richness)
+length(outdegree_nt_spatial$outdegree)
+#
+species_richness_vs_outdegree_NT <- merge(x = sp_richness, y = outdegree_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_outdegree_NT <- as.data.frame(species_richness_vs_outdegree_NT)
+#
+wilcox.test(species_richness_vs_outdegree_NT$sp_richness, 
+            species_richness_vs_outdegree_NT$outdegree, 
+            paired = TRUE)
+
+#Trophic level - T
+length(sp_richness$sp_richness)
+length(tl_t_spatial$trophic_le)
+#
+species_richness_vs_tl_T <- merge(x = sp_richness, y = tl_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_tl_T <- as.data.frame(species_richness_vs_tl_T)
+#
+wilcox.test(species_richness_vs_tl_T$sp_richness, 
+            species_richness_vs_tl_T$trophic_le, 
+            paired = TRUE)
+
+
+#Trophic level - NT
+length(sp_richness$sp_richness)
+length(tl_nt_spatial$trophic_le)
+#
+species_richness_vs_tl_NT <- merge(x = sp_richness, y = tl_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_tl_NT <- as.data.frame(species_richness_vs_tl_NT)
+#
+wilcox.test(species_richness_vs_tl_NT$sp_richness, 
+            species_richness_vs_tl_NT$trophic_le, 
+            paired = TRUE)
+
+#Proportion of threatened species
+
+#length(sp_richness$sp_richness)
+#length(proportion_spatial$proportion)
+
+species_richness_vs_proportion <- merge(x = sp_richness, y = proportion_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
+species_richness_vs_proportion <- as.data.frame(species_richness_vs_proportion)
+
+wilcox.test(species_richness_vs_proportion$sp_richness, 
+            species_richness_vs_proportion$proportion, 
+            paired = TRUE)
+
+############# Relating species richness and the FW metrics ############# END
 
 
 
-#Create a data frame with:
+############# Create a data frame with: ############# START
 
   #species
   #Coef. variation of the centrality
@@ -496,4 +725,57 @@ message(i)
 }
 
 #END - Ran in the cluster
+
+
+#Coming from cluster
+
+load("species_list_centrality.RData")
+load("species_list_presence_absence.RData")
+load("trophic_level.RData")
+
+species_list_centrality
+species_list_presence_absence
+trophic_level
+
+#DF with the CV of centrality
+
+cv_centrality <- data.frame(all_species_status_body_mass_amph_12$species, NA)
+names(cv_centrality) <- c("species", "cv")  
+#head(cv_centrality)
+
+for(i in 1:nrow(cv_centrality)){
+  
+  spe1 <- cv_centrality[i,1]
+  cent <- species_list_centrality[[spe1]]
+  
+  if(!is.null(cent)) cv_centrality[i,2] <-  sd(cent)/mean(cent)
+
+  message(i)
+  
+}
+
+#
+
+nr_grids_with_presence <- data.frame(all_species_status_body_mass_amph_12$species, NA)
+names(nr_grids_with_presence) <- c("species", "grids_with_presence")  
+#head(nr_grids_with_presence)
+
+for(i in 1:nrow(nr_grids_with_presence)){
+  
+  spe2 <- nr_grids_with_presence[i,1]
+  pres2 <- species_list_presence_absence[[spe2]]
+  
+  if(!is.null(pres2)) nr_grids_with_presence[i,2] <-  sum(pres2)
+  
+  message(i)
+  
+}
+
+#str(nr_grids_with_presence)
+nr_grids_with_presence$grids_with_presence
+#
+
+
+############# Create a data frame with: ############# END
+
 

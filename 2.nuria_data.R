@@ -49,6 +49,7 @@ dataset2_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_netw
 length(dataset2_nuria)
 
 metrics_dataset_2 <- data.frame()
+head(metrics_dataset_2)
 
 for(i in 1:length(dataset2_nuria)){
   

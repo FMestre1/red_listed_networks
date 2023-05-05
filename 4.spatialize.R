@@ -7,7 +7,7 @@ grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefile
 crs(grid)
 
 europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
-crs(europe)
+terra::crs(europe)
 
 #Convert CRS
 grid_wgs84 <- terra::project(grid, europe)
@@ -50,11 +50,11 @@ crs(grid_europe_wgs84)
 europeRaster <- terra::rast(x="C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img")
 cells_info <- foreign::read.dbf(file = "C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img.vat.dbf")
 #head(cells_info)
-nrow(cells_info)
+#nrow(cells_info)
 
 #To vector
 europeRaster_poly <- terra::as.polygons(europeRaster, values = TRUE, extent=FALSE)
-europeRaster_poly <- merge(europeRaster_poly, cells_info)
+europeRaster_poly <- terra::merge(europeRaster_poly, cells_info)
 #plot(europeRaster_poly)
 #head(europeRaster_poly)
 europeRaster_poly_wgs84 <- terra::project(europeRaster_poly, europe)
@@ -65,6 +65,7 @@ europeRaster_poly_wgs84_coords <- data.frame(europeRaster_poly_wgs84, europeRast
 
 #Write vector
 #writeVector(europeRaster_poly, filename ="europeRaster_poly.shp", overwrite=TRUE, filetype = "ESRI Shapefile")
+#writeVector(europeRaster_poly_wgs84, filename ="europeRaster_poly_wgs84.shp", overwrite=TRUE, filetype = "ESRI Shapefile")
 
 ################################################################################
 
@@ -160,6 +161,8 @@ writeVector(ivi_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
+ivi_nt_spatial <- terra::vect("ivi_nt_spatial_second_version.shp")
+
 #IVI - THREATENED ##############################################################
 
 ivi_t <- rep(NA, length(fw_list_with_status_aggreg))
@@ -191,6 +194,8 @@ writeVector(ivi_t_spatial,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
+
+ivi_t_spatial <- terra::vect("ivi_t_spatial_second_version.shp")
 
 #CENTRALITY - NON-THREATENED #######################################################
 
@@ -224,6 +229,8 @@ writeVector(centrality_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
+centrality_nt_spatial <- terra::vect("centrality_nt_spatial.shp")
+
 #CENTRALITY - THREATENED #######################################################
 
 centrality_t <- rep(NA, length(fw_list_with_status_aggreg))
@@ -255,6 +262,8 @@ writeVector(centrality_t_spatial,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
+
+centrality_t_spatial <- terra::vect("centrality_t_spatial.shp")
 
 #IN-DEGREE - THREATENED ########################################################
 
@@ -288,6 +297,7 @@ writeVector(indegree_t_spatial,
             options="ENCODING=UTF-8"
 )
 
+indegree_t_spatial <- terra::vect("indegree_t_spatial.shp")
 
 #IN-DEGREE - NON-THREATENED ####################################################
 
@@ -321,6 +331,8 @@ writeVector(indegree_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
+indegree_nt_spatial <- terra::vect("indegree_nt_spatial.shp")
+
 #OUT-DEGREE - THREATENED ########################################################
 
 outegree_t <- rep(NA, length(fw_list_with_status_aggreg))
@@ -353,8 +365,9 @@ writeVector(outdegree_t_spatial,
             options="ENCODING=UTF-8"
 )
 
+outdegree_t_spatial <- terra::vect("outdegree_t_spatial.shp")
 
-#IN-DEGREE - NON-THREATENED ####################################################
+#OUT-DEGREE - NON-THREATENED ####################################################
 
 outegree_nt <- rep(NA, length(fw_list_with_status_aggreg))
 
@@ -385,6 +398,8 @@ writeVector(outdegree_nt_spatial,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
+
+outdegree_nt_spatial <- terra::vect("outdegree_nt_spatial.shp")
 
 #CLOSENESS - THREATENED ########################################################
 
@@ -418,6 +433,8 @@ writeVector(closeness_t_spatial,
             options="ENCODING=UTF-8"
 )
 
+closeness_t_spatial <- terra::vect("closeness_t_spatial.shp")
+
 #CLOSENESS - NON-THREATENED ####################################################
 
 closeness_nt <- rep(NA, length(fw_list_with_status_aggreg))
@@ -450,6 +467,7 @@ writeVector(closeness_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
+closeness_nt_spatial <- terra::vect("closeness_nt_spatial.shp")
 
 #TROPHIC LEVEL - NON-THREATENED ################################################
 
@@ -483,6 +501,7 @@ writeVector(tl_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
+tl_nt_spatial <- terra::vect("tl_nt_spatial.shp")
 
 #TROPHIC LEVEL - THREATENED ####################################################
 
@@ -515,6 +534,8 @@ writeVector(tl_t_spatial,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
+
+tl_t_spatial <- terra::vect("tl_t_spatial.shp")
 
 #PROPORTION OF THREATENED SPECIES ##############################################
 
@@ -552,6 +573,7 @@ writeVector(proportion_spatial,
             options="ENCODING=UTF-8"
 )
 
+proportion_spatial <- terra::vect("proportion_spatial.shp")
 
 ##################################################################################################################
 #                                                #STANDARDIZE MAPS
