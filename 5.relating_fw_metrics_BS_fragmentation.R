@@ -5,9 +5,13 @@
 #FMestre
 #24-03-2023
 
+library(ggplot2)
+library(terra)
+library(igraph)
+
 #The FW metrics
 metrics_dataset_3
-head(metrics_dataset_3)
+#head(metrics_dataset_3)
 
 #Fragmentation or habitat structure (a proxy of it might be "human footprint")
 
@@ -18,12 +22,16 @@ hfootprint <- terra::rast("D:\\fw_space\\human_footprint_1993-2009\\2009\\wildar
 #Extract zonal stats for grids
 hfootprint_wgs84 <- terra::project(hfootprint, crs(europe))
 #plot(hfootprint_wgs84)
-terra::writeRaster(hfootprint_wgs84, filename = "hfootprint_wgs84.tif")
+#terra::writeRaster(hfootprint_wgs84, filename = "hfootprint_wgs84.tif")
+#hfootprint_wgs84 <- terra::rast("hfootprint_wgs84.tif")
+
 
 #Getting all the values above 50 to NA
 myFunction <- function(x){ x[x >= 50] <- NA; return(x)}
 hfootprint_wgs84_v2 <- app(hfootprint_wgs84, fun= myFunction)
-plot(hfootprint_wgs84_v2)
+#plot(hfootprint_wgs84_v2)
+#terra::writeRaster(hfootprint_wgs84_v2, filename = "hfootprint_wgs84_v2.tif")
+#hfootprint_wgs84_v2 <- terra::rast("hfootprint_wgs84_v2.tif")
 
 hfootprint_wgs84_v2_grid <- terra::zonal(hfootprint_wgs84_v2, fun=mean,  terra::rasterize(europeRaster_poly_wgs84, hfootprint_wgs84_v2, "PageName"))
 #head(hfootprint_wgs84_v2_grid)
@@ -350,7 +358,7 @@ for(i in 1:nrow(all_species_status_body_mass_amph_9)){
   
 }
 
-View(all_species_status_body_mass_amph_9)
+#View(all_species_status_body_mass_amph_9)
 
 #sum(is.na(all_species_status_body_mass_amph_8$unified_bs_4))
 #sum(is.na(all_species_status_body_mass_amph_9$unified_bs_4))
@@ -389,13 +397,23 @@ all_species_status_body_mass_amph_10$agreg_ts <- as.factor(all_species_status_bo
 #str(all_species_status_body_mass_amph_10)
 #nrow(all_species_status_body_mass_amph_10)
 
-all_species_status_body_mass_amph_11 <- all_species_status_body_mass_amph_10[complete.cases(all_species_status_body_mass_amph_10),]
+#all_species_status_body_mass_amph_11 <- all_species_status_body_mass_amph_10[complete.cases(all_species_status_body_mass_amph_10),]
 #nrow(all_species_status_body_mass_amph_11)
 #nrow(unique(all_species_status_body_mass_amph_11))
 
 #all_species_status_body_mass_amph_12 <- unique(all_species_status_body_mass_amph_11)
-all_species_status_body_mass_amph_12 <- all_species_status_body_mass_amph_11 #to correct an error 
+#all_species_status_body_mass_amph_12 <- all_species_status_body_mass_amph_11 #to correct an error 
+
+all_species_status_body_mass_amph_12 <- unique(all_species_status_body_mass_amph_10) #to correct an error 
 #View(all_species_status_body_mass_amph_12)
+
+names(all_species_status_body_mass_amph_12)[4] <- "body_size"
+head(all_species_status_body_mass_amph_12)
+
+#all_species_status_body_mass_amph_12 <- unique(all_species_status_body_mass_amph_12)
+#View(data.frame(table(all_species_status_body_mass_amph_12$species)))
+
+#all_species_status_body_mass_amph_12[all_species_status_body_mass_amph_12$species == "Natrix natrix",]
 
 boxplot(body_size~status,data=all_species_status_body_mass_amph_12, main="Body size per IUCN status",
         xlab="status", ylab="body size")
@@ -412,33 +430,46 @@ aggregate(x = all_species_status_body_mass_amph_12$body_size,
           FUN = mean)
 
 
-  #which species are in each square grid
-  #fw_list[[200]]
-  #fw_list_with_status_aggreg[[200]]
-
-
- #Adding BS information
+#Adding BS information
 fw_list_with_status_aggreg_BS <- fw_list_with_status_aggreg
 
 for(i in 1:length(fw_list_with_status_aggreg_BS)){
   
   fw1 <- fw_list_with_status_aggreg_BS[[i]]
   
+  #length(fw1$SP_NAME)
   #which(all_species_status_body_mass_amph_11$species %in% fw1$SP_NAME)
-  
   #all_species_status_body_mass_amph_11[fw1$SP_NAME == all_species_status_body_mass_amph_11$species,]
   fw1_bs <- all_species_status_body_mass_amph_12[which(all_species_status_body_mass_amph_12$species %in% fw1$SP_NAME),]
+
+    
+  #all_species_status_body_mass_amph_12[which(all_species_status_body_mass_amph_12$species %in% fw1$SP_NAME),]
   
-  if(nrow(fw1_bs)!=0) {fw2 <- merge(x =fw1, y = fw1_bs, by.x = "SP_NAME", by.y = "species", all = TRUE)
-  #names(fw2)
-  fw2 <- fw2[,-c(10,12)]
-  names(fw2)[12] <- "aggregated_status"
-  names(fw2)[13] <- "body_size"
+  if(nrow(fw1) != nrow(fw1_bs))
+  {
+  if (any(!fw1$SP_NAME %in% fw1_bs$species)) fw1_bs2 <- data.frame(fw1[!fw1$SP_NAME %in% fw1_bs$species,][,c(1,10,12)], NA, NA)
+  if (any(fw1$SP_NAME %in% fw1_bs$species)) fw1_bs2 <- data.frame(matrix(ncol = 5, nrow = 0))
   
-  fw_list_with_status_aggreg_BS[[i]] <- fw2
+  names(fw1_bs2) <- names(fw1_bs)
+  fw1_bs <- rbind(fw1_bs, fw1_bs2)
   }
   
+  #fw1$SP_NAME[!fw1$SP_NAME %in% fw1_bs$species]
+    
+  if(nrow(fw1_bs)!=0) 
+    {
+    fw2 <- merge(x =fw1, y = fw1_bs, by.x = "SP_NAME", by.y = "species", all.x = TRUE)
+    fw2 <- fw2[,-c(10,12)]
+    names(fw2)[12] <- "aggregated_status"
+    names(fw2)[13] <- "body_size"
+    }
+  
+  if(nrow(fw1_bs)==0) fw2 <- fw1
+  
+  fw_list_with_status_aggreg_BS[[i]] <- fw2
+  
   message(i)
+  
 }
 
 #### Two relevant questions:
@@ -470,10 +501,6 @@ for(i in 1:nrow(europeRaster_poly_wgs84)){
 sp_richness <- terra::merge(x=europeRaster_poly_wgs84, y=species_richness_df, by.x = "PageName", by.y = "grid_code")
 #crs(sp_richness)
 #writeVector(sp_richness, filename ="sp_richness.shp", overwrite=TRUE, filetype = "ESRI Shapefile")
-
-#species_richness_df[species_richness_df$grid_code == "MF430",]
-#nrow(fw_list_with_status_aggreg_BS$MF430)
-
 
 ############# Create a species richness vector ############# END
 
@@ -521,13 +548,13 @@ tl_nt_spatial <- terra::vect("tl_nt_spatial.shp")
 #Proportion of threatened species
 proportion_spatial <- terra::vect("proportion_spatial.shp")
 
-
 # 2. Test significant relationships
 
 #Centrality - T
 
-length(sp_richness$sp_richness)
-length(centrality_t_spatial$centrality)
+#length(sp_richness$sp_richness)
+#length(centrality_t_spatial$centrality)
+
 #
 species_richness_vs_centrality_T <- merge(x = sp_richness, y = centrality_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_centrality_T <- as.data.frame(species_richness_vs_centrality_T)
@@ -537,8 +564,8 @@ wilcox.test(species_richness_vs_centrality_T$sp_richness,
             paired = TRUE)
 
 #Centrality - NT
-length(sp_richness$sp_richness)
-length(centrality_nt_spatial$centrality)
+#length(sp_richness$sp_richness)
+#length(centrality_nt_spatial$centrality)
 #
 species_richness_vs_centrality_NT <- merge(x = sp_richness, y = centrality_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_centrality_NT <- as.data.frame(species_richness_vs_centrality_NT)
@@ -549,8 +576,8 @@ wilcox.test(species_richness_vs_centrality_NT$sp_richness,
 
 
 #IVI - T
-length(sp_richness$sp_richness)
-length(ivi_t_spatial$ivi)
+#length(sp_richness$sp_richness)
+#length(ivi_t_spatial$ivi)
 #
 species_richness_vs_ivi_T <- merge(x = sp_richness, y = ivi_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_ivi_T <- as.data.frame(species_richness_vs_ivi_T)
@@ -561,8 +588,8 @@ wilcox.test(species_richness_vs_ivi_T$sp_richness,
 
 
 #IVI - NT
-length(sp_richness$sp_richness)
-length(ivi_nt_spatial$ivi)
+#length(sp_richness$sp_richness)
+#length(ivi_nt_spatial$ivi)
 #
 species_richness_vs_ivi_NT <- merge(x = sp_richness, y = ivi_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_ivi_NT <- as.data.frame(species_richness_vs_ivi_NT)
@@ -573,8 +600,8 @@ wilcox.test(species_richness_vs_ivi_NT$sp_richness,
 
 
 #Closeness - T
-length(sp_richness$sp_richness)
-length(closeness_t_spatial$closeness)
+#length(sp_richness$sp_richness)
+#length(closeness_t_spatial$closeness)
 #
 species_richness_vs_closeness_T <- merge(x = sp_richness, y = closeness_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_closeness_T <- as.data.frame(species_richness_vs_closeness_T)
@@ -585,8 +612,8 @@ wilcox.test(species_richness_vs_closeness_T$sp_richness,
 
 
 #Closeness - NT
-length(sp_richness$sp_richness)
-length(closeness_nt_spatial$closeness)
+#length(sp_richness$sp_richness)
+#length(closeness_nt_spatial$closeness)
 #
 species_richness_vs_closeness_NT <- merge(x = sp_richness, y = closeness_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_closeness_NT <- as.data.frame(species_richness_vs_closeness_NT)
@@ -596,8 +623,8 @@ wilcox.test(species_richness_vs_closeness_NT$sp_richness,
             paired = TRUE)
 
 #In-degree - T
-length(sp_richness$sp_richness)
-length(indegree_t_spatial$indegree)
+#length(sp_richness$sp_richness)
+#length(indegree_t_spatial$indegree)
 #
 species_richness_vs_indegree_T <- merge(x = sp_richness, y = indegree_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_indegree_T <- as.data.frame(species_richness_vs_indegree_T)
@@ -607,8 +634,8 @@ wilcox.test(species_richness_vs_indegree_T$sp_richness,
             paired = TRUE)
 
 #In-degree - NT
-length(sp_richness$sp_richness)
-length(indegree_nt_spatial$indegree)
+#length(sp_richness$sp_richness)
+#length(indegree_nt_spatial$indegree)
 #
 species_richness_vs_indegree_NT <- merge(x = sp_richness, y = indegree_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_indegree_NT <- as.data.frame(species_richness_vs_indegree_NT)
@@ -618,8 +645,8 @@ wilcox.test(species_richness_vs_indegree_NT$sp_richness,
             paired = TRUE)
 
 #Out-degree - T
-length(sp_richness$sp_richness)
-length(outdegree_t_spatial$outdegree)
+#length(sp_richness$sp_richness)
+#length(outdegree_t_spatial$outdegree)
 #
 species_richness_vs_outdegree_T <- merge(x = sp_richness, y = outdegree_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_outdegree_T <- as.data.frame(species_richness_vs_outdegree_T)
@@ -630,8 +657,8 @@ wilcox.test(species_richness_vs_outdegree_T$sp_richness,
 
 
 #Out-degree - NT
-length(sp_richness$sp_richness)
-length(outdegree_nt_spatial$outdegree)
+#length(sp_richness$sp_richness)
+#length(outdegree_nt_spatial$outdegree)
 #
 species_richness_vs_outdegree_NT <- merge(x = sp_richness, y = outdegree_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_outdegree_NT <- as.data.frame(species_richness_vs_outdegree_NT)
@@ -641,8 +668,8 @@ wilcox.test(species_richness_vs_outdegree_NT$sp_richness,
             paired = TRUE)
 
 #Trophic level - T
-length(sp_richness$sp_richness)
-length(tl_t_spatial$trophic_le)
+#length(sp_richness$sp_richness)
+#length(tl_t_spatial$trophic_le)
 #
 species_richness_vs_tl_T <- merge(x = sp_richness, y = tl_t_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_tl_T <- as.data.frame(species_richness_vs_tl_T)
@@ -653,8 +680,8 @@ wilcox.test(species_richness_vs_tl_T$sp_richness,
 
 
 #Trophic level - NT
-length(sp_richness$sp_richness)
-length(tl_nt_spatial$trophic_le)
+#length(sp_richness$sp_richness)
+#length(tl_nt_spatial$trophic_le)
 #
 species_richness_vs_tl_NT <- merge(x = sp_richness, y = tl_nt_spatial, by.x = "PageName", by.y = "PageName", all = TRUE)
 species_richness_vs_tl_NT <- as.data.frame(species_richness_vs_tl_NT)
@@ -678,7 +705,6 @@ wilcox.test(species_richness_vs_proportion$sp_richness,
 ############# Relating species richness and the FW metrics ############# END
 
 
-
 ############# Create a data frame with: ############# START
 
   #species
@@ -692,17 +718,26 @@ wilcox.test(species_richness_vs_proportion$sp_richness,
 
 #Had to do this in the cluster... and bring it back here:#######################
 #First saving the required files to take to the cluster:
-save(all_species_status_body_mass_amph_12, file = "all_species_status_body_mass_amph_12.RData")
-save(fw_list_with_status_aggreg_BS, file = "fw_list_with_status_aggreg_BS.RData")
+#save(all_species_status_body_mass_amph_12, file = "all_species_status_body_mass_amph_12.RData")
+#save(fw_list_with_status_aggreg_BS, file = "fw_list_with_status_aggreg_BS.RData")
 #After running the code bellow in the cluster, bring everything here:
-load("species_list_centrality")
-load("species_list_presence_absence")
-load("trophic_level")
 
-#START - Ran in the cluster
 
-species_list_centrality <- vector(mode = "list", length = nrow(all_species_status_body_mass_amph_12))
-names(species_list_centrality) <- all_species_status_body_mass_amph_12$species
+#START - Ran in the cluster #####
+
+#To obtain species average centrality, trophic level and presence/absence 
+
+species_names_fw2 <- unique(stringr::str_replace(species_names123, "_", " "))
+#identical(species_names_fw, species_names_fw2)
+
+species_names_fw <- stringr::str_replace(species_names, "_", " ")
+species_names_fw <- unique(species_names_fw)
+#save(species_names_fw, file="species_names_fw.RData")
+
+species_list_centrality <- vector(mode = "list", length = length(species_names_fw))
+names(species_list_centrality) <- species_names_fw
+
+#save(species_list_centrality, file = "species_list_centrality.RData")
 
 species_list_presence_absence <- species_list_centrality
 trophic_level <- species_list_centrality
@@ -715,23 +750,29 @@ for(i in 1:length(fw_list_with_status_aggreg_BS)){
   nr_species_fw_grid <- length(species_fw_grid)
   
   #species_fw_grid %in% names(species_list_centrality)
-if(nr_species_fw_grid !=0){  
-  for(j in 1:nr_species_fw_grid){
-    species_list_centrality[species_fw_grid][[j]] <- c(species_list_centrality[species_fw_grid][[j]], fw_grid$centrality[j])
-    trophic_level[species_fw_grid][[j]] <- c(trophic_level[species_fw_grid][[j]], fw_grid$TL[j])
-    species_list_presence_absence[species_fw_grid][[j]] <- c(species_list_centrality[species_fw_grid][[j]], 1)
+  if(nr_species_fw_grid !=0){  
+    for(j in 1:nr_species_fw_grid){
+      species_list_centrality[species_fw_grid][[j]] <- c(species_list_centrality[species_fw_grid][[j]], fw_grid$centrality[j])
+      trophic_level[species_fw_grid][[j]] <- c(trophic_level[species_fw_grid][[j]], fw_grid$TL[j])
+      species_list_presence_absence[species_fw_grid][[j]] <- c(species_list_presence_absence[species_fw_grid][[j]], 1)
     }}
-message(i)  
+  message(i)
 }
 
-#END - Ran in the cluster
-
+#END - Ran in the cluster #####
 
 #Coming from cluster
 
+#LOAD
+load("all_species_status_body_mass_amph_12.RData")
+load("fw_list_with_status_aggreg_BS.RData")
+load("species_names_fw.RData")
+#
 load("species_list_centrality.RData")
 load("species_list_presence_absence.RData")
 load("trophic_level.RData")
+
+###
 
 species_list_centrality
 species_list_presence_absence
@@ -739,9 +780,9 @@ trophic_level
 
 #DF with the CV of centrality
 
-cv_centrality <- data.frame(all_species_status_body_mass_amph_12$species, NA)
+cv_centrality <- data.frame(species_names_fw, NA)
 names(cv_centrality) <- c("species", "cv")  
-#head(cv_centrality)
+#View(cv_centrality)
 
 for(i in 1:nrow(cv_centrality)){
   
@@ -756,9 +797,9 @@ for(i in 1:nrow(cv_centrality)){
 
 #
 
-nr_grids_with_presence <- data.frame(all_species_status_body_mass_amph_12$species, NA)
+nr_grids_with_presence <- data.frame(species_names_fw, NA)
 names(nr_grids_with_presence) <- c("species", "grids_with_presence")  
-#head(nr_grids_with_presence)
+#View(nr_grids_with_presence)
 
 for(i in 1:nrow(nr_grids_with_presence)){
   
@@ -771,11 +812,142 @@ for(i in 1:nrow(nr_grids_with_presence)){
   
 }
 
-#str(nr_grids_with_presence)
-nr_grids_with_presence$grids_with_presence
 #
 
+trophic_level_vector <- data.frame(species_names_fw, NA)
+names(trophic_level_vector) <- c("species", "tl")  
+#View(trophic_level_vector)
+
+for(i in 1:nrow(trophic_level_vector)){
+  
+  spe3 <- trophic_level_vector[i,1]
+  pres3 <- trophic_level[[spe3]]
+  
+  if(!is.null(pres3)) trophic_level_vector[i,2] <-  mean(pres3)
+  
+  message(i)
+  
+}
+
+#
+cv_presence_tl <-
+data.frame(
+cv_centrality,
+nr_grids_with_presence,
+trophic_level_vector
+)
+
+cv_presence_tl <- cv_presence_tl[,-c(3,5)]
+#head(cv_presence_tl)
+
+#View(all_species_status_body_mass_amph_12)
+
+for(i in 1:nrow(cv_presence_tl)){
+  
+  spe4 <- cv_presence_tl$species[i]
+  dt4 <- all_species_status_body_mass_amph_12[all_species_status_body_mass_amph_12$species == spe4,]
+  if(nrow(dt4) !=0){
+  cv_presence_tl[i,5] <- dt4$status #STATUS
+  cv_presence_tl[i,6] <- dt4$agreg_ts #AGGREG STATUS
+  cv_presence_tl[i,7] <- dt4$body_size #BS
+  cv_presence_tl[i,8] <- dt4$synonym #SYNONYM
+  }
+}
+
+names(cv_presence_tl)[5:8] <- c("status", "aggreg_status", "body_size", "synonym")
+head(cv_presence_tl)
+
+#
+
+plot(cv_presence_tl$body_size, cv_presence_tl$cv)
+plot(cv_presence_tl$body_size, cv_presence_tl$grids_with_presence)
+plot(cv_presence_tl$grids_with_presence, cv_presence_tl$cv)
+plot(cv_presence_tl$tl, cv_presence_tl$body_size)
+
+#save(cv_presence_tl, file = "cv_presence_tl.RData")
+#load("cv_presence_tl.RData")
+#str(cv_presence_tl)
+
+cv_presence_tl$status <- as.factor(cv_presence_tl$status)
+cv_presence_tl$aggreg_status <- as.factor(cv_presence_tl$aggreg_status)
+
+#str(cv_presence_tl)
+
+cv_presence_tl_version_2 <- cv_presence_tl[complete.cases(cv_presence_tl$cv),]
+#str(cv_presence_tl_version_2)
+
+###
+
+ggplot(cv_presence_tl_version_2, aes(x=status, y=cv)) + 
+  geom_boxplot(fill="slateblue", alpha=0.2)
+
+ggplot(cv_presence_tl_version_2, aes(x=aggreg_status, y=cv)) + 
+  geom_boxplot(fill="slateblue", alpha=0.2)
+
+##
+
+ggplot(cv_presence_tl_version_2, aes(x=status, y=body_size)) + 
+  geom_boxplot(fill="slateblue", alpha=0.2)
+
+ggplot(cv_presence_tl_version_2, aes(x=aggreg_status, y=body_size)) + 
+  geom_boxplot(fill="slateblue", alpha=0.2)
 
 ############# Create a data frame with: ############# END
+
+##########################################################################################################
+##########################################################################################################
+
+head(cv_presence_tl) #Species info
+head(metrics_dataset_3) #Network Metrics
+
+fw_list[[1]] #species metrics per network
+fw_list_with_status_aggreg_BS[[1]] #species metrics per network with IUCN status and BS
+
+#Get the latitude and longitude 
+head(europeRaster_poly_wgs84_coords)
+
+
+#Merging network metrics and coordinates
+MERGE_metrics_coords <- merge(x=metrics_dataset_3,
+      y=europeRaster_poly_wgs84_coords,
+      by.x="grid_code",
+      by.y="PageName",
+      all = TRUE)
+
+head(MERGE_metrics_coords)
+
+plot(MERGE_metrics_coords$y, MERGE_metrics_coords$C)
+plot(MERGE_metrics_coords$y, MERGE_metrics_coords$indegree)
+plot(MERGE_metrics_coords$y, MERGE_metrics_coords$outdegree)
+plot(MERGE_metrics_coords$y, MERGE_metrics_coords$top)
+plot(MERGE_metrics_coords$x, MERGE_metrics_coords$modularity)
+
+
+#Merging network's average centrality in threatened species with coordinates
+
+head(species_richness_vs_centrality_NT)
+
+MERGE_centrality_NT_coords <- merge(x=species_richness_vs_centrality_NT,
+                              y=europeRaster_poly_wgs84_coords,
+                              by.x="PageName",
+                              by.y="PageName",
+                              all = TRUE)
+
+
+head(species_richness_vs_centrality_T)
+
+MERGE_centrality_T_coords <- merge(x=species_richness_vs_centrality_T,
+                                    y=europeRaster_poly_wgs84_coords,
+                                    by.x="PageName",
+                                    by.y="PageName",
+                                    all = TRUE)
+
+plot(MERGE_centrality_NT_coords$x, MERGE_centrality_NT_coords$centrality)
+plot(MERGE_centrality_NT_coords$x, MERGE_centrality_NT_coords$centrality)
+
+
+par(mfrow=c(1,2))
+plot(MERGE_centrality_NT_coords$y, MERGE_centrality_NT_coords$centrality)
+plot(MERGE_centrality_T_coords$y, MERGE_centrality_T_coords$centrality)
 
 

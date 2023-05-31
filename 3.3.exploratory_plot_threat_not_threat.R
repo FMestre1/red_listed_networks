@@ -2,8 +2,6 @@
 #22-02-2023
 
 library(ggplot2)
-library(ggplot2)
-
 
 not_threat <- rbind(lc_table,
                     nt_table)
@@ -169,14 +167,4 @@ ggplot(CLOSENESS_2, aes(x=fct_reorder(iucn,closeness, .desc=TRUE), y=closeness))
   ggtitle("Closeness index for threatened and non-threatened species") + 
   xlab("IUCN Categories") + ylab("IVI") +
   geom_boxplot()
-
-
-
-
-
-
-
-
-
-
 

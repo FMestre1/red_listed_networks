@@ -1,6 +1,9 @@
 #FMestre
 #07-02-2023
 
+library(igraph)
+library(cheddar)
+
 ####Load data
 #C:\Users\FMest\Documents\0. Artigos\IUCN_networks\data\data_nuria
 
@@ -37,13 +40,9 @@ length(species_names2)
 
 save(species_names2, file = "species_names2.RData")
 
-#fw_list[[1]]
-
-
 ################################################################################
 #                   SECOND NÚRIA DATASET (network metrics)
 ################################################################################
-
 
 dataset2_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2")
 length(dataset2_nuria)
@@ -73,3 +72,95 @@ metrics_dataset_3 <- unique(metrics_dataset_2)
 #Save
 save(metrics_dataset_3, file = "metrics_dataset_FINAL.RData")
 
+
+################################################################################
+#                       THIRD NÚRIA DATASET (networks)
+################################################################################
+
+#FMestre
+#22-05-23
+
+#### RAN IN CLUSTER #### START
+
+network_list <- list()
+path3 <- "C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3"
+
+dataset3_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3")
+#length(dataset3_nuria)
+
+for(i in 1:length(dataset3_nuria)){
+  network_list[[i]] <- read.table(paste0(path3, "\\",dataset3_nuria[i]), sep=",", header = 1)
+  names(network_list)[i] <- stringr::str_split(dataset3_nuria[i], ".csv")[[1]][1]
+  message(i)
+}
+
+#Save
+#save(network_list, file = "network_list.RData")
+#load("network_list.RData")
+
+#### RAN IN CLUSTER #### END
+
+#Coming from the cluster - 31-05-2023
+load("network_list_25_may_23.RData")
+
+#Check
+#length(network_list)
+#names(network_list)
+
+#Convert to igraph and cheddar
+
+## in the cluster ## START
+network_list_igraph <- vector(mode='list', length=length(network_list))
+names(network_list_igraph) <- names(network_list)
+#
+network_list_cheddar <- network_list_igraph
+
+for(i in 1:length(network_list)){
+  
+  fw_a <- network_list[[i]]
+  rownames(fw_a) <- fw_a$X
+  fw_a <- fw_a[,-1]
+  
+  nodes1 <- colnames(fw_a)
+  nodes1 <- stringr::str_replace_all(nodes1, pattern = "_", replacement = " ")
+  nodes1 <- all_species_status_body_mass_amph_12[all_species_status_body_mass_amph_12$species %in% nodes1,]
+  #
+  edges1 <- as.data.frame(which(fw_a==1, arr.ind = TRUE))
+  rownames(edges1) <- 1:nrow(edges1)
+  
+  for(j in 1:nrow(edges1)){
+  row_a <- edges1[j,]
+  fw_a
+  edges1[j,2] <- colnames(fw_a)[as.numeric(row_a[2])]
+  edges1[j,1] <- rownames(fw_a)[as.numeric(row_a[1])]
+  }
+  names(edges1) <- c("resource", "consumer")
+  edges1$resource <- stringr::str_replace_all(edges1$resource, pattern = "_", replacement = " ")
+  edges1$consumer <- stringr::str_replace_all(edges1$consumer, pattern = "_", replacement = " ")
+  
+  g1 <- graph_from_data_frame(edges1, directed = TRUE, vertices = nodes1)
+  
+  #Insert igraph
+  network_list_igraph[[i]] <- g1
+  
+  
+  #... no the cheddar version
+  names(nodes1)[1] <- "node"
+  ch1 <- cheddar::Community(nodes = nodes1, properties = list(title= paste0("Interactions in grid ", names(network_list[i]))), trophic.links = edges1)
+  network_list_cheddar[[i]] <- ch1
+  
+  message(i)
+  
+}
+
+
+#Save
+save(network_list_igraph, file = "network_list_igraph.RData")
+save(network_list_cheddar, file = "network_list_cheddar.RData")
+
+## in the cluster ## END
+
+
+#Load
+load("network_list_igraph.RData")
+load("network_list_cheddar.RData")

@@ -61,7 +61,9 @@ red_listed_3 <- data.frame(
 names(red_listed_3) <- c("group", "full_name", "europeanRegionalRedListCategory",
                                       "endemic_to_europe")
 
-View(red_listed_3)
-save(red_listed_3, file = "red_listed_3_08FEV2023.RData")
+#View(red_listed_3)
+#save(red_listed_3, file = "red_listed_3_08FEV2023.RData")
+
+
 
 ################################################################################

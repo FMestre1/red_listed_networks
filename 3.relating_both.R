@@ -25,8 +25,8 @@ merged_tables <- merge(x = red_listed_3, y = species_names4, by.x = "full_name",
 write.csv(merged_tables, "merged_tables_09_FEV_2023.csv", row.names=FALSE)
 
 #Only those in the red list data were not merged? Strange?
-table(species_names4$query %in% red_listed_3$full_name) #species on FW that are in Red List
-table(red_listed_3$full_name %in% species_names4$query) #species in red list that are in the FW  
+#table(species_names4$query %in% red_listed_3$full_name) #species on FW that are in Red List
+#table(red_listed_3$full_name %in% species_names4$query) #species in red list that are in the FW  
 
 #Ok, we have 190 non-matches!
 

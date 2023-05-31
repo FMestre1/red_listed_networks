@@ -4,10 +4,10 @@
 library(terra)
 
 grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europa_10km/europe_10km.shp")
-crs(grid)
+#crs(grid)
 
 europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
-terra::crs(europe)
+#terra::crs(europe)
 
 #Convert CRS
 grid_wgs84 <- terra::project(grid, europe)
@@ -32,10 +32,10 @@ writeVector(europe_coastline_borders,
 #grid_europe <- intersect(grid_wgs84, europe_coastline_borders) #takes toooo long! I'll do this in ArcGis.
 
 grid_europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/grid_10_EUROPE.shp")
-crs(grid_europe)
+#crs(grid_europe)
 
 grid_europe_wgs84 <- terra::project(grid_europe, europe)
-crs(grid_europe_wgs84)
+#crs(grid_europe_wgs84)
 #plot(europe_coastline_borders)
 #plot(grid_europe_wgs84, add = TRUE)
 
@@ -76,17 +76,22 @@ fw_list
 
 fw_list_with_status <- fw_list
 
+#fw_list_with_status[[i]]$SP_NAME %in% stringr::str_replace(fw_list[[i]]$SP_NAME, "_", " ")
+#fw_list[[i]][which(!stringr::str_replace(fw_list[[i]]$SP_NAME, "_", " ") %in% fw_list_with_status[[i]]$SP_NAME == TRUE),]
+
+#data.frame(table(fw_list[[i]]$SP_NAME))
+
 #Add IUCN status
 for(i in 1:length(fw_list_with_status)){
   
   fw3 <- fw_list_with_status[[i]]
   fw3$SP_NAME <- stringr::str_replace(fw3$SP_NAME, "_", " ")
-  sp_fw3 <- stringr::str_replace(fw3$SP_NAME, "_", " ")
+  sp_fw3 <- fw3$SP_NAME
   
   if(any(red_listed_3$full_name %in% sp_fw3))
     {
     sp_fw3_redList <- red_listed_3[red_listed_3$full_name %in% sp_fw3,]
-    fw4 <- merge(fw3, sp_fw3_redList, by.x = "SP_NAME", by.y = "full_name")
+    fw4 <- merge(fw3, sp_fw3_redList, by.x = "SP_NAME", by.y = "full_name", all.x = TRUE)
     fw_list_with_status[[i]] <- fw4
   }
 
@@ -94,6 +99,9 @@ for(i in 1:length(fw_list_with_status)){
 message(i)
 
 }
+
+#table(fw_list_with_status_aggreg_BS[[i]]$SP_NAME == "Natrix natrix")
+#identical(as.vector(unlist(lapply(fw_list_with_status, nrow))), as.vector(unlist(lapply(fw_list, nrow))))
 
 fw_list_with_status_aggreg <- fw_list_with_status
 
@@ -126,6 +134,8 @@ for(i in 1:length(fw_list_with_status)){
   message(i)
   
 }
+
+#identical(as.vector(unlist(lapply(fw_list_with_status, nrow))), as.vector(unlist(lapply(fw_list_with_status_aggreg, nrow))))
 
 
 #IVI - NOT THREATENED ##########################################################
@@ -739,8 +749,6 @@ writeVector(outdegree_t_std_vector_STD,
 
 
 
-closeness_t_spatial
-
 ###########
 #CLOSENESS
 ###########
@@ -777,7 +785,7 @@ writeVector(closeness_t_std_vector_STD,
 
 
 ################################################################################
-#                                   COMPARE MAPS
+#                                 COMPARE MAPS
 ################################################################################
 
 #FMestre
@@ -789,19 +797,30 @@ ivi_t_spatial$ivi
 ivi_nt_spatial$ivi
 
 cor.test(ivi_t_spatial$ivi, ivi_nt_spatial$ivi, method = "spearman", use = "complete.obs")
+#
+ivi_test <- data.frame(ivi_t_spatial$ivi, ivi_nt_spatial$ivi)
+ivi_test <- ivi_test[complete.cases(ivi_test),]
+wilcx_ivi <- wilcox.test(ivi_test[,1], ivi_test[,2], paired = TRUE)
 
 #CLOSENESS
 closeness_t_spatial$closeness
 closeness_nt_spatial$closeness
 
 cor.test(closeness_t_spatial$closeness, closeness_nt_spatial$closeness, method = "spearman", use = "complete.obs")
+#
+close_test <- data.frame(closeness_t_spatial$closeness, closeness_nt_spatial$closeness)
+close_test <- close_test[complete.cases(close_test),]
+wilcx_close <- wilcox.test(close_test[,1], close_test[,2], paired = TRUE)
 
 #CENTRALITY
 centrality_t_spatial$centrality
 centrality_nt_spatial$centrality
 
 cor.test(centrality_t_spatial$centrality, centrality_nt_spatial$centrality, method = "spearman", use = "complete.obs")
-
+#
+ctrl_test <- data.frame(centrality_t_spatial$centrality, centrality_nt_spatial$centrality)
+ctrl_test <- ctrl_test[complete.cases(ctrl_test),]
+ctrl_ivi <- wilcox.test(ctrl_test[,1], ctrl_test[,2], paired = TRUE)
 
 
 
