@@ -165,12 +165,9 @@ save(network_list_cheddar, file = "network_list_cheddar.RData")
 library(cheddar)
 library(igraph)
 
-load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_cheddar_06jun23.RData")
-load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/eur_comm_collection_06jun23.RData")
 #
-load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_ate_72649.RData")
-load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_de_72650_a_118292.RData")
-
+#load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_ate_72649.RData")
+#load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_de_72650_a_118292.RData")
 
 
 network_list_igraph_2_ate_72649 <- network_list_igraph_2
@@ -190,4 +187,13 @@ network_list_igraph_2 <- c(list_a, list_b)
 rm(list_a)
 rm(list_b)
 #length(network_list_igraph_2)
-save(network_list_igraph_2, file = "network_list_igraph_2_all_06JUN2023.RData")
+#save(network_list_igraph_2, file = "network_list_igraph_2_all_06JUN2023.RData")
+
+load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_cheddar_06jun23.RData")
+load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/eur_comm_collection_06jun23.RData")
+load("network_list_igraph_2_all_06JUN2023.RData")
+
+
+network_list_cheddar
+eur_comm_collection
+network_list_igraph_2_all

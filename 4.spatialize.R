@@ -823,8 +823,3 @@ ctrl_test <- ctrl_test[complete.cases(ctrl_test),]
 ctrl_ivi <- wilcox.test(ctrl_test[,1], ctrl_test[,2], paired = TRUE)
 
 
-
-
-
-
-
