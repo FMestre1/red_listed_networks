@@ -1,7 +1,15 @@
+################################################################################
+#             Exploratory plotting of these data - IUCN status
+################################################################################
 #FMestre
 #18-02-2023
 
+#Load packages
+library(ggplot2)
+library(forcats)
 
+
+#Using these tables:
 dd_table
 lc_table
 nt_table
@@ -10,8 +18,6 @@ en_table
 cr_table
 ne_table
 re_table
-
-library(ggplot2)
 
 # IVI ##########################################################################
 dd_ivi<-data.frame(rep("DD", nrow(dd_table)), dd_table$ivi)
@@ -46,7 +52,6 @@ re_ivi<-data.frame(rep("RE", nrow(re_table)), re_table$ivi)
 names(re_ivi) <- c("iucn", "ivi")
 head(re_ivi)
 
-
 IVI <- rbind(dd_ivi,
       lc_ivi,
       nt_ivi,
@@ -55,8 +60,6 @@ IVI <- rbind(dd_ivi,
       cr_ivi,
       ne_ivi,
       re_ivi)
-
-#save(IVI, file = "IVI.RData")
 
 rm(dd_ivi,
    lc_ivi,
@@ -71,18 +74,14 @@ IVI <- IVI[complete.cases(IVI),]
 str(IVI)
 IVI$iucn <- as.factor(IVI$iucn)
 
-library(ggplot2)
-c
+#save(IVI, file = "IVI.RData")
+
 ggplot(IVI, aes(x=fct_reorder(iucn,ivi, .desc=TRUE), y=ivi)) +
   ggtitle("IVI index by IUCN status") + 
   xlab("IUCN Categories") + ylab("IVI") +
   geom_boxplot()
 
-
-
 #in-degree #####################################################################
-
-
 dd_in<-data.frame(rep("DD", nrow(dd_table)), dd_table$indegree)
 names(dd_in) <- c("iucn", "indegree")
 head(dd_in)
@@ -133,13 +132,12 @@ rm(dd_in,
       ne_in,
       re_in)
 
-#save(INDEGREE, file = "INDEGREE.RData")
-
 
 INDEGREE <- INDEGREE[complete.cases(INDEGREE),]
 str(INDEGREE)
 INDEGREE$iucn <- as.factor(INDEGREE$iucn)
 
+#save(INDEGREE, file = "INDEGREE.RData")
 
 ggplot(INDEGREE, aes(x=fct_reorder(iucn,indegree, .desc=TRUE), y=indegree)) +
   ggtitle("In-degree by IUCN status") + 
@@ -148,8 +146,6 @@ ggplot(INDEGREE, aes(x=fct_reorder(iucn,indegree, .desc=TRUE), y=indegree)) +
 
 
 #out-degree #####################################################################
-
-
 dd_out<-data.frame(rep("DD", nrow(dd_table)), dd_table$outdegree)
 names(dd_out) <- c("iucn", "outdegree")
 head(dd_out)
@@ -200,12 +196,11 @@ rm(dd_out,
    ne_out,
    re_out)
 
-#save(OUTDEGREE, file = "OUTDEGREE.RData")
-
 OUTDEGREE <- OUTDEGREE[complete.cases(OUTDEGREE),]
 str(OUTDEGREE)
 OUTDEGREE$iucn <- as.factor(OUTDEGREE$iucn)
 
+#save(OUTDEGREE, file = "OUTDEGREE.RData")
 
 ggplot(OUTDEGREE, aes(x=fct_reorder(iucn,outdegree, .desc=TRUE), y=outdegree)) +
   ggtitle("Out-degree by IUCN status") + 
@@ -213,8 +208,6 @@ ggplot(OUTDEGREE, aes(x=fct_reorder(iucn,outdegree, .desc=TRUE), y=outdegree)) +
   geom_boxplot()
 
 #centrality #####################################################################
-
-
 dd_centrality<-data.frame(rep("DD", nrow(dd_table)), dd_table$centrality)
 names(dd_centrality) <- c("iucn", "centrality")
 head(dd_centrality)
@@ -265,12 +258,11 @@ rm(dd_centrality,
    ne_centrality,
    re_centrality)
 
-#save(CENTRALITY, file = "CENTRALITY.RData")
-
 CENTRALITY <- CENTRALITY[complete.cases(CENTRALITY),]
 str(CENTRALITY)
 CENTRALITY$iucn <- as.factor(CENTRALITY$iucn)
 
+#save(CENTRALITY, file = "CENTRALITY.RData")
 
 ggplot(CENTRALITY, aes(x=fct_reorder(iucn,centrality, .desc=TRUE), y=centrality)) +
   ggtitle("Centrality by IUCN status") + 
@@ -279,8 +271,6 @@ ggplot(CENTRALITY, aes(x=fct_reorder(iucn,centrality, .desc=TRUE), y=centrality)
 
 
 #closeness #####################################################################
-
-
 dd_closeness<-data.frame(rep("DD", nrow(dd_table)), dd_table$closeness)
 names(dd_closeness) <- c("iucn", "closeness")
 head(dd_closeness)
@@ -331,18 +321,14 @@ rm(dd_closeness,
    ne_closeness,
    re_closeness)
 
-#save(CLOSENESS, file = "CLOSENESS.RData")
-
 CLOSENESS <- CLOSENESS[complete.cases(CLOSENESS),]
 str(CLOSENESS)
 CLOSENESS$iucn <- as.factor(CLOSENESS$iucn)
 
+#save(CLOSENESS, file = "CLOSENESS.RData")
 
 ggplot(CLOSENESS, aes(x=fct_reorder(iucn,closeness, .desc=TRUE), y=closeness)) +
   ggtitle("Closeness by IUCN status") + 
   xlab("IUCN Categories") + ylab("Closeness") +
   geom_boxplot()
-
-
-
 

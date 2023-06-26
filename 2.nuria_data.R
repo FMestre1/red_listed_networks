@@ -1,3 +1,6 @@
+################################################################################
+#                    FIRST NÚRIA DATASET (node metrics)
+################################################################################
 #FMestre
 #07-02-2023
 
@@ -5,11 +8,8 @@ library(igraph)
 library(cheddar)
 
 ####Load data
-#C:\Users\FMest\Documents\0. Artigos\IUCN_networks\data\data_nuria
-
 path1 <- "C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria\\"
 files_folder <- list.files(path1)
-#files_folder[[i]]
 
 fw_list <- list()
 #
@@ -35,9 +35,8 @@ for(i in 1:length(fw_list)){
 }
 
 species_names2 <- unique(species_names)
-length(species_names)
-length(species_names2)
 
+#Save
 save(species_names2, file = "species_names2.RData")
 
 ################################################################################
@@ -45,7 +44,7 @@ save(species_names2, file = "species_names2.RData")
 ################################################################################
 
 dataset2_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2")
-length(dataset2_nuria)
+#length(dataset2_nuria)
 
 metrics_dataset_2 <- data.frame()
 head(metrics_dataset_2)
@@ -70,8 +69,7 @@ metrics_dataset_3 <- unique(metrics_dataset_2)
 #nrow(metrics_dataset_3)
 
 #Save
-save(metrics_dataset_3, file = "metrics_dataset_FINAL.RData")
-
+#save(metrics_dataset_3, file = "metrics_dataset_FINAL.RData")
 
 ################################################################################
 #                       THIRD NÚRIA DATASET (networks)
@@ -161,14 +159,9 @@ save(network_list_cheddar, file = "network_list_cheddar.RData")
 ## in the cluster ## END
 
 ##### Getting what ran in the cluster #####
-
-library(cheddar)
-library(igraph)
-
-#
+#I had to run this in two parts, and here I connect both...
 #load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_ate_72649.RData")
 #load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_de_72650_a_118292.RData")
-
 
 network_list_igraph_2_ate_72649 <- network_list_igraph_2
 rm(network_list_igraph_2)
@@ -179,7 +172,6 @@ rm(network_list_igraph_2)
 rm(network_list_igraph_2_de_72650_a_118292)
 #
 list_a <- network_list_igraph_2_ate_72649[1:72649]
-#
 list_b <- network_list_igraph_2_de_72650_a_118292[72650:118292]
 
 #Finally, concatenate both
@@ -189,11 +181,12 @@ rm(list_b)
 #length(network_list_igraph_2)
 #save(network_list_igraph_2, file = "network_list_igraph_2_all_06JUN2023.RData")
 
-load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_cheddar_06jun23.RData")
-load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/eur_comm_collection_06jun23.RData")
-load("network_list_igraph_2_all_06JUN2023.RData")
+#Load from cluster
+load("from_cluster/network_list_cheddar_06jun23.RData")
+load("from_cluster/eur_comm_collection_06jun23.RData")
+load("from_cluster/network_list_igraph_2_all_06JUN2023.RData")
 
-
-network_list_cheddar
+#Check
+length(network_list_cheddar)
 eur_comm_collection
-network_list_igraph_2_all
+length(network_list_igraph_2_all)

@@ -1,16 +1,19 @@
+################################################################################
+#                               RELATING BOTH
+################################################################################
 #FMestre
 #08-02-2023
 
+#Load packages
 library(taxize)
 
-#Red list data
+#Red list data - get the names of the species
 red_listed_3
 red_list_species <- red_listed_3$full_name
 red_listed_3$full_name <- stringr::str_replace(red_listed_3$full_name, "_", " ")
 
-
 #Node metrics across Europe
-fw_list
+#fw_list
 species_names2 #the species on the networks across Europe
 species_names3 <- stringr::str_replace(species_names2, "_", " ")
 species_names4 <- taxize::tax_name(sci=species_names3, get=c("kingdom", "class","order","family","genus"), db="itis") #changed to "itis"
@@ -23,16 +26,14 @@ merged_tables <- merge(x = red_listed_3, y = species_names4, by.x = "full_name",
 
 #Save as csv file
 write.csv(merged_tables, "merged_tables_09_FEV_2023.csv", row.names=FALSE)
+#read.csv("merged_tables_09_FEV_2023.csv")
 
 #Only those in the red list data were not merged? Strange?
 #table(species_names4$query %in% red_listed_3$full_name) #species on FW that are in Red List
 #table(red_listed_3$full_name %in% species_names4$query) #species in red list that are in the FW  
-
 #Ok, we have 190 non-matches!
 
-#Check with synonyms
-library(taxize)
-
+#Check with synonyms (taxize)
 not_matched <- species_names4[!(species_names4$query %in% red_listed_3$full_name),]
 
 list_of_syns <- list()
@@ -68,11 +69,10 @@ table(additional_matches)
 #only two! So... the rest are not in the list!
 
 which(additional_matches == TRUE)
-#the 1 and 5 are solved by syns
+#(the 1 and 5 are solved by syns)
 
 list_of_syns[[1]] %in% red_listed_3$full_name
 list_of_syns[[5]] %in% red_listed_3$full_name
-
 
 red_listed_3[red_listed_3$full_name == "Catharacta skua",]
 red_listed_3[red_listed_3$full_name == "Eudromias morinellus",]
@@ -92,18 +92,16 @@ merged_tables[merged_tables$full_name == "Eudromias morinellus",]$order <- speci
 merged_tables[merged_tables$full_name == "Eudromias morinellus",]$family <- species_names4[species_names4$query == names(list_of_syns)[5],]$family
 merged_tables[merged_tables$full_name == "Eudromias morinellus",]$genus <- species_names4[species_names4$query == names(list_of_syns)[5],]$genus
 
-
 #Finally.... keep only those that are in the FW
 fw_species_with_red_list_status <- merged_tables[!is.na(merged_tables$genus),]
 fw_species_with_red_list_status <- fw_species_with_red_list_status[,-c(2,5)]
-
 
 fw_species_with_red_list_status$europeanRegionalRedListCategory[is.na(fw_species_with_red_list_status$europeanRegionalRedListCategory)] <- "not_listed"
 fw_species_with_red_list_status$endemic_to_europe[is.na(fw_species_with_red_list_status$endemic_to_europe)] <- "not_listed"
 #View(fw_species_with_red_list_status)
 
-#SAVE
-save(fw_species_with_red_list_status, file = "fw_species_with_red_list_status_15_FEV_2023.RData")
+#Save
+#save(fw_species_with_red_list_status, file = "fw_species_with_red_list_status_15_FEV_2023.RData")
 
 unique(fw_species_with_red_list_status$europeanRegionalRedListCategory)
 
@@ -125,13 +123,14 @@ for(i in 1:nrow(fw_species_with_red_list_status)){
 }
 
 fw_species_with_red_list_combined_status <- data.frame(fw_species_with_red_list_status, grouped_status)
-View(fw_species_with_red_list_combined_status)
+#View(fw_species_with_red_list_combined_status)
 
+#Save
+#save(fw_species_with_red_list_combined_status, file = "fw_species_with_red_list_combined_status_26_JUN_2023.RData")
 
 ##########################################
 
 #Get the metrics per status in all trophic structures
-
 #names(fw_list[[1]])[-1]
 dd_table <- as.data.frame(matrix(ncol = 7))
 lc_table <- as.data.frame(matrix(ncol = 7))
@@ -210,7 +209,7 @@ for(i in 1:length(fw_list)){
   
 }
 
-#Saving of partial tables
+#Saving of partial tables - Shouldn't these have all the other number, not just 19?
 save(dd_table, file = "dd_table_CORRECTEC_19.RData")
 save(lc_table, file = "lc_table_CORRECTEC_19.RData")
 save(nt_table, file = "nt_table_CORRECTEC_19.RData")

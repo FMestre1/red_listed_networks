@@ -1,3 +1,6 @@
+################################################################################
+#          Exploratory plotting of these data - Agregated status
+################################################################################
 #FMestre
 #22-02-2023
 
@@ -11,7 +14,6 @@ threatened <- rbind(vu_table,
                     cr_table)
 
 #in-degree #####################################################################
-
 t_in<-data.frame(rep("threatened", nrow(threatened)), threatened$indegree)
 names(t_in) <- c("iucn", "indegree")
 head(t_in)
@@ -43,7 +45,6 @@ ggplot(INDEGREE_2, aes(x=fct_reorder(iucn,indegree, .desc=TRUE), y=indegree)) +
 
 
 #out-degree #####################################################################
-
 t_out<-data.frame(rep("threatened", nrow(threatened)), threatened$outdegree)
 names(t_out) <- c("iucn", "outdegree")
 head(t_out)
@@ -75,7 +76,6 @@ ggplot(OUTDEGREE_2, aes(x=fct_reorder(iucn,outdegree, .desc=TRUE), y=outdegree))
 
 
 #centrality #####################################################################
-
 t_centrality<-data.frame(rep("threatened", nrow(threatened)), threatened$centrality)
 names(t_centrality) <- c("iucn", "centrality")
 head(t_centrality)
@@ -107,7 +107,6 @@ ggplot(CENTRALITY_2, aes(x=fct_reorder(iucn,centrality, .desc=TRUE), y=centralit
 
 
 #centrality #####################################################################
-
 t_ivi<-data.frame(rep("threatened", nrow(threatened)), threatened$ivi)
 names(t_ivi) <- c("iucn", "ivi")
 head(t_ivi)
@@ -131,14 +130,12 @@ IVI_2 <- IVI_2[complete.cases(IVI_2),]
 str(IVI_2)
 IVI_2$iucn <- as.factor(IVI_2$iucn)
 
-
 ggplot(IVI_2, aes(x=fct_reorder(iucn,ivi, .desc=TRUE), y=ivi)) +
   ggtitle("IVI index for threatened and non-threatened species") + 
   xlab("IUCN Categories") + ylab("IVI") +
   geom_boxplot()
 
 #closeness #####################################################################
-
 t_closeness<-data.frame(rep("threatened", nrow(threatened)), threatened$closeness)
 names(t_closeness) <- c("iucn", "closeness")
 head(t_closeness)
@@ -161,7 +158,6 @@ rm(t_closeness,
 CLOSENESS_2 <- CLOSENESS_2[complete.cases(CLOSENESS_2),]
 str(CLOSENESS_2)
 CLOSENESS_2$iucn <- as.factor(CLOSENESS_2$iucn)
-
 
 ggplot(CLOSENESS_2, aes(x=fct_reorder(iucn,closeness, .desc=TRUE), y=closeness)) +
   ggtitle("Closeness index for threatened and non-threatened species") + 

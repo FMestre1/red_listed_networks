@@ -1,19 +1,17 @@
+################################################################################
+#                                   Spatialize
+################################################################################
 #FMestre
 #09-02-2023
 
+#Load packages
 library(terra)
 
-grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europa_10km/europe_10km.shp")
+#grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europa_10km/europe_10km.shp")
 #crs(grid)
 
 europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
 #terra::crs(europe)
-
-#Convert CRS
-grid_wgs84 <- terra::project(grid, europe)
-#
-#plot(europe)
-#plot(grid_wgs84, add = TRUE)
 
 europe_coastline_borders <- aggregate(europe, dissolve = TRUE)
 #plot(europe_coastline_borders)
@@ -28,24 +26,6 @@ writeVector(europe_coastline_borders,
             overwrite=FALSE, 
             options="ENCODING=UTF-8"
             )
-
-#grid_europe <- intersect(grid_wgs84, europe_coastline_borders) #takes toooo long! I'll do this in ArcGis.
-
-grid_europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/grid_10_EUROPE.shp")
-#crs(grid_europe)
-
-grid_europe_wgs84 <- terra::project(grid_europe, europe)
-#crs(grid_europe_wgs84)
-#plot(europe_coastline_borders)
-#plot(grid_europe_wgs84, add = TRUE)
-
-#Codes from the grid downloaded
-#codes_from_grids <- grid_europe_wgs84$CellCode
-
-#Codes from Núria´s dataset
-#codes_from_nuria <- names(fw_list)
-
-#The codes do not match. Asked Núria for the shapefile.
 
 europeRaster <- terra::rast(x="C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img")
 cells_info <- foreign::read.dbf(file = "C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img.vat.dbf")
