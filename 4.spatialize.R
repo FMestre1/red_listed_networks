@@ -29,19 +29,14 @@ writeVector(europe_coastline_borders,
 
 europeRaster <- terra::rast(x="C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img")
 cells_info <- foreign::read.dbf(file = "C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img.vat.dbf")
-#head(cells_info)
-#nrow(cells_info)
 
 #To vector
 europeRaster_poly <- terra::as.polygons(europeRaster, values = TRUE, extent=FALSE)
 europeRaster_poly <- terra::merge(europeRaster_poly, cells_info)
-#plot(europeRaster_poly)
-#head(europeRaster_poly)
 europeRaster_poly_wgs84 <- terra::project(europeRaster_poly, europe)
-#
+#To WGS84
 europeRaster_poly_wgs84_coords <- crds(europeRaster_poly_wgs84, df=TRUE)
 europeRaster_poly_wgs84_coords <- data.frame(europeRaster_poly_wgs84, europeRaster_poly_wgs84_coords)
-#head(europeRaster_poly_wgs84_coords)
 
 #Write vector
 #writeVector(europeRaster_poly, filename ="europeRaster_poly.shp", overwrite=TRUE, filetype = "ESRI Shapefile")
@@ -49,17 +44,10 @@ europeRaster_poly_wgs84_coords <- data.frame(europeRaster_poly_wgs84, europeRast
 
 ################################################################################
 
-red_listed_3
-fw_list
-
-#as.numeric(lapply(fw_list, nrow))
+#red_listed_3
+#fw_list
 
 fw_list_with_status <- fw_list
-
-#fw_list_with_status[[i]]$SP_NAME %in% stringr::str_replace(fw_list[[i]]$SP_NAME, "_", " ")
-#fw_list[[i]][which(!stringr::str_replace(fw_list[[i]]$SP_NAME, "_", " ") %in% fw_list_with_status[[i]]$SP_NAME == TRUE),]
-
-#data.frame(table(fw_list[[i]]$SP_NAME))
 
 #Add IUCN status
 for(i in 1:length(fw_list_with_status)){
@@ -83,6 +71,7 @@ message(i)
 #table(fw_list_with_status_aggreg_BS[[i]]$SP_NAME == "Natrix natrix")
 #identical(as.vector(unlist(lapply(fw_list_with_status, nrow))), as.vector(unlist(lapply(fw_list, nrow))))
 
+#Add aggregated IUCN status
 fw_list_with_status_aggreg <- fw_list_with_status
 
 #Add threatened/non-threatened
@@ -114,9 +103,6 @@ for(i in 1:length(fw_list_with_status)){
   message(i)
   
 }
-
-#identical(as.vector(unlist(lapply(fw_list_with_status, nrow))), as.vector(unlist(lapply(fw_list_with_status_aggreg, nrow))))
-
 
 #IVI - NOT THREATENED ##########################################################
 
@@ -568,10 +554,10 @@ proportion_spatial <- terra::vect("proportion_spatial.shp")
 ##################################################################################################################
 #                                                #STANDARDIZE MAPS
 ##################################################################################################################
-
 #FMestre
 #09-03-2023
 
+#Load packages
 library(vegan)
 library(terra)
 
@@ -726,9 +712,6 @@ writeVector(outdegree_t_std_vector_STD,
 )
 
 
-
-
-
 ###########
 #CLOSENESS
 ###########
@@ -772,7 +755,6 @@ writeVector(closeness_t_std_vector_STD,
 #15-03-2023
 
 #IVI
-
 ivi_t_spatial$ivi
 ivi_nt_spatial$ivi
 
@@ -801,5 +783,3 @@ cor.test(centrality_t_spatial$centrality, centrality_nt_spatial$centrality, meth
 ctrl_test <- data.frame(centrality_t_spatial$centrality, centrality_nt_spatial$centrality)
 ctrl_test <- ctrl_test[complete.cases(ctrl_test),]
 ctrl_ivi <- wilcox.test(ctrl_test[,1], ctrl_test[,2], paired = TRUE)
-
-
