@@ -1,9 +1,10 @@
 ################################################################################
-#                         Ploting FW for the figure
+#                         Plotting FW for the figure
 ################################################################################
 
 # Get a good example to the fw figure
 
+#using igraph list
 for(i in 1:length(network_list_igraph_2)){
   
   if(all(c("Lynx pardinus", "Oryctolagus cuniculus", "Vulpes vulpes") %in% igraph::vertex.attributes(network_list_igraph_2[[i]])[1]$name)) print(i)
@@ -12,6 +13,7 @@ for(i in 1:length(network_list_igraph_2)){
   
 }
 
+#using cheddar list
 for(i in 1:length(network_list_cheddar)){
   
   if(all(c("Lynx pardinus", "Oryctolagus cuniculus", "Vulpes vulpes") %in%  network_list_cheddar[[i]]$nodes$node)) print(i)
@@ -19,7 +21,6 @@ for(i in 1:length(network_list_cheddar)){
   #if(any(c("Ursus maritimus") %in% igraph::vertex.attributes(network_list_igraph_2[[i]])[1]$name)) print(i)
   
 }
-
 
 #cheddar::TrophicLinkPropertyNames (network_list_cheddar[[116183]])
 #cheddar::NodePropertyNames (network_list_cheddar[[116183]])

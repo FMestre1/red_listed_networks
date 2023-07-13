@@ -29,7 +29,7 @@ proportion <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_network
 #
 
 richness <- terra::vect("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\shapefiles\\richness_2.shp")
-terra::plot(richness, "sp_rich")
+#terra::plot(richness, "sp_rich")
 #richness_2 <- terra::rasterize(richness, proportion, "Count")
 #richness$sp_richnes
 #rasterVis::levelplot(richness_2)
@@ -80,17 +80,22 @@ par(mfrow=c(1, 2))
 terra::plot(t_closeness, range = c(0, 1), main = "Threatened")
 terra::plot(nt_closeness, range = c(0, 1), main = "Not threatened")
 
-
 #Evaluate statistical differences between threatened and non-threatened species
-# Extract pixel values from the two rasters
-t_indegree_values <- values(t_indegree,  mat=TRUE)
-nt_indegree_values <- values(nt_indegree,  mat=TRUE)
 
-# Perform the t-test
-in_degree_result <- t.test(t_indegree_values, nt_indegree_values)
+library(spatialEco)
+library(SpatialPack)
 
-# Print the t-test results
-print(in_degree_result)
+test_indegree <- raster.modified.ttest(t_indegree, nt_indegree, d = "auto", sample = "random", p = 0.1)
+test_outdegree <- raster.modified.ttest(t_outdegree, nt_outdegree, d = "auto", sample = "random", p = 0.1)
+test_t_level <- raster.modified.ttest(t_t_level, nt_t_level, d = "auto", sample = "random", p = 0.1)
+test_centrality <- raster.modified.ttest(t_centrality, nt_centrality, d = "auto", sample = "random", p = 0.1)
+test_closeness <- raster.modified.ttest(t_closeness, nt_closeness, d = "auto", sample = "random", p = 0.1)
+test_ivi <- raster.modified.ttest(t_ivi, nt_ivi, d = "auto", sample = "random", p = 0.1)
 
-?terra::values
+save(test_indegree, file = "test_indegree.RData")
+save(test_outdegree, file = "test_outdegree.RData")
+save(test_t_level, file = "test_t_level.RData")
+save(test_centrality, file = "test_centrality.RData")
+save(test_closeness, file = "test_closeness.RData")
+save(test_ivi, file = "test_ivi.RData")
 
