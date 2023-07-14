@@ -89,8 +89,28 @@ terra::plot(nt_closeness, range = c(0, 1), main = "Not threatened")
 # Evaluate statistical differences between threatened and non-threatened species
 ################################################################################
 
+
+proportion <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/proportion_spatial.shp")
+richness <- terra::vect("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\shapefiles\\richness_2.shp")
+
+
+#T-test and Cohen's d
+
 #t test interpretation
 #p < 0.05 significance difference
+
+#Coehen's d interpretation
+#Small effect size: Cohen's d around 0.2 indicates a small effect size. 
+#It suggests that there is a small difference between the groups, which may 
+#have limited practical significance.
+
+#Medium effect size: Cohen's d around 0.5 indicates a medium effect size. 
+#It suggests a moderate difference between the groups, which is typically 
+#considered to have a meaningful practical impact.
+
+#Large effect size: Cohen's d around 0.8 or above indicates a large effect size. 
+#It suggests a substantial difference between the groups, which is likely to 
+#have significant practical implications.
 
 nt_indegree <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/indegree_nt_spatial.shp")
 t_indegree <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/indegree_t_spatial.shp")
@@ -103,12 +123,44 @@ names(t_indegree)[2] <- "T_indegree"
 indegree_compare <- merge(nt_indegree, t_indegree)
 indegree_compare <- indegree_compare[complete.cases(indegree_compare),]
 #View(indegree_compare)
-indegree_ttest <- t.test(indegree_compare[,2], indegree_compare[,3])
+indegree_ttest <- t.test(indegree_compare[,2], indegree_compare[,3], paired = TRUE)
 print(indegree_ttest)
 indegree_cohens_d <- effsize::cohen.d(indegree_compare[,2], indegree_compare[,3])
 print(indegree_cohens_d)
 plot(indegree_compare[,2], indegree_compare[,3])
 cor(indegree_compare[,2], indegree_compare[,3], method = "spearman")
+#indegree_chisquare <- chisq.test(indegree_compare[,2:3], correct = FALSE)
+#indegree_fisher_test <- fisher.test(indegree_compare[,2:3])
+
+#########################################################################################
+
+#Using sub-sample of the data frame rows in order to avoid the issue of large samples
+
+# Number of sub-samples (e.g., 100 sub-samples)
+num_subsamples <- 100
+
+# Size of each sub-sample (e.g., 50% of the original sample size)
+subsample_size <- round(length(indegree_compare[,2]) * 0.5)
+
+# Create vectors to store sub-sample t-test results
+t_statistic <- rep(NA, num_subsamples)
+p_value <- rep(NA, num_subsamples)
+
+# Perform sub-sampling and t-test for each sub-sample
+for (i in 1:num_subsamples) {
+  # Randomly select subsample_size observations from each group
+  sub_sample_table <- indegree_compare[sample(nrow(indegree_compare), subsample_size), ]
+  
+  # Perform t-test on the sub-sample
+  indegree_result <- t.test(sub_sample_table[,2], sub_sample_table[,3], paired = TRUE)
+  
+  # Store t-test results
+  t_statistic[i] <- indegree_result$statistic
+  p_value[i] <- indegree_result$p.value
+}
+
+#########################################################################################
+
 #
 nt_outdegree <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_nt_spatial.shp")
 t_outdegree <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_t_spatial.shp")
@@ -121,12 +173,42 @@ names(t_outdegree)[2] <- "T_outdegree"
 outdegree_compare <- merge(nt_outdegree, t_outdegree)
 outdegree_compare <- outdegree_compare[complete.cases(outdegree_compare),]
 #View(outdegree_compare)
-outdegree_ttest <- t.test(outdegree_compare[,2], outdegree_compare[,3])
+outdegree_ttest <- t.test(outdegree_compare[,2], outdegree_compare[,3], paired = TRUE)
 print(outdegree_ttest)
 outdegree_cohens_d <- effsize::cohen.d(outdegree_compare[,2], outdegree_compare[,3])
 print(outdegree_cohens_d)
 plot(outdegree_compare[,2], outdegree_compare[,3])
 cor(outdegree_compare[,2], outdegree_compare[,3], method = "spearman")
+
+#########################################################################################
+
+#Using sub-sample of the data frame rows in order to avoid the issue of large samples
+
+# Number of sub-samples (e.g., 100 sub-samples)
+num_subsamples <- 100
+
+# Size of each sub-sample (e.g., 50% of the original sample size)
+subsample_size <- round(length(outdegree_compare[,2]) * 0.5)
+
+# Create vectors to store sub-sample t-test results
+t_statistic <- rep(NA, num_subsamples)
+p_value <- rep(NA, num_subsamples)
+
+# Perform sub-sampling and t-test for each sub-sample
+for (i in 1:num_subsamples) {
+  # Randomly select subsample_size observations from each group
+  sub_sample_table <- outdegree_compare[sample(nrow(outdegree_compare), subsample_size), ]
+  
+  # Perform t-test on the sub-sample
+  outdegree_result <- t.test(sub_sample_table[,2], sub_sample_table[,3], paired = TRUE)
+  
+  # Store t-test results
+  t_statistic[i] <- outdegree_result$statistic
+  p_value[i] <- outdegree_result$p.value
+}
+
+#########################################################################################
+
 #
 nt_t_level <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/tl_nt_spatial.shp")
 t_t_level <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/tl_t_spatial.shp")
@@ -139,7 +221,7 @@ names(t_t_level)[2] <- "T_trph_level"
 trophic_level_compare <- merge(nt_t_level, t_t_level)
 trophic_level_compare <- trophic_level_compare[complete.cases(trophic_level_compare),]
 #View(trophic_level_compare)
-trophic_level_ttest <- t.test(trophic_level_compare[,2], trophic_level_compare[,3])
+trophic_level_ttest <- t.test(trophic_level_compare[,2], trophic_level_compare[,3], paired = TRUE)
 print(trophic_level_ttest)
 trophic_level_cohens_d <- effsize::cohen.d(trophic_level_compare[,2], trophic_level_compare[,3])
 print(trophic_level_cohens_d)
@@ -157,7 +239,7 @@ names(t_closeness)[2] <- "T_closeness"
 closeness_compare <- merge(nt_closeness, t_closeness)
 closeness_compare <- closeness_compare[complete.cases(closeness_compare),]
 #View(closeness_compare)
-closeness_ttest <- t.test(closeness_compare[,2], closeness_compare[,3])
+closeness_ttest <- t.test(closeness_compare[,2], closeness_compare[,3], paired = TRUE)
 print(closeness_ttest)
 outdegree_cohens_d <- effsize::cohen.d(closeness_compare[,2], closeness_compare[,3])
 print(outdegree_cohens_d)
@@ -175,7 +257,7 @@ names(t_centrality)[2] <- "T_centrality"
 centrality_compare <- merge(nt_centrality, t_centrality)
 centrality_compare <- centrality_compare[complete.cases(centrality_compare),]
 #View(centrality_compare)
-centrality_ttest <- t.test(centrality_compare[,2], centrality_compare[,3])
+centrality_ttest <- t.test(centrality_compare[,2], centrality_compare[,3], paired = TRUE)
 print(centrality_ttest)
 centrality_cohens_d <- effsize::cohen.d(centrality_compare[,2], centrality_compare[,3])
 print(centrality_cohens_d)
@@ -193,15 +275,13 @@ names(t_ivi)[2] <- "T_ivi"
 ivi_compare <- merge(nt_ivi, t_ivi)
 ivi_compare <- ivi_compare[complete.cases(ivi_compare),]
 #View(centrality_compare)
-ivi_ttest <- t.test(ivi_compare[,2], ivi_compare[,3])
+ivi_ttest <- t.test(ivi_compare[,2], ivi_compare[,3], paired = TRUE)
 print(ivi_ttest)
 ivi_cohens_d <- effsize::cohen.d(ivi_compare[,2], ivi_compare[,3])
 print(ivi_cohens_d)
 plot(ivi_compare[,2], ivi_compare[,3])
 cor(ivi_compare[,2], ivi_compare[,3], method = "spearman")
 #
-proportion <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/proportion_spatial.shp")
-richness <- terra::vect("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\shapefiles\\richness_2.shp")
 
 
 
