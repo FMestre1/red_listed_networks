@@ -805,3 +805,22 @@ plot(MERGE_centrality_NT_coords$x, MERGE_centrality_NT_coords$centrality)
 par(mfrow=c(1,2))
 plot(MERGE_centrality_NT_coords$y, MERGE_centrality_NT_coords$centrality)
 plot(MERGE_centrality_T_coords$y, MERGE_centrality_T_coords$centrality)
+
+
+################################################################################
+#   NEWER DATASET ON HABITAT FRAGMENTATION
+################################################################################
+#FMestre
+#17-07-2023
+
+# From the paper "Global forest fragmentation change from 2000 to 2020":
+#https://www.nature.com/articles/s41467-023-39221-x
+FFI2000 <- terra::rast("D:\\Dados Habitats e Usos Solo\\Global forest fragmentation change from 2000 to 2020\\FFI2000.tif")
+#plot(FFI2000)
+#
+FFI2020 <- terra::rast("D:\\Dados Habitats e Usos Solo\\Global forest fragmentation change from 2000 to 2020\\FFI2020.tif")
+#plot(FFI2020)
+#
+#rm(FFI2000)
+#rm(FFI2020)
+

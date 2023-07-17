@@ -307,12 +307,34 @@ centrality_difference <- centrality_compare_2[,4] - centrality_compare_2[,2]
 ivi_difference <- ivi_compare_2[,4] - ivi_compare_2[,2]
 
 # Perform a t-test to assess the statistical significance
-t_test_indeg <- t.test(indegree_compare_2[,2], indegree_compare_2[,4])
-t_test_outdeg <- t.test(outdegree_compare_2[,2], outdegree_compare_2[,4])
-t_test_tl <- t.test(trophic_level_compare_2[,2], trophic_level_compare_2[,4])
-t_test_closeness <- t.test(closeness_compare_2[,2], closeness_compare_2[,4])
-t_test_centrality <- t.test(centrality_compare_2[,2], centrality_compare_2[,4])
-t_test_ivi <- t.test(ivi_compare_2[,2], ivi_compare_2[,4])
+t_test_indeg <- t.test(indegree_compare_2[,4], indegree_compare_2[,2], paired = TRUE, alternative = "two.sided")
+t_test_outdeg <- t.test(outdegree_compare_2[,4], outdegree_compare_2[,2], paired = TRUE, alternative = "two.sided")
+t_test_tl <- t.test(trophic_level_compare_2[,4], trophic_level_compare_2[,2], paired = TRUE, alternative = "two.sided")
+t_test_closeness <- t.test(closeness_compare_2[,4], closeness_compare_2[,2], paired = TRUE, alternative = "two.sided")
+t_test_centrality <- t.test(centrality_compare_2[,4], centrality_compare_2[,2], paired = TRUE, alternative = "two.sided")
+t_test_ivi <- t.test(ivi_compare_2[,4], ivi_compare_2[,2], paired = TRUE, alternative = "two.sided")
+
+#Cohen's d
+library(effsize)
+indegree_cohens_d_2 <- effsize::cohen.d(indegree_compare_2[complete.cases(indegree_compare_2),][,4],
+                                        indegree_compare_2[complete.cases(indegree_compare_2),][,2], paired = TRUE)
+outdegree_cohens_d_2 <- effsize::cohen.d(outdegree_compare_2[complete.cases(outdegree_compare_2),][,4],
+                                         outdegree_compare_2[complete.cases(outdegree_compare_2),][,2], paired = TRUE)
+tl_cohens_d_2 <- effsize::cohen.d(trophic_level_compare_2[complete.cases(trophic_level_compare_2),][,4],
+                                  trophic_level_compare_2[complete.cases(trophic_level_compare_2),][,2], paired = TRUE)
+closeness_cohens_d_2 <- effsize::cohen.d(closeness_compare_2[complete.cases(closeness_compare_2),][,4],
+                                         closeness_compare_2[complete.cases(closeness_compare_2),][,2], paired = TRUE)
+centrality_cohens_d_2 <- effsize::cohen.d(centrality_compare_2[complete.cases(centrality_compare_2),][,4],
+                                          centrality_compare_2[complete.cases(centrality_compare_2),][,2], paired = TRUE)
+ivi_cohens_d_2 <- effsize::cohen.d(ivi_compare_2[complete.cases(ivi_compare_2),][,4],
+                                   ivi_compare_2[complete.cases(ivi_compare_2),][,2], paired = TRUE)
+
+round(indegree_cohens_d_2$estimate, 3)
+round(outdegree_cohens_d_2$estimate, 3)
+round(tl_cohens_d_2$estimate, 3)
+round(closeness_cohens_d_2$estimate, 3)
+round(centrality_cohens_d_2$estimate, 3)
+round(ivi_cohens_d_2$estimate, 3)
 
 # Set the significance level
 significance_level <- 0.05
@@ -367,4 +389,50 @@ writeVector(tl_shape, filename = "tl_shape.shp")
 writeVector(closeness_shape, filename = "closeness_shape.shp")
 writeVector(centrality_shape, filename = "centrality_shape.shp")
 writeVector(ivi_shape, filename = "ivi_shape.shp")
+
+
+
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
+
+# Required libraries
+library(terra)
+
+# Load the two shapefiles as spatial objects
+#nt_centrality3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.shp")
+#t_centrality3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_t_spatial.shp")
+nt_outdegree3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_nt_spatial.shp")
+t_outdegree3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_t_spatial.shp")
+
+# Extract the attribute values from the shapefiles
+values_map1 <- t_outdegree3$outdegree
+values_map2 <- nt_outdegree3$outdegree
+
+# Calculate the observed difference between the two maps
+obs_diff <- values_map1 - values_map2
+
+# Generate a null distribution of differences using a permutation test
+#n_permutations <- 1000  # Number of permutations
+n_permutations <- length(nt_centrality3$centrality)  # Number of permutations
+null_diff <- rep(NA, n_permutations)
+
+for (i in 1:n_permutations) {
+  # Randomly permute the values of the second map
+  permuted_values_map2 <- sample(values_map2)
+  
+  # Calculate the difference between the first map and permuted second map
+  perm_diff <- abs(values_map1 - permuted_values_map2)
+  
+  # Store the difference in the null distribution
+  null_diff[i] <- mean(perm_diff, na.rm = TRUE)
+  message(i)
+}
+
+# Calculate the p-value by comparing the observed difference to the null distribution
+p_value <- sum(null_diff >= obs_diff, na.rm=TRUE)/n_permutations
+print(p_value)
+
+
+
 
