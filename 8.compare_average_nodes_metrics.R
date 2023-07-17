@@ -85,14 +85,12 @@ par(mfrow=c(1, 2))
 terra::plot(t_closeness, range = c(0, 1), main = "Threatened")
 terra::plot(nt_closeness, range = c(0, 1), main = "Not threatened")
 
-################################################################################
-# Evaluate statistical differences between threatened and non-threatened species
-################################################################################
-
+#######################################################################################
+#    Evaluate statistical differences between threatened and non-threatened species
+#######################################################################################
 
 proportion <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/proportion_spatial.shp")
 richness <- terra::vect("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\shapefiles\\richness_2.shp")
-
 
 #T-test and Cohen's d
 
@@ -128,7 +126,7 @@ print(indegree_ttest)
 indegree_cohens_d <- effsize::cohen.d(indegree_compare[,2], indegree_compare[,3])
 print(indegree_cohens_d)
 plot(indegree_compare[,2], indegree_compare[,3])
-cor(indegree_compare[,2], indegree_compare[,3], method = "spearman")
+cor(indegree_compare[,2], indegree_compare[,3], method = "pearson")
 #indegree_chisquare <- chisq.test(indegree_compare[,2:3], correct = FALSE)
 #indegree_fisher_test <- fisher.test(indegree_compare[,2:3])
 
@@ -178,7 +176,7 @@ print(outdegree_ttest)
 outdegree_cohens_d <- effsize::cohen.d(outdegree_compare[,2], outdegree_compare[,3])
 print(outdegree_cohens_d)
 plot(outdegree_compare[,2], outdegree_compare[,3])
-cor(outdegree_compare[,2], outdegree_compare[,3], method = "spearman")
+cor(outdegree_compare[,2], outdegree_compare[,3], method = "pearson")
 
 #########################################################################################
 
@@ -226,7 +224,7 @@ print(trophic_level_ttest)
 trophic_level_cohens_d <- effsize::cohen.d(trophic_level_compare[,2], trophic_level_compare[,3])
 print(trophic_level_cohens_d)
 plot(trophic_level_compare[,2], trophic_level_compare[,3])
-cor(trophic_level_compare[,2], trophic_level_compare[,3], method = "spearman")
+cor(trophic_level_compare[,2], trophic_level_compare[,3], method = "pearson")
 #
 nt_closeness <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/closeness_nt_spatial.shp")
 t_closeness <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/closeness_t_spatial.shp")
@@ -239,12 +237,12 @@ names(t_closeness)[2] <- "T_closeness"
 closeness_compare <- merge(nt_closeness, t_closeness)
 closeness_compare <- closeness_compare[complete.cases(closeness_compare),]
 #View(closeness_compare)
-closeness_ttest <- t.test(closeness_compare[,2], closeness_compare[,3], paired = TRUE)
+closeness_ttest <- t.test(closeness_compare[,2], closeness_compare[,4], paired = TRUE)
 print(closeness_ttest)
 outdegree_cohens_d <- effsize::cohen.d(closeness_compare[,2], closeness_compare[,3])
 print(outdegree_cohens_d)
 plot(closeness_compare[,2], closeness_compare[,3])
-cor(closeness_compare[,2], closeness_compare[,3], method = "spearman")
+cor(closeness_compare[,2], closeness_compare[,3], method = "pearson")
 #
 nt_centrality <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.shp")
 t_centrality <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_t_spatial.shp")
@@ -262,7 +260,7 @@ print(centrality_ttest)
 centrality_cohens_d <- effsize::cohen.d(centrality_compare[,2], centrality_compare[,3])
 print(centrality_cohens_d)
 plot(centrality_compare[,2], centrality_compare[,3])
-cor(centrality_compare[,2], centrality_compare[,3], method = "spearman")
+cor(centrality_compare[,2], centrality_compare[,3], method = "pearson")
 #
 nt_ivi <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/ivi_nt_spatial_second_version.shp")
 t_ivi <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/ivi_t_spatial_second_version.shp")
@@ -280,17 +278,93 @@ print(ivi_ttest)
 ivi_cohens_d <- effsize::cohen.d(ivi_compare[,2], ivi_compare[,3])
 print(ivi_cohens_d)
 plot(ivi_compare[,2], ivi_compare[,3])
-cor(ivi_compare[,2], ivi_compare[,3], method = "spearman")
+cor(ivi_compare[,2], ivi_compare[,3], method = "pearson")
 #
 
+#######################################################################################
+#    Where are areas significantly higher or lower in one metrics in T and NT?
+#######################################################################################
 
+names(indegree_compare)
+names(outdegree_compare)
+names(trophic_level_difference)
+names(closeness_difference)
+names(centrality_difference)
+names(ivi_difference)
+#
+indegree_compare_2 <- data.frame(nt_indegree, t_indegree)
+outdegree_compare_2 <- data.frame(nt_outdegree, t_outdegree)
+trophic_level_compare_2 <- data.frame(nt_t_level, t_t_level)
+closeness_compare_2 <- data.frame(nt_closeness, t_closeness)
+centrality_compare_2 <- data.frame(nt_centrality, t_centrality)
+ivi_compare_2 <- data.frame(nt_ivi, t_ivi)
+#
+indegree_difference <- indegree_compare_2[,4] - indegree_compare_2[,2]
+outdegree_difference <- outdegree_compare_2[,4] - outdegree_compare_2[,2]
+trophic_level_difference <- trophic_level_compare_2[,4] - trophic_level_compare_2[,2]
+closeness_difference <- closeness_compare_2[,4] - closeness_compare_2[,2]
+centrality_difference <- centrality_compare_2[,4] - centrality_compare_2[,2]
+ivi_difference <- ivi_compare_2[,4] - ivi_compare_2[,2]
 
+# Perform a t-test to assess the statistical significance
+t_test_indeg <- t.test(indegree_compare_2[,2], indegree_compare_2[,4])
+t_test_outdeg <- t.test(outdegree_compare_2[,2], outdegree_compare_2[,4])
+t_test_tl <- t.test(trophic_level_compare_2[,2], trophic_level_compare_2[,4])
+t_test_closeness <- t.test(closeness_compare_2[,2], closeness_compare_2[,4])
+t_test_centrality <- t.test(centrality_compare_2[,2], centrality_compare_2[,4])
+t_test_ivi <- t.test(ivi_compare_2[,2], ivi_compare_2[,4])
 
+# Set the significance level
+significance_level <- 0.05
 
+# Identify areas where values in shapefile1 are significantly higher than shapefile2
+indegree_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/indegree_nt_spatial.shp")
+indegree_shape <- indegree_shape[, -4]
+indegree_shape$indegree_difference <- indegree_difference
+#terra::plot(indegree_shape, "indegree_difference", col=rainbow(10))
+indegree_shape$significantly_higher <- ifelse(t_test_indeg$p.value < significance_level & indegree_shape$indegree_difference > 0, "Yes", "No")
+terra::plot(indegree_shape, "significantly_higher")
+#######################
+outdegree_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_nt_spatial.shp")
+outdegree_shape <- outdegree_shape[, -4]
+outdegree_shape$outdegree_difference <- outdegree_difference
+#terra::plot(outdegree_shape, "outdegree_difference", col=rainbow(10))
+outdegree_shape$significantly_higher <- ifelse(t_test_outdeg$p.value < significance_level & outdegree_shape$outdegree_difference > 0, "Yes", "No")
+terra::plot(outdegree_shape, "significantly_higher")
+#######################
+tl_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/tl_nt_spatial.shp")
+tl_shape <- tl_shape[, -4]
+tl_shape$trophic_level_difference <- trophic_level_difference
+#terra::plot(tl_shape, "trophic_level_difference", col=rainbow(10))
+tl_shape$significantly_higher <- ifelse(t_test_tl$p.value < significance_level & tl_shape$trophic_level_difference > 0, "Yes", "No")
+terra::plot(tl_shape, "significantly_higher")
+#######################
+closeness_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/closeness_nt_spatial.shp")
+closeness_shape <- closeness_shape[, -4]
+closeness_shape$closeness_difference <- closeness_difference
+#terra::plot(closeness_shape, "closeness_difference", col=rainbow(10))
+closeness_shape$significantly_higher <- ifelse(t_test_closeness$p.value < significance_level & closeness_shape$closeness_difference > 0, "Yes", "No")
+terra::plot(closeness_shape, "significantly_higher")
+#######################
+centrality_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.shp")
+centrality_shape <- closeness_shape[, -4]
+centrality_shape$centrality_difference <- centrality_difference
+#terra::plot(centrality_shape, "centrality_difference", col=rainbow(10))
+centrality_shape$significantly_higher <- ifelse(t_test_centrality$p.value < significance_level & centrality_shape$centrality_difference > 0, "Yes", "No")
+terra::plot(centrality_shape, "significantly_higher")
+#######################
+ivi_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/ivi_nt_spatial_second_version.shp")
+ivi_shape <- ivi_shape[, -4]
+ivi_shape$ivi_difference <- ivi_difference
+#terra::plot(ivi_shape, "ivi_difference", col=rainbow(10))
+ivi_shape$significantly_higher <- ifelse(t_test_ivi$p.value < significance_level & ivi_shape$ivi_difference > 0, "Yes", "No")
+terra::plot(ivi_shape, "significantly_higher")
 
-
-
-
-
-
+#Save shapefiles
+writeVector(indegree_shape, filename = "indegree_shape.shp")
+writeVector(outdegree_shape, filename = "outdegree_shape.shp")
+writeVector(tl_shape, filename = "tl_shape.shp")
+writeVector(closeness_shape, filename = "closeness_shape.shp")
+writeVector(centrality_shape, filename = "centrality_shape.shp")
+writeVector(ivi_shape, filename = "ivi_shape.shp")
 
