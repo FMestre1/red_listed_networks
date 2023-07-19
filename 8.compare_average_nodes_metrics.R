@@ -6,6 +6,9 @@ library(terra)
 library(rasterVis)
 library(cheddar)
 library(effsize)
+library(gridExtra)
+library(viridis)
+library(grid)
 
 ################################################################################
 #                                  Plot maps
@@ -31,59 +34,76 @@ nt_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\r
 t_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_ivi.tif")
 #
 proportion <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\proportion.tif")
+richness_raster <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\richness.tif")
+richness_raster2 <- terra::resample(richness_raster, proportion)
 #
 
 richness <- terra::vect("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\shapefiles\\richness_2.shp")
+proportion_vector <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/proportion_spatial.shp")
+#
+richness_proportion <- data.frame(merge(richness, proportion_vector))
+#head(richness_proportion)
+richness_proportion <- richness_proportion[,-c(2,3,4)]
+
 #terra::plot(richness, "sp_rich")
 #richness_2 <- terra::rasterize(richness, proportion, "Count")
 #richness$sp_richnes
 #rasterVis::levelplot(richness_2)
 
 #Plot with rastervis
-rasterVis::levelplot(nt_indegree)
-rasterVis::levelplot(t_indegree)
-#
-rasterVis::levelplot(nt_outdegree)
-rasterVis::levelplot(t_outdegree)
-#
-rasterVis::levelplot(nt_t_level)
-rasterVis::levelplot(t_t_level)
-#
-rasterVis::levelplot(nt_closeness)
-rasterVis::levelplot(t_closeness)
-#
-rasterVis::levelplot(nt_centrality)
-rasterVis::levelplot(t_centrality)
-#
-rasterVis::levelplot(nt_ivi)
-rasterVis::levelplot(t_ivi)
-#
-rasterVis::levelplot(proportion)
-
-#Plot side by side
-par(mfrow=c(1, 2))
-terra::plot(t_indegree, range = c(0, 65), main = "Threatened")
-terra::plot(nt_indegree, range = c(0, 65), main = "Not threatened")
-#
-par(mfrow=c(1, 2))
-terra::plot(t_outdegree, range = c(0, 25), main = "Threatened")
-terra::plot(nt_outdegree, range = c(0, 25), main = "Not threatened")
-#
-par(mfrow=c(1, 2))
-terra::plot(t_t_level, range = c(0, 3), main = "Threatened")
-terra::plot(nt_t_level, range = c(0, 3), main = "Not threatened")
-#
-par(mfrow=c(1, 2))
-terra::plot(t_centrality, range = c(0, 460), main = "Threatened")
-terra::plot(nt_centrality, range = c(0, 460), main = "Not threatened")
-#
-par(mfrow=c(1, 2))
-terra::plot(t_ivi, range = c(0, 100), main = "Threatened")
-terra::plot(nt_ivi, range = c(0, 100), main = "Not threatened")
-#
-par(mfrow=c(1, 2))
-terra::plot(t_closeness, range = c(0, 1), main = "Threatened")
-terra::plot(nt_closeness, range = c(0, 1), main = "Not threatened")
+##
+my.col.regions <- rev(terrain.colors(100))
+######################
+#max(nt_indegree) #max value: 25.28488 
+#max(t_indegree) #max value: 61.000 
+ind_min_max <- seq(0, 61, length.out = 100)
+ind1 <- rasterVis::levelplot(nt_indegree, col.regions=my.col.regions, at=ind_min_max, main = "Not-threatened")
+ind2 <- rasterVis::levelplot(t_indegree, col.regions=my.col.regions, at=ind_min_max, main = "Threatened")
+ind_title <- textGrob("Average In-degree", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(ind1, ind2, ncol=2, top=ind_title)
+######################
+#max(nt_outdegree) #max value: 22.2991447
+#max(t_outdegree) #max value: 20.4444447
+out_min_max <- seq(0, 23, length.out = 100)
+out1 <- rasterVis::levelplot(nt_outdegree, col.regions=my.col.regions, at=out_min_max, main = "Not-threatened")
+out2 <- rasterVis::levelplot(t_outdegree, col.regions=my.col.regions, at=out_min_max, main = "Threatened")
+out_title <- textGrob("Average Out-degree", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(out1, out2, ncol=2, top=out_title)
+######################
+#max(nt_t_level) #max value: 2
+#max(t_t_level) #max value: 3 
+tl_min_max <- seq(0, 3, length.out = 100)
+tl1 <- rasterVis::levelplot(nt_t_level, col.regions=my.col.regions, at=tl_min_max, main = "Not-threatened")
+tl2 <- rasterVis::levelplot(t_t_level, col.regions=my.col.regions, at=tl_min_max, main = "Threatened")
+tl_title <- textGrob("Average Trophic Level", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(tl1, tl2, ncol=2, top=tl_title)
+######################
+#max(nt_closeness) #max value:
+#max(t_closeness) #max value:
+closeness_min_max <- seq(0, 1, length.out = 100)
+cl1 <- rasterVis::levelplot(nt_closeness, col.regions=my.col.regions, at=closeness_min_max, main = "Not-threatened")
+cl2 <- rasterVis::levelplot(t_closeness, col.regions=my.col.regions, at=closeness_min_max, main = "Threatened")
+cl_title <- textGrob("Average Closeness Centrality", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(cl1, cl2, ncol=2, top=cl_title)
+######################
+#max(nt_centrality) #max value: 115.24037170
+#max(t_centrality) #max value: 459.1808
+centrality_min_max <- seq(0, 460, length.out = 100)
+bt1 <- rasterVis::levelplot(nt_centrality, col.regions=my.col.regions, at=centrality_min_max, main = "Not-threatened")
+bt2 <- rasterVis::levelplot(t_centrality, col.regions=my.col.regions, at=centrality_min_max, main = "Threatened")
+bt_title <- textGrob("Average Betweenness Centrality", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(bt1, bt2, ncol=2, top=bt_title)
+######################
+#max(nt_ivi) #max value: 82.45447
+#max(t_ivi) #max value: 100
+ivi_min_max <- seq(0, 100, length.out = 100)
+ivi1 <- rasterVis::levelplot(nt_ivi, col.regions=my.col.regions, at=ivi_min_max, main = "Not-threatened")
+ivi2 <- rasterVis::levelplot(t_ivi, col.regions=my.col.regions, at=ivi_min_max, main = "Threatened")
+ivi_title <- textGrob("Average IVI", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(ivi1, ivi2, ncol=2, top=ivi_title)
+######################
+rasterVis::levelplot(proportion, par.settings = rasterTheme(viridis_pal()(255)), main = "Proportion of threatened species")
+rasterVis::levelplot(richness_raster2, par.settings = rasterTheme(viridis_pal()(255)), main = "Number of nodes in each network")
 
 #######################################################################################
 #    Evaluate statistical differences between threatened and non-threatened species
@@ -130,35 +150,22 @@ cor(indegree_compare[,2], indegree_compare[,3], method = "pearson")
 #indegree_chisquare <- chisq.test(indegree_compare[,2:3], correct = FALSE)
 #indegree_fisher_test <- fisher.test(indegree_compare[,2:3])
 
-#########################################################################################
-
-#Using sub-sample of the data frame rows in order to avoid the issue of large samples
-
-# Number of sub-samples (e.g., 100 sub-samples)
-num_subsamples <- 100
-
-# Size of each sub-sample (e.g., 50% of the original sample size)
-subsample_size <- round(length(indegree_compare[,2]) * 0.5)
-
-# Create vectors to store sub-sample t-test results
-t_statistic <- rep(NA, num_subsamples)
-p_value <- rep(NA, num_subsamples)
-
-# Perform sub-sampling and t-test for each sub-sample
-for (i in 1:num_subsamples) {
-  # Randomly select subsample_size observations from each group
-  sub_sample_table <- indegree_compare[sample(nrow(indegree_compare), subsample_size), ]
-  
-  # Perform t-test on the sub-sample
-  indegree_result <- t.test(sub_sample_table[,2], sub_sample_table[,3], paired = TRUE)
-  
-  # Store t-test results
-  t_statistic[i] <- indegree_result$statistic
-  p_value[i] <- indegree_result$p.value
-}
-
-#########################################################################################
-
+#frequency plots
+names(indegree_compare)
+par(mfrow=c(2, 2))
+h_in_nt <- hist(indegree_compare[,2], freq = TRUE, main = "Non-threatened", col = "darkgreen", xlab = "In-degree", breaks = seq(0,65, by=2), ylim = c(0,40000), plot = FALSE)
+h_in_t <- hist(indegree_compare[,3], freq = TRUE, main = "Threatened", col = "darkred", xlab = "In-degree",  breaks = seq(0,65, by=2), ylim = c(0,40000), plot = FALSE)
+# Convert the counts to percentages
+h_in_nt$counts <- h_in_nt$counts / sum(h_in_nt$counts) * 100
+h_in_t$counts <- h_in_t$counts / sum(h_in_t$counts) * 100
+#plot(h_in_nt, main = "Non-threatened", col = "darkgreen", xlab = "In-degree")
+#plot(h_in_t, main = "Threatened", col = "darkred", xlab = "In-degree")
+# Create the line plot
+plot(h_in_nt$mids, h_in_nt$counts, type = "n", xlab = "In-degree", ylab = "Frequency (%)", main = "In-degree", ylim = c(0,40))
+lines(h_in_nt$mids, h_in_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_in_t$mids, h_in_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
 #
 nt_outdegree <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_nt_spatial.shp")
 t_outdegree <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_t_spatial.shp")
@@ -178,35 +185,20 @@ print(outdegree_cohens_d)
 plot(outdegree_compare[,2], outdegree_compare[,3])
 cor(outdegree_compare[,2], outdegree_compare[,3], method = "pearson")
 
-#########################################################################################
-
-#Using sub-sample of the data frame rows in order to avoid the issue of large samples
-
-# Number of sub-samples (e.g., 100 sub-samples)
-num_subsamples <- 100
-
-# Size of each sub-sample (e.g., 50% of the original sample size)
-subsample_size <- round(length(outdegree_compare[,2]) * 0.5)
-
-# Create vectors to store sub-sample t-test results
-t_statistic <- rep(NA, num_subsamples)
-p_value <- rep(NA, num_subsamples)
-
-# Perform sub-sampling and t-test for each sub-sample
-for (i in 1:num_subsamples) {
-  # Randomly select subsample_size observations from each group
-  sub_sample_table <- outdegree_compare[sample(nrow(outdegree_compare), subsample_size), ]
-  
-  # Perform t-test on the sub-sample
-  outdegree_result <- t.test(sub_sample_table[,2], sub_sample_table[,3], paired = TRUE)
-  
-  # Store t-test results
-  t_statistic[i] <- outdegree_result$statistic
-  p_value[i] <- outdegree_result$p.value
-}
-
-#########################################################################################
-
+#frequency plots
+names(outdegree_compare)
+par(mfrow=c(1, 2))
+h_out_nt <- hist(outdegree_compare[,2], freq = TRUE, main = "Non-threatened", col = "darkgreen", xlab = "Out-degree", breaks = seq(0,65, by=2), ylim = c(0,40000))
+h_out_t <- hist(outdegree_compare[,3], freq = TRUE, main = "Threatened", col = "darkred", xlab = "Out-degree",  breaks = seq(0,65, by=2), ylim = c(0,40000))
+# Convert the counts to percentages
+h_out_nt$counts <- h_out_nt$counts / sum(h_out_nt$counts) * 100
+h_out_t$counts <- h_out_t$counts / sum(h_out_t$counts) * 100
+# Create the line plot
+plot(h_out_nt$mids, h_out_nt$counts, type = "n", xlab = "Out-degree", ylab = "Frequency (%)", main = "Out-degree", ylim = c(0,40))
+lines(h_out_nt$mids, h_out_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_out_t$mids, h_out_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
 #
 nt_t_level <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/tl_nt_spatial.shp")
 t_t_level <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/tl_t_spatial.shp")
@@ -225,6 +217,21 @@ trophic_level_cohens_d <- effsize::cohen.d(trophic_level_compare[,2], trophic_le
 print(trophic_level_cohens_d)
 plot(trophic_level_compare[,2], trophic_level_compare[,3])
 cor(trophic_level_compare[,2], trophic_level_compare[,3], method = "pearson")
+
+#frequency plots
+names(trophic_level_compare)
+par(mfrow=c(1, 2))
+h_tl_nt <- hist(trophic_level_compare[,2], freq = TRUE, main = "Non-threatened", col = "darkgreen", xlab = "Trophic level", breaks = seq(0,4, by=0.25), ylim = c(0,100000))
+h_tl_t <- hist(trophic_level_compare[,3], freq = TRUE, main = "Threatened", col = "darkred", xlab = "Trophic level",  breaks = seq(0,4, by=0.25), ylim = c(0,100000))
+# Convert the counts to percentages
+h_tl_nt$counts <- h_tl_nt$counts / sum(h_tl_nt$counts) * 100
+h_tl_t$counts <- h_tl_t$counts / sum(h_tl_t$counts) * 100
+# Create the line plot
+plot(h_tl_nt$mids, h_tl_nt$counts, type = "n", xlab = "Trophic level", ylab = "Frequency (%)", main = "Trophic level", ylim = c(0,100))
+lines(h_tl_nt$mids, h_tl_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_tl_t$mids, h_tl_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
 #
 nt_closeness <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/closeness_nt_spatial.shp")
 t_closeness <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/closeness_t_spatial.shp")
@@ -243,6 +250,21 @@ outdegree_cohens_d <- effsize::cohen.d(closeness_compare[,2], closeness_compare[
 print(outdegree_cohens_d)
 plot(closeness_compare[,2], closeness_compare[,3])
 cor(closeness_compare[,2], closeness_compare[,3], method = "pearson")
+
+#frequency plots
+names(closeness_compare)
+par(mfrow=c(1, 2))
+h_clos_nt <- hist(closeness_compare[,2], freq = TRUE, main = "Non-threatened", col = "darkgreen", xlab = "Closeness Centrality", breaks = seq(0,460, by=10), ylim = c(0,150000))
+h_clos_t <- hist(closeness_compare[,3], freq = TRUE, main = "Threatened", col = "darkred", xlab = "Closeness Centrality",  breaks = seq(0,460, by=10), ylim = c(0,150000))
+# Convert the counts to percentages
+h_clos_nt$counts <- h_clos_nt$counts / sum(h_clos_nt$counts) * 100
+h_clos_t$counts <- h_clos_t$counts / sum(h_clos_t$counts) * 100
+# Create the line plot
+plot(h_clos_nt$mids, h_clos_nt$counts, type = "n", xlab = "Closeness Centrality", ylab = "Frequency (%)", main = "Closeness Centrality", ylim = c(0,100))
+lines(h_clos_nt$mids, h_clos_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_tl_t$mids, h_tl_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
 #
 nt_centrality <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.shp")
 t_centrality <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_t_spatial.shp")
@@ -261,6 +283,21 @@ centrality_cohens_d <- effsize::cohen.d(centrality_compare[,2], centrality_compa
 print(centrality_cohens_d)
 plot(centrality_compare[,2], centrality_compare[,3])
 cor(centrality_compare[,2], centrality_compare[,3], method = "pearson")
+
+#frequency plots
+names(centrality_compare)
+par(mfrow=c(1, 2))
+h_bet_nt <- hist(centrality_compare[,2], freq = TRUE, main = "Non-threatened", col = "darkgreen", xlab = "Betwenness Centrality", breaks = seq(0,460, by=10), ylim = c(0,150000))
+h_bet_t <- hist(centrality_compare[,3], freq = TRUE, main = "Threatened", col = "darkred", xlab = "Betwenness Centrality",  breaks = seq(0,460, by=10), ylim = c(0,150000))
+# Convert the counts to percentages
+h_bet_nt$counts <- h_bet_nt$counts / sum(h_bet_nt$counts) * 100
+h_bet_t$counts <- h_bet_t$counts / sum(h_bet_t$counts) * 100
+# Create the line plot
+plot(h_bet_nt$mids, h_bet_nt$counts, type = "n", xlab = "Betwenness Centrality", ylab = "Frequency (%)", main = "Betwenness Centrality", ylim = c(0,65))
+lines(h_bet_nt$mids, h_bet_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_tl_t$mids, h_tl_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
 #
 nt_ivi <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/ivi_nt_spatial_second_version.shp")
 t_ivi <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/ivi_t_spatial_second_version.shp")
@@ -280,7 +317,21 @@ print(ivi_cohens_d)
 plot(ivi_compare[,2], ivi_compare[,3])
 cor(ivi_compare[,2], ivi_compare[,3], method = "pearson")
 #
-
+#frequency plots
+names(ivi_compare)
+par(mfrow=c(1, 2))
+h_ivi_nt <- hist(ivi_compare[,2], freq = TRUE, main = "Non-threatened", col = "darkgreen", xlab = "IVI", breaks = seq(0,100, by=10), ylim = c(0,150000))
+h_ivi_t <- hist(ivi_compare[,3], freq = TRUE, main = "Threatened", col = "darkred", xlab = "IVI",  breaks = seq(0,100, by=10), ylim = c(0,150000))
+# Convert the counts to percentages
+h_ivi_nt$counts <- h_ivi_nt$counts / sum(h_ivi_nt$counts) * 100
+h_ivi_t$counts <- h_ivi_t$counts / sum(h_ivi_t$counts) * 100
+# Create the line plot
+plot(h_ivi_nt$mids, h_ivi_nt$counts, type = "n", xlab = "IVI", ylab = "Frequency (%)", main = "IVI", ylim = c(0,100))
+lines(h_ivi_nt$mids, h_ivi_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_ivi_t$mids, h_ivi_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
+#
 #######################################################################################
 #    Where are areas significantly higher or lower in one metrics in T and NT?
 #######################################################################################
@@ -313,6 +364,73 @@ t_test_tl <- t.test(trophic_level_compare_2[,4], trophic_level_compare_2[,2], pa
 t_test_closeness <- t.test(closeness_compare_2[,4], closeness_compare_2[,2], paired = TRUE, alternative = "two.sided")
 t_test_centrality <- t.test(centrality_compare_2[,4], centrality_compare_2[,2], paired = TRUE, alternative = "two.sided")
 t_test_ivi <- t.test(ivi_compare_2[,4], ivi_compare_2[,2], paired = TRUE, alternative = "two.sided")
+
+#Use wilcoxon test - to try and avoid the effect of the large sample size leading to significant differences
+  #relate with richness and proportion
+
+richness_proportion_indegree <- merge(richness_proportion, indegree_compare_2)
+richness_proportion_indegree <- richness_proportion_indegree[,-5]
+head(richness_proportion_indegree)
+wilcox.test(richness_proportion_indegree[,2], richness_proportion_indegree[,4], paired = TRUE)
+wilcox.test(richness_proportion_indegree[,2], richness_proportion_indegree[,5], paired = TRUE)
+wilcox.test(richness_proportion_indegree[,3], richness_proportion_indegree[,4], paired = TRUE)
+wilcox.test(richness_proportion_indegree[,3], richness_proportion_indegree[,5], paired = TRUE)
+#
+richness_proportion_outdegree <- merge(richness_proportion, outdegree_compare_2)
+richness_proportion_outdegree <- richness_proportion_outdegree[,-5]
+head(richness_proportion_outdegree)
+wilcox.test(richness_proportion_outdegree[,2], richness_proportion_outdegree[,4], paired = TRUE)
+wilcox.test(richness_proportion_outdegree[,2], richness_proportion_outdegree[,5], paired = TRUE)
+wilcox.test(richness_proportion_outdegree[,3], richness_proportion_outdegree[,4], paired = TRUE)
+wilcox.test(richness_proportion_outdegree[,3], richness_proportion_outdegree[,5], paired = TRUE)
+#
+richness_proportion_tl <- merge(richness_proportion, trophic_level_compare_2)
+richness_proportion_tl <- richness_proportion_tl[,-5]
+head(richness_proportion_tl)
+wilcox.test(richness_proportion_tl[,2], richness_proportion_tl[,4], paired = TRUE)
+wilcox.test(richness_proportion_tl[,2], richness_proportion_tl[,5], paired = TRUE)
+wilcox.test(richness_proportion_tl[,3], richness_proportion_tl[,4], paired = TRUE)
+wilcox.test(richness_proportion_tl[,3], richness_proportion_tl[,5], paired = TRUE)
+#
+richness_proportion_closeness <- merge(richness_proportion, closeness_compare_2)
+richness_proportion_closeness <- richness_proportion_closeness[,-5]
+head(richness_proportion_closeness)
+wilcox.test(richness_proportion_closeness[,2], richness_proportion_closeness[,4], paired = TRUE)
+wilcox.test(richness_proportion_closeness[,2], richness_proportion_closeness[,5], paired = TRUE)
+wilcox.test(richness_proportion_closeness[,3], richness_proportion_closeness[,4], paired = TRUE)
+wilcox.test(richness_proportion_closeness[,3], richness_proportion_closeness[,5], paired = TRUE)
+#
+richness_proportion_centrality <- merge(richness_proportion, centrality_compare_2)
+richness_proportion_centrality <- richness_proportion_centrality[,-5]
+head(richness_proportion_centrality)
+wilcox.test(richness_proportion_centrality[,2], richness_proportion_centrality[,4], paired = TRUE)
+wilcox.test(richness_proportion_centrality[,2], richness_proportion_centrality[,5], paired = TRUE)
+wilcox.test(richness_proportion_centrality[,3], richness_proportion_centrality[,4], paired = TRUE)
+wilcox.test(richness_proportion_centrality[,3], richness_proportion_centrality[,5], paired = TRUE)
+#
+richness_proportion_ivi <- merge(richness_proportion, ivi_compare_2)
+richness_proportion_ivi <- richness_proportion_ivi[,-5]
+head(richness_proportion_ivi)
+wilcox.test(richness_proportion_ivi[,2], richness_proportion_ivi[,4], paired = TRUE)
+wilcox.test(richness_proportion_ivi[,2], richness_proportion_ivi[,5], paired = TRUE)
+wilcox.test(richness_proportion_ivi[,3], richness_proportion_ivi[,4], paired = TRUE)
+wilcox.test(richness_proportion_ivi[,3], richness_proportion_ivi[,5], paired = TRUE)
+
+#######
+
+wilcox_indeg <- wilcox.test(indegree_compare_2[,4], indegree_compare_2[,2], paired = TRUE)
+wilcox_outdeg <- wilcox.test(outdegree_compare_2[,4], outdegree_compare_2[,2], paired = TRUE)
+wilcox_tl <- wilcox.test(trophic_level_compare_2[,4], trophic_level_compare_2[,2], paired = TRUE)
+wilcox_closeness <- wilcox.test(closeness_compare_2[,4], closeness_compare_2[,2], paired = TRUE)
+wilcox_centrality <- wilcox.test(centrality_compare_2[,4], centrality_compare_2[,2], paired = TRUE)
+wilcox_ivi <- wilcox.test(ivi_compare_2[,4], ivi_compare_2[,2], paired = TRUE)
+#
+wilcox_indeg$p.value
+wilcox_outdeg$p.value
+wilcox_tl$p.value
+wilcox_closeness$p.value
+wilcox_centrality$p.value
+wilcox_ivi$p.value
 
 #Cohen's d
 library(effsize)
@@ -390,49 +508,6 @@ writeVector(closeness_shape, filename = "closeness_shape.shp")
 writeVector(centrality_shape, filename = "centrality_shape.shp")
 writeVector(ivi_shape, filename = "ivi_shape.shp")
 
-
-
-#########################################################################################################
-#########################################################################################################
-#########################################################################################################
-
-# Required libraries
-library(terra)
-
-# Load the two shapefiles as spatial objects
-#nt_centrality3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.shp")
-#t_centrality3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/centrality_t_spatial.shp")
-nt_outdegree3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_nt_spatial.shp")
-t_outdegree3 <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/outdegree_t_spatial.shp")
-
-# Extract the attribute values from the shapefiles
-values_map1 <- t_outdegree3$outdegree
-values_map2 <- nt_outdegree3$outdegree
-
-# Calculate the observed difference between the two maps
-obs_diff <- values_map1 - values_map2
-
-# Generate a null distribution of differences using a permutation test
-#n_permutations <- 1000  # Number of permutations
-n_permutations <- length(nt_centrality3$centrality)  # Number of permutations
-null_diff <- rep(NA, n_permutations)
-
-for (i in 1:n_permutations) {
-  # Randomly permute the values of the second map
-  permuted_values_map2 <- sample(values_map2)
-  
-  # Calculate the difference between the first map and permuted second map
-  perm_diff <- abs(values_map1 - permuted_values_map2)
-  
-  # Store the difference in the null distribution
-  null_diff[i] <- mean(perm_diff, na.rm = TRUE)
-  message(i)
-}
-
-# Calculate the p-value by comparing the observed difference to the null distribution
-p_value <- sum(null_diff >= obs_diff, na.rm=TRUE)/n_permutations
-print(p_value)
-
-
-
+################################################################################
+################################################################################
 
