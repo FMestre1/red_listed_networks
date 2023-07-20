@@ -10,23 +10,23 @@
 library(devtools) 
 install_github("FMestre1/fw_package")
 library(FWebs)
+library(igraph)
+
+#Load the modified functions
+source("12.modified_fw_functions.R")
 
 #Loading the list of igraph networks
-load("network_list_igraph_2.RData")
-#network_list_igraph
+load("from_cluster/network_list_igraph_2_all_13JUN2023.RData")
 
-#Convert to list a list of graph objects
-graph_list1 <- convert.to.graph.list(mg1)
+network_list_igraph_3 <- vector(mode='list', length=length(network_list_igraph_2))
+names(network_list_igraph_3) <- names(network_list_igraph_2)
 
-#Create a vector with the values for the Intentionality Index (I)
-i_index <- seq(from = 0, to = 1, by =0.01)
-i_index <- head(i_index,-1)
+for(i in 1:length(network_list_igraph_2)) {
+  
+  network_list_igraph_3[[i]]  <- igraph::upgrade_graph(network_list_igraph_2[[i]])
+  message(i)
+  
+  }
 
-#Extract one food web as example
-fw1 <- graph_list1[[40]]
-
-#Compute the probability to remove each species 
-prob_exp <- exponent.removal(fw1, i_index)
-
-#Simulate the extraction of species to evaluate how many primary extinctions are required to have 50% of the total species extinguished
-it1 <- iterate(fw_to_attack=fw1, prob_exp, alpha1=50, iter=10, i_index, plot = TRUE)
+#Save the new, updated, igraphs
+#save(network_list_igraph_3, file = "network_list_igraph_3_20JUL.RData")
