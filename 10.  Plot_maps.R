@@ -328,6 +328,3 @@ lines(h_ivi_t$mids, h_ivi_t$counts, lwd = 3, col = "darkred")
 legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
 #
 
-
-
-

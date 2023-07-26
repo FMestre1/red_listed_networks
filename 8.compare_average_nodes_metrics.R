@@ -105,6 +105,94 @@ wilcox_closeness$p.value
 wilcox_centrality$p.value
 wilcox_ivi$p.value
 
+###
+
+#CORRELATION
+
+round(cor(indegree_compare_2[,4], indegree_compare_2[,2], method = "spearman", use = "complete"), 3)
+round(cor(outdegree_compare_2[,4], outdegree_compare_2[,2], method = "spearman", use = "complete"), 3)
+round(cor(trophic_level_compare_2[,4], trophic_level_compare_2[,2], method = "spearman", use = "complete"), 3)
+round(cor(closeness_compare_2[,4], closeness_compare_2[,2], method = "spearman", use = "complete"), 3)
+round(cor(centrality_compare_2[,4], centrality_compare_2[,2], method = "spearman", use = "complete"), 3)
+round(cor(ivi_compare_2[,4], ivi_compare_2[,2], method = "spearman", use = "complete"), 3)
+
+###
+
+#BOXPLOTS
+
+indegree_compare_3_NT <- data.frame(indegree_compare_2[,2], rep("NT", length = length(indegree_compare_2[,2])))
+indegree_compare_3_T <- data.frame(indegree_compare_2[,4], rep("T", length = length(indegree_compare_2[,4])))
+names(indegree_compare_3_NT) <- c("indeg", "group")
+names(indegree_compare_3_T) <- c("indeg", "group")
+indegree_compare_3 <- rbind(indegree_compare_3_T, indegree_compare_3_NT)
+ggplot(indegree_compare_3, aes(x=group, y=indeg)) + geom_boxplot(notch = TRUE, outlier.colour="grey")
+ggplot(indegree_compare_3, aes(x=group, y=indeg)) +
+  geom_violin(aes(fill = group)) +
+  guides(fill = "none") +
+  labs(title = "Average In-degree") +
+  scale_fill_manual(values = c("darkgreen", "darkred"))
+#####
+outdegree_compare_3_NT <- data.frame(outdegree_compare_2[,2], rep("NT", length = length(outdegree_compare_2[,2])))
+outdegree_compare_3_T <- data.frame(outdegree_compare_2[,4], rep("T", length = length(outdegree_compare_2[,4])))
+names(outdegree_compare_3_NT) <- c("outdeg", "group")
+names(outdegree_compare_3_T) <- c("outdeg", "group")
+outdegree_compare_3 <- rbind(outdegree_compare_3_T, outdegree_compare_3_NT)
+#ggplot(outdegree_compare_3, aes(x=group, y=outdeg)) + geom_boxplot(notch = TRUE, outlier.colour="grey")
+ggplot(outdegree_compare_3, aes(x=group, y=outdeg)) +
+  geom_violin(aes(fill = group)) +
+  guides(fill = "none") +
+  labs(title = "Average Out-degree") +
+  scale_fill_manual(values = c("darkgreen", "darkred"))
+#####
+trophic_level_compare_3_NT <- data.frame(trophic_level_compare_2[,2], rep("NT", length = length(trophic_level_compare_2[,2])))
+trophic_level_compare_3_T <- data.frame(trophic_level_compare_2[,4], rep("T", length = length(trophic_level_compare_2[,4])))
+names(trophic_level_compare_3_NT) <- c("tl", "group")
+names(trophic_level_compare_3_T) <- c("tl", "group")
+trophic_level_compare_3 <- rbind(trophic_level_compare_3_T, trophic_level_compare_3_NT)
+#ggplot(trophic_level_compare_3, aes(x=group, y=tl)) + geom_boxplot(notch = TRUE, outlier.colour="grey")
+ggplot(trophic_level_compare_3, aes(x=group, y=tl)) +
+  geom_violin(aes(fill = group)) +
+  guides(fill = "none") +
+  labs(title = "Average Trophic Level") +
+  scale_fill_manual(values = c("darkgreen", "darkred"))
+#####
+closeness_compare_3_NT <- data.frame(closeness_compare_2[,2], rep("NT", length = length(closeness_compare_2[,2])))
+closeness_compare_3_T <- data.frame(closeness_compare_2[,4], rep("T", length = length(closeness_compare_2[,4])))
+names(closeness_compare_3_NT) <- c("closeness", "group")
+names(closeness_compare_3_T) <- c("closeness", "group")
+closeness_compare_3 <- rbind(closeness_compare_3_T, closeness_compare_3_NT)
+#ggplot(closeness_compare_3, aes(x=group, y=closeness)) + geom_boxplot(notch = TRUE, outlier.colour="grey")
+ggplot(closeness_compare_3, aes(x=group, y=closeness)) +
+  geom_violin(aes(fill = group)) +
+  guides(fill = "none") +
+  labs(title = "Average Closeness Centrality") +
+  scale_fill_manual(values = c("darkgreen", "darkred"))
+#####
+centrality_compare_3_NT <- data.frame(centrality_compare_2[,2], rep("NT", length = length(centrality_compare_2[,2])))
+centrality_compare_3_T <- data.frame(centrality_compare_2[,4], rep("T", length = length(centrality_compare_2[,4])))
+names(centrality_compare_3_NT) <- c("centrality", "group")
+names(centrality_compare_3_T) <- c("centrality", "group")
+centrality_compare_3 <- rbind(centrality_compare_3_T, centrality_compare_3_NT)
+#ggplot(centrality_compare_3, aes(x=group, y=centrality)) + geom_boxplot(notch = TRUE, outlier.colour="grey")
+ggplot(centrality_compare_3, aes(x=group, y=centrality)) +
+  geom_violin(aes(fill = group)) +
+  guides(fill = "none") +
+  labs(title = "Average Betweeness Centrality") +
+  scale_fill_manual(values = c("darkgreen", "darkred"))
+#####
+ivi_compare_3_NT <- data.frame(ivi_compare_2[,2], rep("NT", length = length(ivi_compare_2[,2])))
+ivi_compare_3_T <- data.frame(ivi_compare_2[,4], rep("T", length = length(ivi_compare_2[,4])))
+names(ivi_compare_3_NT) <- c("ivi", "group")
+names(ivi_compare_3_T) <- c("ivi", "group")
+ivi_compare_3 <- rbind(ivi_compare_3_T, ivi_compare_3_NT)
+#ggplot(ivi_compare_3, aes(x=group, y=ivi)) + geom_boxplot(notch = TRUE, outlier.colour="grey")
+ggplot(ivi_compare_3, aes(x=group, y=ivi)) +
+  geom_violin(aes(fill = group)) +
+  guides(fill = "none") +
+  labs(title = "Average IVI") +
+  scale_fill_manual(values = c("darkgreen", "darkred"))
+###
+
 #Cohen's d
 library(effsize)
 indegree_cohens_d_2 <- effsize::cohen.d(indegree_compare_2[complete.cases(indegree_compare_2),][,4],
@@ -181,6 +269,79 @@ writeVector(closeness_shape, filename = "closeness_shape.shp")
 writeVector(centrality_shape, filename = "centrality_shape.shp")
 writeVector(ivi_shape, filename = "ivi_shape.shp")
 
+
+
 ################################################################################
+#
 ################################################################################
 
+nt_indegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_indegree.tif")
+t_indegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_indegree.tif")
+#
+nt_outdegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_outdegree.tif")
+t_outdegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_outdegree.tif")
+#
+nt_t_level <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_trophic_level.tif")
+t_t_level <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_trophic_level.tif")
+#
+nt_closeness <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_closeness.tif")
+t_closeness <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_closeness.tif")
+#
+nt_centrality <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_centrality.tif")
+t_centrality <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_centrality.tif")
+#
+nt_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_ivi.tif")
+t_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_ivi.tif")
+
+###
+#rm(t_indegree, nt_indegree,
+#   t_outdegree, nt_outdegree,
+#   t_t_level, nt_t_level,
+#   t_closeness, nt_closeness,
+#   t_centrality, nt_centrality,
+#   t_ivi, nt_ivi)
+###
+
+indeg_ttest <- t.test(t_indegree, nt_indegree)
+outdeg_ttest <- t.test(t_outdegree, nt_outdegree)
+tl_ttest <- t.test(t_t_level, nt_t_level)
+closeness_ttest <- t.test(t_closeness, nt_closeness)
+centrality_ttest <- t.test(t_centrality, nt_centrality)
+ivi_ttest <- t.test(t_ivi, nt_ivi)
+
+
+
+mask_vect <- terra::vect("C:\\Users\\FMest\\Documents\\github\\red_listed_networks\\europeRaster_poly.shp")
+
+# Add the centroid coordinates
+centroids <- terra::centroids(mask_vect, TRUE)
+
+# Add the centroid coordinates to the vector
+mask_vect <- terra::cbind2(mask_vect, as.data.frame(terra::crds(centroids)))
+longitudes <- seq(min(mask_vect$x), max(mask_vect$x), by = 800000)
+
+#plot(terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1]))
+
+i = 3
+
+mask1 <- terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1])
+#plot(mask1)
+ext1 <- ext(mask1)
+
+#plot(terra::mask(t_indegree, mask1))
+mp1 <- terra::mask(t_indegree, mask1)
+mp2 <- terra::mask(nt_indegree, mask1)
+#
+ext(mp1) <- ext1
+ext(mp2) <- ext1
+
+r_stack <- c(mp1, mp2) 
+r_stack_cor <- focalPairs(r_stack, w = 5, cor) 
+
+#
+plot(mp1)
+plot(mp2)
+#
+tt1 <- t.test(mp1, mp2)
+#
+rm(mp1, mp2)
