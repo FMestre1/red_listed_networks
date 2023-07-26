@@ -302,14 +302,12 @@ t_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\ra
 #   t_ivi, nt_ivi)
 ###
 
-indeg_ttest <- t.test(t_indegree, nt_indegree)
-outdeg_ttest <- t.test(t_outdegree, nt_outdegree)
-tl_ttest <- t.test(t_t_level, nt_t_level)
-closeness_ttest <- t.test(t_closeness, nt_closeness)
-centrality_ttest <- t.test(t_centrality, nt_centrality)
-ivi_ttest <- t.test(t_ivi, nt_ivi)
-
-
+#indeg_ttest <- t.test(t_indegree, nt_indegree)
+#outdeg_ttest <- t.test(t_outdegree, nt_outdegree)
+#tl_ttest <- t.test(t_t_level, nt_t_level)
+#closeness_ttest <- t.test(t_closeness, nt_closeness)
+#centrality_ttest <- t.test(t_centrality, nt_centrality)
+#ivi_ttest <- t.test(t_ivi, nt_ivi)
 
 mask_vect <- terra::vect("C:\\Users\\FMest\\Documents\\github\\red_listed_networks\\europeRaster_poly.shp")
 
@@ -326,7 +324,7 @@ i = 3
 
 mask1 <- terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1])
 #plot(mask1)
-ext1 <- ext(mask1)
+ext1 <- terra::ext(mask1)
 
 #plot(terra::mask(t_indegree, mask1))
 mp1 <- terra::mask(t_indegree, mask1)
