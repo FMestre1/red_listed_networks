@@ -330,12 +330,8 @@ ext1 <- terra::ext(mask1)
 mp1 <- terra::mask(t_indegree, mask1)
 mp2 <- terra::mask(nt_indegree, mask1)
 #
-ext(mp1) <- ext1
-ext(mp2) <- ext1
-
-r_stack <- c(mp1, mp2) 
-r_stack_cor <- focalPairs(r_stack, w = 5, cor) 
-
+terra::ext(mp1) <- ext1
+terra::ext(mp2) <- ext1
 #
 plot(mp1)
 plot(mp2)
