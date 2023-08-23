@@ -44,7 +44,6 @@ richness_proportion <- data.frame(merge(richness, proportion_vector))
 #head(richness_proportion)
 richness_proportion <- richness_proportion[,-c(2,3,4)]
 
-
 #Plot with rastervis
 ##
 my.col.regions <- rev(terrain.colors(100))
