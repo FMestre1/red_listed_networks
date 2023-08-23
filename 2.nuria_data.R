@@ -151,7 +151,6 @@ for(i in 1:length(network_list)){
   
 }
 
-
 #Save
 save(network_list_igraph, file = "network_list_igraph.RData")
 save(network_list_cheddar, file = "network_list_cheddar.RData")

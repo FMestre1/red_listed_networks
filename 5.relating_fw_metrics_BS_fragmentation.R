@@ -448,7 +448,6 @@ wilcox.test(species_richness_vs_centrality_NT$sp_richness,
             species_richness_vs_centrality_NT$centrality, 
             paired = TRUE)
 
-
 #IVI - T
 #length(sp_richness$sp_richness)
 #length(ivi_t_spatial$ivi)
@@ -459,7 +458,6 @@ species_richness_vs_ivi_T <- as.data.frame(species_richness_vs_ivi_T)
 wilcox.test(species_richness_vs_ivi_T$sp_richness, 
             species_richness_vs_ivi_T$ivi, 
             paired = TRUE)
-
 
 #IVI - NT
 #length(sp_richness$sp_richness)
@@ -472,7 +470,6 @@ wilcox.test(species_richness_vs_ivi_NT$sp_richness,
             species_richness_vs_ivi_NT$ivi, 
             paired = TRUE)
 
-
 #Closeness - T
 #length(sp_richness$sp_richness)
 #length(closeness_t_spatial$closeness)
@@ -483,7 +480,6 @@ species_richness_vs_closeness_T <- as.data.frame(species_richness_vs_closeness_T
 wilcox.test(species_richness_vs_closeness_T$sp_richness, 
             species_richness_vs_closeness_T$closeness, 
             paired = TRUE)
-
 
 #Closeness - NT
 #length(sp_richness$sp_richness)
@@ -529,7 +525,6 @@ wilcox.test(species_richness_vs_outdegree_T$sp_richness,
             species_richness_vs_outdegree_T$outdegree, 
             paired = TRUE)
 
-
 #Out-degree - NT
 #length(sp_richness$sp_richness)
 #length(outdegree_nt_spatial$outdegree)
@@ -551,7 +546,6 @@ species_richness_vs_tl_T <- as.data.frame(species_richness_vs_tl_T)
 wilcox.test(species_richness_vs_tl_T$sp_richness, 
             species_richness_vs_tl_T$trophic_le, 
             paired = TRUE)
-
 
 #Trophic level - NT
 #length(sp_richness$sp_richness)

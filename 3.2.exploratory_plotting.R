@@ -8,7 +8,6 @@
 library(ggplot2)
 library(forcats)
 
-
 #Using these tables:
 dd_table
 lc_table

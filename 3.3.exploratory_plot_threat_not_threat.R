@@ -22,7 +22,6 @@ nt_in<-data.frame(rep("non-threatened", nrow(not_threat)), not_threat$indegree)
 names(nt_in) <- c("iucn", "indegree")
 head(nt_in)
 
-
 INDEGREE_2 <- rbind(t_in,
                     nt_in
                     )
@@ -37,12 +36,10 @@ INDEGREE_2 <- INDEGREE_2[complete.cases(INDEGREE_2),]
 str(INDEGREE_2)
 INDEGREE_2$iucn <- as.factor(INDEGREE_2$iucn)
 
-
 ggplot(INDEGREE_2, aes(x=fct_reorder(iucn,indegree, .desc=TRUE), y=indegree)) +
   ggtitle("In-degree for threatened and non-threatened species") + 
   xlab("IUCN Categories") + ylab("In-degree") +
   geom_boxplot()
-
 
 #out-degree #####################################################################
 t_out<-data.frame(rep("threatened", nrow(threatened)), threatened$outdegree)
@@ -52,7 +49,6 @@ head(t_out)
 nt_out<-data.frame(rep("non-threatened", nrow(not_threat)), not_threat$outdegree)
 names(nt_out) <- c("iucn", "outdegree")
 head(nt_out)
-
 
 OUTDEGREE_2 <- rbind(t_out,
                     nt_out
@@ -68,12 +64,10 @@ OUTDEGREE_2 <- OUTDEGREE_2[complete.cases(OUTDEGREE_2),]
 str(OUTDEGREE_2)
 OUTDEGREE_2$iucn <- as.factor(OUTDEGREE_2$iucn)
 
-
 ggplot(OUTDEGREE_2, aes(x=fct_reorder(iucn,outdegree, .desc=TRUE), y=outdegree)) +
   ggtitle("Out-degree for threatened and non-threatened species") + 
   xlab("IUCN Categories") + ylab("Out-degree") +
   geom_boxplot()
-
 
 #centrality #####################################################################
 t_centrality<-data.frame(rep("threatened", nrow(threatened)), threatened$centrality)
@@ -83,7 +77,6 @@ head(t_centrality)
 nt_centrality<-data.frame(rep("non-threatened", nrow(not_threat)), not_threat$centrality)
 names(nt_centrality) <- c("iucn", "centrality")
 head(nt_centrality)
-
 
 CENTRALITY_2 <- rbind(t_centrality,
                       nt_centrality
@@ -99,12 +92,10 @@ CENTRALITY_2 <- CENTRALITY_2[complete.cases(CENTRALITY_2),]
 str(CENTRALITY_2)
 CENTRALITY_2$iucn <- as.factor(CENTRALITY_2$iucn)
 
-
 ggplot(CENTRALITY_2, aes(x=fct_reorder(iucn,centrality, .desc=TRUE), y=centrality)) +
   ggtitle("Centrality for threatened and non-threatened species") + 
   xlab("IUCN Categories") + ylab("Centrality") +
   geom_boxplot()
-
 
 #centrality #####################################################################
 t_ivi<-data.frame(rep("threatened", nrow(threatened)), threatened$ivi)
@@ -114,7 +105,6 @@ head(t_ivi)
 nt_ivi<-data.frame(rep("non-threatened", nrow(not_threat)), not_threat$ivi)
 names(nt_ivi) <- c("iucn", "ivi")
 head(nt_ivi)
-
 
 IVI_2 <- rbind(t_ivi,
                       nt_ivi
@@ -144,7 +134,6 @@ nt_closeness<-data.frame(rep("non-threatened", nrow(not_threat)), not_threat$clo
 names(nt_closeness) <- c("iucn", "closeness")
 head(nt_closeness)
 
-
 CLOSENESS_2 <- rbind(t_closeness,
                nt_closeness
 )
@@ -163,4 +152,3 @@ ggplot(CLOSENESS_2, aes(x=fct_reorder(iucn,closeness, .desc=TRUE), y=closeness))
   ggtitle("Closeness index for threatened and non-threatened species") + 
   xlab("IUCN Categories") + ylab("IVI") +
   geom_boxplot()
-
