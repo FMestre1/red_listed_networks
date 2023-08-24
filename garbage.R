@@ -317,4 +317,39 @@ for(i in 1:length(network_list_igraph_2)) {
 #Save the new, updated, igraphs
 #save(network_list_igraph_3, file = "network_list_igraph_3_20JUL.RData")
 
+################################################################################
+################################################################################
+
+#install.packages("diffeR")
+library(diffeR)
+
+# Calculate the difference between the two maps
+indegree_diff <- differenceMR(t_indegree, nt_indegree)
+outdegree_diff <- differenceMR(t_outdegree, nt_outdegree)
+t_level_diff <- differenceMR(t_t_level, nt_t_level)
+closeness_diff <- differenceMR(t_closeness, nt_closeness)
+centrality_diff <- differenceMR(t_centrality, nt_centrality)
+ivi_diff <- differenceMR(t_ivi, nt_ivi)
+
+# Plot the difference map
+plot(indegree_diff)
+plot(outdegree_diff)
+plot(t_level_diff)
+plot(closeness_diff)
+plot(centrality_diff)
+plot(ivi_diff)
+
+#Write
+writeRaster(indegree_diff, "indegree_diff.tif", overwrite=TRUE)
+writeRaster(outdegree_diff, "outdegree_diff.tif", overwrite=TRUE)
+writeRaster(t_level_diff, "t_level_diff.tif", overwrite=TRUE)
+writeRaster(closeness_diff, "closeness_diff.tif", overwrite=TRUE)
+writeRaster(centrality_diff, "centrality_diff.tif", overwrite=TRUE)
+writeRaster(ivi_diff, "ivi_diff.tif", overwrite=TRUE)
+
+
+################################################################################
+################################################################################
+
+
 
