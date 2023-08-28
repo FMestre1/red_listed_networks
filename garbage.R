@@ -353,3 +353,50 @@ writeRaster(ivi_diff, "ivi_diff.tif", overwrite=TRUE)
 
 
 
+###
+#rm(t_indegree, nt_indegree,
+#   t_outdegree, nt_outdegree,
+#   t_t_level, nt_t_level,
+#   t_closeness, nt_closeness,
+#   t_centrality, nt_centrality,
+#   t_ivi, nt_ivi)
+###
+
+#indeg_ttest <- t.test(t_indegree, nt_indegree)
+#outdeg_ttest <- t.test(t_outdegree, nt_outdegree)
+#tl_ttest <- t.test(t_t_level, nt_t_level)
+#closeness_ttest <- t.test(t_closeness, nt_closeness)
+#centrality_ttest <- t.test(t_centrality, nt_centrality)
+#ivi_ttest <- t.test(t_ivi, nt_ivi)
+
+mask_vect <- terra::vect("C:\\Users\\FMest\\Documents\\github\\red_listed_networks\\europeRaster_poly.shp")
+
+# Add the centroid coordinates
+centroids <- terra::centroids(mask_vect, TRUE)
+
+# Add the centroid coordinates to the vector
+mask_vect <- terra::cbind2(mask_vect, as.data.frame(terra::crds(centroids)))
+longitudes <- seq(min(mask_vect$x), max(mask_vect$x), by = 800000)
+
+#plot(terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1]))
+
+i = 3
+
+mask1 <- terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1])
+#plot(mask1)
+ext1 <- terra::ext(mask1)
+
+#plot(terra::mask(t_indegree, mask1))
+mp1 <- terra::mask(t_indegree, mask1)
+mp2 <- terra::mask(nt_indegree, mask1)
+#
+terra::ext(mp1) <- ext1
+terra::ext(mp2) <- ext1
+#
+plot(mp1)
+plot(mp2)
+#
+tt1 <- t.test(mp1, mp2)
+#
+rm(mp1, mp2)
+

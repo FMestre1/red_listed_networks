@@ -98,6 +98,75 @@ wilcox_closeness <- wilcox.test(closeness_compare_2[,4], closeness_compare_2[,2]
 wilcox_centrality <- wilcox.test(centrality_compare_2[,4], centrality_compare_2[,2], paired = TRUE)
 wilcox_ivi <- wilcox.test(ivi_compare_2[,4], ivi_compare_2[,2], paired = TRUE)
 #
+
+#Wilcoxon's Effects Size ####################################################### START
+library("rstatix")
+citation("rstatix")
+
+#Indegree
+df1_indegree_compare_3 <- data.frame(indegree_compare_2[,4],rep("T_indegree" , length(indegree_compare_2[,4])))
+df2_indegree_compare_3 <- data.frame(indegree_compare_2[,2],rep("NT_indegree" , length(indegree_compare_2[,2])))
+colnames(df1_indegree_compare_3) <- c("indegree", "group_T_NT")
+colnames(df2_indegree_compare_3) <- c("indegree", "group_T_NT")
+indegree_compare_3 <- rbind(df1_indegree_compare_3, df2_indegree_compare_3)
+indegree_compare_3$group_T_NT <- as.factor(indegree_compare_3$group_T_NT)
+#
+wilcox_effsize(indegree ~ group_T_NT, paired = TRUE, data=indegree_compare_3)
+
+#Outdegree
+df1_outdegree_compare_3 <- data.frame(outdegree_compare_2[,4],rep("T_indegree" , length(outdegree_compare_2[,4])))
+df2_outdegree_compare_3 <- data.frame(outdegree_compare_2[,2],rep("NT_indegree" , length(outdegree_compare_2[,2])))
+colnames(df1_outdegree_compare_3) <- c("outdegree", "group_T_NT")
+colnames(df2_outdegree_compare_3) <- c("outdegree", "group_T_NT")
+outdegree_compare_3 <- rbind(df1_outdegree_compare_3, df2_outdegree_compare_3)
+outdegree_compare_3$group_T_NT <- as.factor(outdegree_compare_3$group_T_NT)
+#
+wilcox_effsize(outdegree ~ group_T_NT, paired = TRUE, data=outdegree_compare_3)
+
+#Trophic level
+df1_trophic_level_compare_3 <- data.frame(trophic_level_compare_2[,4],rep("T_tlevel" , length(trophic_level_compare_2[,4])))
+df2_trophic_level_compare_3 <- data.frame(trophic_level_compare_2[,2],rep("NT_tlevel" , length(trophic_level_compare_2[,2])))
+colnames(df1_trophic_level_compare_3) <- c("tlevel", "group_T_NT")
+colnames(df2_trophic_level_compare_3) <- c("tlevel", "group_T_NT")
+trophic_level_compare_3 <- rbind(df1_trophic_level_compare_3, df2_trophic_level_compare_3)
+trophic_level_compare_3$group_T_NT <- as.factor(trophic_level_compare_3$group_T_NT)
+#
+wilcox_effsize(tlevel ~ group_T_NT, paired = TRUE, data=trophic_level_compare_3)
+
+#Closeness centrality
+df1_closeness_compare_3 <- data.frame(closeness_compare_2[,4],rep("T_tlevel" , length(closeness_compare_2[,4])))
+df2_closeness_compare_3 <- data.frame(closeness_compare_2[,2],rep("NT_tlevel" , length(closeness_compare_2[,2])))
+colnames(df1_closeness_compare_3) <- c("closeness", "group_T_NT")
+colnames(df2_closeness_compare_3) <- c("closeness", "group_T_NT")
+closeness_compare_3 <- rbind(df1_closeness_compare_3, df2_closeness_compare_3)
+closeness_compare_3$group_T_NT <- as.factor(closeness_compare_3$group_T_NT)
+#
+wilcox_effsize(closeness ~ group_T_NT, paired = TRUE, data=closeness_compare_3)
+
+#Closeness centrality
+df1_centrality_compare_3 <- data.frame(centrality_compare_2[,4],rep("T_tlevel" , length(centrality_compare_2[,4])))
+df2_centrality_compare_3 <- data.frame(centrality_compare_2[,2],rep("NT_tlevel" , length(centrality_compare_2[,2])))
+colnames(df1_centrality_compare_3) <- c("centrality", "group_T_NT")
+colnames(df2_centrality_compare_3) <- c("centrality", "group_T_NT")
+centrality_compare_3 <- rbind(df1_centrality_compare_3, df2_centrality_compare_3)
+centrality_compare_3$group_T_NT <- as.factor(centrality_compare_3$group_T_NT)
+#
+wilcox_effsize(centrality ~ group_T_NT, paired = TRUE, data=centrality_compare_3)
+
+#IVI
+df1_ivi_compare_3 <- data.frame(ivi_compare_2[,4],rep("T_tlevel" , length(ivi_compare_2[,4])))
+df2_ivi_compare_3 <- data.frame(ivi_compare_2[,2],rep("NT_tlevel" , length(ivi_compare_2[,2])))
+colnames(df1_ivi_compare_3) <- c("ivi", "group_T_NT")
+colnames(df2_ivi_compare_3) <- c("ivi", "group_T_NT")
+ivi_compare_3 <- rbind(df1_ivi_compare_3, df2_ivi_compare_3)
+ivi_compare_3$group_T_NT <- as.factor(ivi_compare_3$group_T_NT)
+#
+wilcox_effsize(ivi ~ group_T_NT, paired = TRUE, data=ivi_compare_3)
+
+#Wilcoxon's Effects Size ####################################################### END
+
+#Wilcoxon's Significance ####################################################### START
+
 wilcox_indeg$p.value
 wilcox_outdeg$p.value
 wilcox_tl$p.value
@@ -105,9 +174,9 @@ wilcox_closeness$p.value
 wilcox_centrality$p.value
 wilcox_ivi$p.value
 
-###
+#Wilcoxon's Significance ####################################################### END
 
-#CORRELATION
+#CORRELATION  ################################################################## START
 
 round(cor(indegree_compare_2[,4], indegree_compare_2[,2], method = "spearman", use = "complete"), 3)
 round(cor(outdegree_compare_2[,4], outdegree_compare_2[,2], method = "spearman", use = "complete"), 3)
@@ -116,7 +185,7 @@ round(cor(closeness_compare_2[,4], closeness_compare_2[,2], method = "spearman",
 round(cor(centrality_compare_2[,4], centrality_compare_2[,2], method = "spearman", use = "complete"), 3)
 round(cor(ivi_compare_2[,4], ivi_compare_2[,2], method = "spearman", use = "complete"), 3)
 
-###
+#CORRELATION  ################################################################## END
 
 #BOXPLOTS
 
@@ -278,67 +347,30 @@ writeVector(ivi_shape, filename = "ivi_shape.shp")
 #
 ################################################################################
 
-nt_indegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_indegree.tif")
-t_indegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_indegree.tif")
+nt_indegree <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_indegree.tif")
+t_indegree <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_indegree.tif")
 #
-nt_outdegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_outdegree.tif")
-t_outdegree <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_outdegree.tif")
+nt_outdegree <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_outdegree.tif")
+t_outdegree <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_outdegree.tif")
 #
-nt_t_level <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_trophic_level.tif")
-t_t_level <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_trophic_level.tif")
+nt_t_level <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_trophic_level.tif")
+t_t_level <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_trophic_level.tif")
 #
-nt_closeness <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_closeness.tif")
-t_closeness <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_closeness.tif")
+nt_closeness <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_closeness.tif")
+t_closeness <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_closeness.tif")
 #
-nt_centrality <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_centrality.tif")
-t_centrality <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_centrality.tif")
+nt_centrality <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_centrality.tif")
+t_centrality <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_centrality.tif")
 #
-nt_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_ivi.tif")
-t_ivi <- terra::rast("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_ivi.tif")
+nt_ivi <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\nt_ivi.tif")
+t_ivi <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_ivi.tif")
 
-###
-#rm(t_indegree, nt_indegree,
-#   t_outdegree, nt_outdegree,
-#   t_t_level, nt_t_level,
-#   t_closeness, nt_closeness,
-#   t_centrality, nt_centrality,
-#   t_ivi, nt_ivi)
-###
+#####################################################################################
 
-#indeg_ttest <- t.test(t_indegree, nt_indegree)
-#outdeg_ttest <- t.test(t_outdegree, nt_outdegree)
-#tl_ttest <- t.test(t_t_level, nt_t_level)
-#closeness_ttest <- t.test(t_closeness, nt_closeness)
-#centrality_ttest <- t.test(t_centrality, nt_centrality)
-#ivi_ttest <- t.test(t_ivi, nt_ivi)
+# COMPARING MAPS SPATIALLY
+#FMestre
+#28-08-2023
 
-mask_vect <- terra::vect("C:\\Users\\FMest\\Documents\\github\\red_listed_networks\\europeRaster_poly.shp")
+indeg_diff <- t_indegree - nt_indegree
+plot(indeg_diff)
 
-# Add the centroid coordinates
-centroids <- terra::centroids(mask_vect, TRUE)
-
-# Add the centroid coordinates to the vector
-mask_vect <- terra::cbind2(mask_vect, as.data.frame(terra::crds(centroids)))
-longitudes <- seq(min(mask_vect$x), max(mask_vect$x), by = 800000)
-
-#plot(terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1]))
-
-i = 3
-
-mask1 <- terra::subset(mask_vect, mask_vect$x > longitudes[i] & mask_vect$x  < longitudes[i+1])
-#plot(mask1)
-ext1 <- terra::ext(mask1)
-
-#plot(terra::mask(t_indegree, mask1))
-mp1 <- terra::mask(t_indegree, mask1)
-mp2 <- terra::mask(nt_indegree, mask1)
-#
-terra::ext(mp1) <- ext1
-terra::ext(mp2) <- ext1
-#
-plot(mp1)
-plot(mp2)
-#
-tt1 <- t.test(mp1, mp2)
-#
-rm(mp1, mp2)
