@@ -218,7 +218,10 @@ round(ivi_cohens_d_2$estimate, 3)
 # Set the significance level
 significance_level <- 0.05
 
+##########################################################################################
 # Identify areas where values in shapefile1 are significantly higher than shapefile2
+##########################################################################################
+
 indegree_shape <- terra::vect("C:/Users/FMest/Documents/github/red_listed_networks/indegree_nt_spatial.shp")
 indegree_shape <- indegree_shape[, -4]
 indegree_shape$indegree_difference <- indegree_difference
