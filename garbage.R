@@ -400,3 +400,39 @@ tt1 <- t.test(mp1, mp2)
 #
 rm(mp1, mp2)
 
+################################################################################
+
+#29-08-2023
+
+install.packages("spatialEco")
+library(spatialEco)
+#
+indeg_corr <- rasterCorrelation(nt_indegree, t_indegree, s = 3, type = "spearman")
+terra::writeRaster(indeg_corr, filename = "indeg_corr.tif", overwrite=TRUE)
+plot(indeg_corr)
+
+#O raster ficou esquisito...
+
+################################################################################
+
+#Cohen's d
+library(effsize)
+indegree_cohens_d_2 <- effsize::cohen.d(indegree_compare_2[complete.cases(indegree_compare_2),][,4],
+                                        indegree_compare_2[complete.cases(indegree_compare_2),][,2], paired = TRUE)
+outdegree_cohens_d_2 <- effsize::cohen.d(outdegree_compare_2[complete.cases(outdegree_compare_2),][,4],
+                                         outdegree_compare_2[complete.cases(outdegree_compare_2),][,2], paired = TRUE)
+tl_cohens_d_2 <- effsize::cohen.d(trophic_level_compare_2[complete.cases(trophic_level_compare_2),][,4],
+                                  trophic_level_compare_2[complete.cases(trophic_level_compare_2),][,2], paired = TRUE)
+closeness_cohens_d_2 <- effsize::cohen.d(closeness_compare_2[complete.cases(closeness_compare_2),][,4],
+                                         closeness_compare_2[complete.cases(closeness_compare_2),][,2], paired = TRUE)
+centrality_cohens_d_2 <- effsize::cohen.d(centrality_compare_2[complete.cases(centrality_compare_2),][,4],
+                                          centrality_compare_2[complete.cases(centrality_compare_2),][,2], paired = TRUE)
+ivi_cohens_d_2 <- effsize::cohen.d(ivi_compare_2[complete.cases(ivi_compare_2),][,4],
+                                   ivi_compare_2[complete.cases(ivi_compare_2),][,2], paired = TRUE)
+
+round(indegree_cohens_d_2$estimate, 3)
+round(outdegree_cohens_d_2$estimate, 3)
+round(tl_cohens_d_2$estimate, 3)
+round(closeness_cohens_d_2$estimate, 3)
+round(centrality_cohens_d_2$estimate, 3)
+round(ivi_cohens_d_2$estimate, 3)
