@@ -2,7 +2,17 @@
 #                         Plotting FW for the figure
 ################################################################################
 
-# Get a good example to the fw figure
+#Load datasets
+#Load from cluster
+load("from_cluster/network_list_cheddar_06jun23.RData")
+#load("from_cluster/eur_comm_collection_06jun23.RData")
+load("from_cluster/network_list_igraph_2_all_13JUN2023.RData")
+
+#Package
+library(cheddar)
+library(igraph)
+
+# Get a good example to the fw figure ##########################################
 
 #using igraph list
 for(i in 1:length(network_list_igraph_2)){
@@ -25,7 +35,7 @@ for(i in 1:length(network_list_cheddar)){
 #cheddar::TrophicLinkPropertyNames (network_list_cheddar[[116183]])
 #cheddar::NodePropertyNames (network_list_cheddar[[116183]])
 
-#Which is the most vulnerable prey
+#Which is the most vulnerable prey?
 sort(cheddar::TrophicVulnerability(network_list_cheddar[[116183]]))
 "Pelophylax perezi" # this is it, but also use...
 "Oryctolagus cuniculus"
@@ -34,6 +44,8 @@ sort(cheddar::TrophicVulnerability(network_list_cheddar[[116183]]))
 sort(cheddar::TrophicGenerality(network_list_cheddar[[116183]]))
 "Vulpes vulpes" # this is it, but also use...
 "Lynx pardinus"
+
+#Lets use the grids SQ189!
 
 #Plot links going and coming from Vulpes vulpes
 links <- cbind(TLPS(network_list_cheddar[[116183]]), colour="#c7c7c788")
@@ -88,3 +100,8 @@ for(i in 1:length(pch_cex)) if(nodes1$colour[i] == "red") pch_cex[i] <- 2
 #The links are setup as transparent: link.col="#ffffff00"
 cheddar::plot.Community(network_list_cheddar[[116183]], link.col="#ffffff00", col = nodes1$colour, pch = 19, cex = pch_cex)
 #
+
+#DELETE
+rm(network_list_igraph_2)
+rm(network_list_cheddar)
+
