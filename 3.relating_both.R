@@ -10,7 +10,7 @@ library(taxize)
 #Red list data - get the names of the species
 red_listed_3
 red_list_species <- red_listed_3$full_name
-red_listed_3$full_name <- stringr::str_replace(red_listed_3$full_name, "_", " ")
+#red_listed_3$full_name <- stringr::str_replace(red_listed_3$full_name, "_", " ")
 
 #Node metrics across Europe
 #fw_list

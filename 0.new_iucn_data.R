@@ -22,3 +22,10 @@ iucn_sept23_aves <- iucn_sept23_aves[,3:4]
 #remove empty spaces at the end of string
 iucn_sept23_rep_mamm_amph_SYN[,2] <- trimws(iucn_sept23_rep_mamm_amph_SYN[,2])
 #head(iucn_sept23_rep_mamm_amph_SYN, 20)
+
+#Join both
+#head(iucn_sept23_rep_mamm_amph)
+#head(iucn_sept23_aves)
+new_species_iucn <- rbind(iucn_sept23_rep_mamm_amph, iucn_sept23_aves)
+#head(new_species_iucn)
+#View(new_species_iucn)

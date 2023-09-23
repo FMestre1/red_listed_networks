@@ -7,11 +7,10 @@
 
 #Source: https://www.eea.europa.eu/data-and-maps/data/european-red-lists-7
 
-red_listed <- read.csv("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\European_Red_List_2017_December_csv\\European_Red_List_2017_December.csv", 
+red_listed <- read.csv("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\European_Red_List_2017_December_csv\\European_Red_List_2017_December.csv", 
                        sep = ",")
                        
 #View(red_listed)
-
 #Create vector with genus+species name
 
 full_name <- c()
@@ -53,6 +52,27 @@ names(red_listed_3) <- c("group", "full_name", "europeanRegionalRedListCategory"
                                       "endemic_to_europe")
 
 #View(red_listed_3)
-
 #Save
 #save(red_listed_3, file = "red_listed_3_08FEV2023.RData")
+
+#Combine with the new dataset to update
+#23-09-2023
+
+red_listed_3$full_name <- stringr::str_replace(red_listed_3$full_name, "_", " ")
+#names(red_listed_3)
+#names(new_species_iucn)
+
+merged_update_iucn <- merge(x = red_listed_3, y = new_species_iucn, by.x = "full_name", by.y = "scientificName")
+merged_update_iucn <- merged_update_iucn[,-3]
+#head(merged_update_iucn)
+#unique(merged_update_iucn$redlistCategory)
+
+merged_update_iucn[merged_update_iucn$redlistCategory == "Least Concern",][,4] <- "LC"
+merged_update_iucn[merged_update_iucn$redlistCategory == "Endangered",][,4] <- "EN"
+merged_update_iucn[merged_update_iucn$redlistCategory == "Data Deficient",][,4] <- "DD"
+merged_update_iucn[merged_update_iucn$redlistCategory == "Vulnerable",][,4] <- "VU"
+merged_update_iucn[merged_update_iucn$redlistCategory == "Near Threatened",][,4] <- "NT"
+merged_update_iucn[merged_update_iucn$redlistCategory == "Extinct",][,4] <- "EX"
+merged_update_iucn[merged_update_iucn$redlistCategory == "Critically Endangered",][,4] <- "CE"
+
+#head(merged_update_iucn)

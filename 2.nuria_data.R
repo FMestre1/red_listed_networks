@@ -8,7 +8,7 @@ library(igraph)
 library(cheddar)
 
 ####Load data
-path1 <- "C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria\\"
+path1 <- "C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria\\"
 files_folder <- list.files(path1)
 
 fw_list <- list()
@@ -37,8 +37,8 @@ for(i in 1:length(fw_list)){
 species_names2 <- unique(species_names)
 
 #Save
-save(species_names2, file = "species_names2.RData")
-
+#save(species_names2, file = "species_names2.RData")
+#AQUI
 ################################################################################
 #                   SECOND NÚRIA DATASET (network metrics)
 ################################################################################
@@ -47,8 +47,8 @@ dataset2_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_netw
 #length(dataset2_nuria)
 
 metrics_dataset_2 <- data.frame()
-head(metrics_dataset_2)
-
+#head(metrics_dataset_2)
+#AQUI
 for(i in 1:length(dataset2_nuria)){
   
   m123 <- read.csv(paste0("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2\\", dataset2_nuria[i]))
@@ -59,8 +59,7 @@ for(i in 1:length(dataset2_nuria)){
   
 }
 
-View(metrics_dataset_2)
-
+#View(metrics_dataset_2)
 #nrow(metrics_dataset_2)
 #View(metrics_dataset_2)
 
