@@ -43,15 +43,15 @@ species_names2 <- unique(species_names)
 #                   SECOND NÚRIA DATASET (network metrics)
 ################################################################################
 
-dataset2_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2")
+dataset2_nuria <- list.files("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2")
 #length(dataset2_nuria)
 
 metrics_dataset_2 <- data.frame()
 #head(metrics_dataset_2)
-#AQUI
+
 for(i in 1:length(dataset2_nuria)){
   
-  m123 <- read.csv(paste0("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2\\", dataset2_nuria[i]))
+  m123 <- read.csv(paste0("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2\\", dataset2_nuria[i]))
   grid_code <- strsplit(dataset2_nuria[i], ".csv")[[1]]
   metrics_dataset_2 <- rbind(metrics_dataset_2, data.frame(grid_code,m123))
   #
@@ -77,12 +77,11 @@ metrics_dataset_3 <- unique(metrics_dataset_2)
 #FMestre
 #22-05-23
 
-#### RAN IN CLUSTER #### START
 
 network_list <- list()
-path3 <- "C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3"
+path3 <- "C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3"
 
-dataset3_nuria <- list.files("C:\\Users\\FMest\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3")
+dataset3_nuria <- list.files("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3")
 #length(dataset3_nuria)
 
 for(i in 1:length(dataset3_nuria)){
@@ -92,13 +91,7 @@ for(i in 1:length(dataset3_nuria)){
 }
 
 #Save
-#save(network_list, file = "network_list.RData")
-#load("network_list.RData")
-
-#### RAN IN CLUSTER #### END
-
-#Coming from the cluster - 31-05-2023
-load("network_list_25_may_23.RData")
+#save(network_list, file = "network_list24SET23.RData")
 
 #Check
 #length(network_list)
@@ -111,6 +104,9 @@ network_list_igraph <- vector(mode='list', length=length(network_list))
 names(network_list_igraph) <- names(network_list)
 #
 network_list_cheddar <- network_list_igraph
+
+#load("all_species_status_body_mass_amph_12.RData")
+View(all_species_status_body_mass_amph_12)
 
 for(i in 1:length(network_list)){
   
@@ -151,8 +147,11 @@ for(i in 1:length(network_list)){
 }
 
 #Save
-save(network_list_igraph, file = "network_list_igraph.RData")
-save(network_list_cheddar, file = "network_list_cheddar.RData")
+#save(network_list_igraph, file = "network_list_igraph_until_18802.RData")
+#length(network_list_igraph)
+#class(network_list_igraph[[1]])
+
+#save(network_list_cheddar, file = "network_list_cheddar.RData")
 
 ## in the cluster ## END
 

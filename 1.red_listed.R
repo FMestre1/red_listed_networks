@@ -76,3 +76,43 @@ merged_update_iucn[merged_update_iucn$redlistCategory == "Extinct",][,4] <- "EX"
 merged_update_iucn[merged_update_iucn$redlistCategory == "Critically Endangered",][,4] <- "CE"
 
 #head(merged_update_iucn)
+
+all_species_status_body_mass_amph_12
+names(all_species_status_body_mass_amph_12)
+names(merged_update_iucn)
+
+head(all_species_status_body_mass_amph_12)
+
+all_species_status_body_mass_amph_13 <- merge(x = all_species_status_body_mass_amph_12, y = merged_update_iucn, by.x = "species", by.y = "full_name")
+
+View(all_species_status_body_mass_amph_13)
+
+#Create new df with updated information
+all_species_status_body_mass_amph_14 <- data.frame(
+  all_species_status_body_mass_amph_13$species,
+  all_species_status_body_mass_amph_13$redlistCategory,
+  NA,
+  all_species_status_body_mass_amph_13$body_size,
+  all_species_status_body_mass_amph_13$synonym
+  )
+
+names(all_species_status_body_mass_amph_14) <- names(all_species_status_body_mass_amph_12)
+View(all_species_status_body_mass_amph_14)
+
+unique(all_species_status_body_mass_amph_14$status)
+
+agreg_ts2 <- c()
+
+for(i in 1:nrow(all_species_status_body_mass_amph_14)){
+  
+  cat1 <- all_species_status_body_mass_amph_14[i,]$status
+  if(cat1 %in% c("LC", "NT")) agreg_ts2[i] <- "not_threatened"
+  if(cat1 %in% c("VU", "EN", "CE")) agreg_ts2[i] <- "threatened"
+  if(!(cat1 %in% c("LC", "NT", "VU", "EN", "CE"))) agreg_ts2[i] <- "none"
+  
+}
+
+all_species_status_body_mass_amph_14$agreg_ts <- agreg_ts2
+#head(all_species_status_body_mass_amph_14)
+
+#got to script2 line 110

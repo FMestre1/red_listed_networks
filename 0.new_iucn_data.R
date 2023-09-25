@@ -4,6 +4,7 @@
 #FMestre
 #22-09-2023
 
+
 iucn_sept23_rep_mamm_amph <- read.csv('C:/Users/asus/Documents/0. Artigos/IUCN_networks/data/iucn_pam_new_data/redlist_species_data_f5ded918-27b1-4050-8a3e-e4d9cbade939/assessments.csv')
 #View(iucn_sept23_rep_mamm_amph)
 iucn_sept23_rep_mamm_amph <- iucn_sept23_rep_mamm_amph[,3:4]
