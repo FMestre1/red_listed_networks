@@ -36,9 +36,10 @@ for(i in 1:length(fw_list)){
 
 species_names2 <- unique(species_names)
 
-#Save
+#Load & Save
+#load("species_names2.RData")
 #save(species_names2, file = "species_names2.RData")
-#AQUI
+
 ################################################################################
 #                   SECOND NÚRIA DATASET (network metrics)
 ################################################################################
@@ -58,17 +59,16 @@ for(i in 1:length(dataset2_nuria)){
   message(paste0("Did ", i, "!"))
   
 }
-
 #View(metrics_dataset_2)
 #nrow(metrics_dataset_2)
-#View(metrics_dataset_2)
 
 metrics_dataset_3 <- unique(metrics_dataset_2)
 #View(metrics_dataset_3)
 #nrow(metrics_dataset_3)
 
-#Save
-#save(metrics_dataset_3, file = "metrics_dataset_FINAL.RData")
+#Load & Save
+#load("metrics_dataset_FINAL.RData")
+#save(metrics_dataset_3, file = "metrics_dataset_FINAL_26SET2023.RData")
 
 ################################################################################
 #                       THIRD NÚRIA DATASET (networks)
@@ -77,9 +77,10 @@ metrics_dataset_3 <- unique(metrics_dataset_2)
 #FMestre
 #22-05-23
 
-
 network_list <- list()
 path3 <- "C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3"
+
+#length(network_list)
 
 dataset3_nuria <- list.files("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3")
 #length(dataset3_nuria)
@@ -90,7 +91,7 @@ for(i in 1:length(dataset3_nuria)){
   message(i)
 }
 
-#Save
+#Load & Save
 #save(network_list, file = "network_list24SET23.RData")
 
 #Check
@@ -105,9 +106,6 @@ names(network_list_igraph) <- names(network_list)
 #
 network_list_cheddar <- network_list_igraph
 
-#load("all_species_status_body_mass_amph_12.RData")
-View(all_species_status_body_mass_amph_12)
-
 for(i in 1:length(network_list)){
   
   fw_a <- network_list[[i]]
@@ -116,7 +114,7 @@ for(i in 1:length(network_list)){
   
   nodes1 <- colnames(fw_a)
   nodes1 <- stringr::str_replace_all(nodes1, pattern = "_", replacement = " ")
-  nodes1 <- all_species_status_body_mass_amph_12[all_species_status_body_mass_amph_12$species %in% nodes1,]
+  nodes1 <- all_species_status_body_mass_amph_13[all_species_status_body_mass_amph_13$species %in% nodes1,]
   #
   edges1 <- as.data.frame(which(fw_a==1, arr.ind = TRUE))
   rownames(edges1) <- 1:nrow(edges1)
@@ -136,7 +134,6 @@ for(i in 1:length(network_list)){
   #Insert igraph
   network_list_igraph[[i]] <- g1
   
-  
   #... no the cheddar version
   names(nodes1)[1] <- "node"
   ch1 <- cheddar::Community(nodes = nodes1, properties = list(title= paste0("Interactions in grid ", names(network_list[i]))), trophic.links = edges1)
@@ -146,12 +143,34 @@ for(i in 1:length(network_list)){
   
 }
 
+#network_list_igraph[[i-1]]
+#network_list_cheddar[[i-1]]
+
+#AQUI!
+save(network_list_igraph, file = "network_list_igraph_from_1_to_6846.RData")
+save(network_list_cheddar, file = "network_list_cheddar_from_1_to_6846.RData")
+#retart at i=6846
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Save
-#save(network_list_igraph, file = "network_list_igraph_until_18802.RData")
+#save(network_list_igraph, file = "network_list_igraph.RData")
 #length(network_list_igraph)
 #class(network_list_igraph[[1]])
-
 #save(network_list_cheddar, file = "network_list_cheddar.RData")
+#length(network_list_cheddar)
+#class(network_list_cheddar[[1]])
 
 ## in the cluster ## END
 
@@ -179,9 +198,9 @@ rm(list_b)
 #save(network_list_igraph_2, file = "network_list_igraph_2_all_06JUN2023.RData")
 
 #Load from cluster
-load("from_cluster/network_list_cheddar_06jun23.RData")
-load("from_cluster/eur_comm_collection_06jun23.RData")
-load("from_cluster/network_list_igraph_2_all_06JUN2023.RData")
+#load("from_cluster/network_list_cheddar_06jun23.RData")
+#load("from_cluster/eur_comm_collection_06jun23.RData")
+#load("from_cluster/network_list_igraph_2_all_06JUN2023.RData")
 
 #Check
 length(network_list_cheddar)
