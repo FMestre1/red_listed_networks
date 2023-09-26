@@ -145,11 +145,20 @@ for(i in 1:length(network_list)){
 
 #network_list_igraph[[i-1]]
 #network_list_cheddar[[i-1]]
+#
+#network_list_igraph[[i]]
+#network_list_cheddar[[i]]
+#
+#i
+
+#save(network_list_igraph, file = "network_list_igraph_from_1_to_6846.RData")
+#save(network_list_cheddar, file = "network_list_cheddar_from_1_to_6846.RData")
+#
+#save(network_list_igraph, file = "network_list_igraph_from_6847_to_16503.RData")
+#save(network_list_cheddar, file = "network_list_cheddar_from_6847_to_16503.RData")
 
 #AQUI!
-save(network_list_igraph, file = "network_list_igraph_from_1_to_6846.RData")
-save(network_list_cheddar, file = "network_list_cheddar_from_1_to_6846.RData")
-#retart at i=6846
+
 
 
 
