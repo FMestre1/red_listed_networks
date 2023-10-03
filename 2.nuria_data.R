@@ -143,75 +143,140 @@ for(i in 1:length(network_list)){
   
 }
 
-#network_list_igraph[[i-1]]
-#network_list_cheddar[[i-1]]
-#
-#network_list_igraph[[i]]
-#network_list_cheddar[[i]]
-#
-#i
+#I had to run this in chunks...
+#...combining partial lists after:
 
-#save(network_list_igraph, file = "network_list_igraph_from_1_to_6846.RData")
-#save(network_list_cheddar, file = "network_list_cheddar_from_1_to_6846.RData")
-#
-#save(network_list_igraph, file = "network_list_igraph_from_6847_to_16503.RData")
-#save(network_list_cheddar, file = "network_list_cheddar_from_6847_to_16503.RData")
+#igraph list
 
-#AQUI!
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_until_38636.RData")
+list1_igraph <- get("network_list_igraph")
+rm(network_list_igraph)
+list1_igraph[[1]]
+list1_igraph[[38635]]
 
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_until_from_38636_until_54275.RData")
+list2_igraph <- get("network_list_igraph")
+rm(network_list_igraph)
+list2_igraph[[38636]]
+list2_igraph[[54275]]
 
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_until_from_54276_until_68933.RData")
+list3_igraph <- get("network_list_igraph")
+rm(network_list_igraph)
+list3_igraph[[54276]]
+list3_igraph[[68933]]
 
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_from_68934_until_70129.RData")
+list4_igraph <- get("network_list_igraph")
+rm(network_list_igraph)
+list4_igraph[[68934]]
+list4_igraph[[70129]]
 
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_from_70130_until_118292.RData")
+list5_igraph <- get("network_list_igraph")
+rm(network_list_igraph)
+list5_igraph[[70130]]
+list5_igraph[[118292]]
 
+#Gather all the graph in one list
+igraph_list <- c(
+  list1_igraph[1:38635],
+  list2_igraph[38636:54275],
+  list3_igraph[54276:68933],
+  list4_igraph[68934:70129],
+  list5_igraph[70130:118292]
+)
 
-
-
-
-
-
-
-
-
+length(igraph_list)
+igraph_class <- data.frame(unlist(lapply(igraph_list, class)))
+igraph_class <- igraph_class$unlist.lapply.igraph_list..class..
+table(igraph_class)
 
 #Save
-#save(network_list_igraph, file = "network_list_igraph.RData")
-#length(network_list_igraph)
-#class(network_list_igraph[[1]])
-#save(network_list_cheddar, file = "network_list_cheddar.RData")
-#length(network_list_cheddar)
-#class(network_list_cheddar[[1]])
+#save(igraph_list, file = "C:\\Users\\asus\\Desktop\\igraph_list_02SET23.RData")
 
-## in the cluster ## END
+#Delete objects
+rm(igraph_list,
+   igraph_class,
+   list1_igraph,
+   list2_igraph,
+   list3_igraph,
+   list4_igraph,
+   list5_igraph
+)
 
-##### Getting what ran in the cluster #####
-#I had to run this in two parts, and here I connect both...
-#load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_ate_72649.RData")
-#load("C:/Users/FMest/Documents/github/red_listed_networks/05_jun_2023/network_list_igraph_2_de_72650_a_118292.RData")
+################################################################################
+#cheddar list
 
-network_list_igraph_2_ate_72649 <- network_list_igraph_2
-rm(network_list_igraph_2)
-rm(network_list_igraph_2_ate_72649)
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_until_38636.RData")
+list1_cheddar <- get("network_list_cheddar")
+rm(network_list_cheddar)
+list1_cheddar[[1]]
+list1_cheddar[[38635]]
 #
-network_list_igraph_2_de_72650_a_118292 <- network_list_igraph_2
-rm(network_list_igraph_2)
-rm(network_list_igraph_2_de_72650_a_118292)
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_until_from_38636_until_54275.RData")
+list2_cheddar <- get("network_list_cheddar")
+rm(network_list_cheddar)
+list2_cheddar[[38636]]
+list2_cheddar[[54275]]
 #
-list_a <- network_list_igraph_2_ate_72649[1:72649]
-list_b <- network_list_igraph_2_de_72650_a_118292[72650:118292]
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_until_from_54276_until_68933.RData")
+list3_cheddar <- get("network_list_cheddar")
+rm(network_list_cheddar)
+list3_cheddar[[54276]]
+list3_cheddar[[68933]]
+#
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_from_68934_until_70129.RData")
+list4_cheddar <- get("network_list_cheddar")
+rm(network_list_cheddar)
+list4_cheddar[[68934]]
+list4_cheddar[[70129]]
+#
+load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_from_70130_until_118292.RData")
+list5_cheddar <- get("network_list_cheddar")
+rm(network_list_cheddar)
+list5_cheddar[[70130]]
+list5_cheddar[[118292]]
 
-#Finally, concatenate both
-network_list_igraph_2 <- c(list_a, list_b)
-rm(list_a)
-rm(list_b)
-#length(network_list_igraph_2)
-#save(network_list_igraph_2, file = "network_list_igraph_2_all_06JUN2023.RData")
+#Gather all the graph in one list
+cheddar_list <- vector(mode='list', length=118292)
+for(i in 1:118292){
+  if(i >= 1 && i < 38636) cheddar_list[[i]] <- list1_cheddar[[i]]
+  if(i >= 38636 && i < 54276) cheddar_list[[i]] <- list1_cheddar[[i]]
+  if(i >= 54276 && i < 68934) cheddar_list[[i]] <- list1_cheddar[[i]]
+  if(i >= 68934 && i < 70130) cheddar_list[[i]] <- list1_cheddar[[i]]
+  if(i >= 70130 && i < 118293) cheddar_list[[i]] <- list1_cheddar[[i]]
+  message(i)
+}
 
-#Load from cluster
-#load("from_cluster/network_list_cheddar_06jun23.RData")
-#load("from_cluster/eur_comm_collection_06jun23.RData")
-#load("from_cluster/network_list_igraph_2_all_06JUN2023.RData")
+#Gather all the graph in one list
+cheddar_list <- c(
+  list1_cheddar[1:38635],
+  list2_cheddar[38636:54275],
+  list3_cheddar[54276:68933],
+  list4_cheddar[68934:70129],
+  list5_cheddar[70130:118292]
+)
 
-#Check
-length(network_list_cheddar)
-eur_comm_collection
-length(network_list_igraph_2_all)
+length(cheddar_list)
+cheddar_class <- data.frame(unlist(lapply(cheddar_list, class)))
+cheddar_class <- cheddar_class$unlist.lapply.cheddar_list..class..
+table(cheddar_class)
+
+#Save
+#save(cheddar_list, file = "C:\\Users\\asus\\Desktop\\cheddar_list_02SET23.RData")
+
+#Delete objects
+rm(cheddar_list,
+   cheddar_class,
+   list1_cheddar,
+   list2_cheddar,
+   list3_cheddar,
+   list4_cheddar,
+   list5_cheddar
+)
+
+#Loading the newly created lists
+load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\igraph_list_02SET23.RData")
+load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\igraph_list_02SET23.RData")
+

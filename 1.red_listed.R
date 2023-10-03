@@ -94,8 +94,9 @@ all_species_status_body_mass_amph_13 <- all_species_status_body_mass_amph_12
 #Where are synonyms?
 #which(all_species_status_body_mass_amph_13$synonym != "NA")
 
+
 all_species_status_body_mass_amph_13$status <- NA
-all_species_status_body_mass_amph_13$agreg_ts <- NA
+all_species_status_body_mass_amph_13$code <- NA
 
 for(i in 1:nrow(all_species_status_body_mass_amph_13)){
 
@@ -110,8 +111,19 @@ if(nrow(status_species0) !=0 && !identical(status_species0, status_species_syn))
 if(nrow(status_species_syn) !=0 && !identical(status_species0, status_species_syn)) new_status1 <- status_species_syn
     
 all_species_status_body_mass_amph_13$status[i] <- new_status1$redlistCategory
-all_species_status_body_mass_amph_13$agreg_ts[i] <- new_status1$code
+all_species_status_body_mass_amph_13$code[i] <- new_status1$code
 
+}
+
+#unique(new_species_iucn$code)
+
+for(i in 1:nrow(all_species_status_body_mass_amph_13)){
+  
+  cat1 <- all_species_status_body_mass_amph_13[i,]$code
+  if(cat1 %in% c("LC", "NT")) all_species_status_body_mass_amph_13$agreg_ts[i] <- "not_threatened"
+  if(cat1 %in% c("VU", "EN", "CR")) all_species_status_body_mass_amph_13$agreg_ts[i] <- "threatened"
+  if(!(cat1 %in% c("LC", "NT", "VU", "EN", "CR"))) all_species_status_body_mass_amph_13$agreg_ts[i] <- "none"
+  message(i)
 }
 
 #table(all_species_status_body_mass_amph_13$agreg_ts)
