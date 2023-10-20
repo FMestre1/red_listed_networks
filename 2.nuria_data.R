@@ -142,7 +142,9 @@ for(i in 1:length(network_list)){
 #I had to run this in chunks...
 #...combining partial lists after:
 
-#igraph list
+################################################################################
+#                                  igraph list
+################################################################################
 
 #load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_until_38636.RData")
 list1_igraph <- get("network_list_igraph")
@@ -203,7 +205,8 @@ rm(igraph_list,
 )
 
 ################################################################################
-#cheddar list
+#                               cheddar list
+################################################################################
 
 #load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_until_38636.RData")
 list1_cheddar <- get("network_list_cheddar")
@@ -278,4 +281,3 @@ rm(cheddar_list,
 #load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\igraph_list_02SET23.RData")
 #load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
 
-cheddar_list[[1]]$nodes

@@ -15,7 +15,6 @@ europe <- terra::vect("C:/Users/asus/Documents/0. Artigos/IUCN_networks/shapefil
 
 europe_coastline_borders <- aggregate(europe, dissolve = TRUE)
 #plot(europe_coastline_borders)
-#crs(europe_coastline_borders)
 
 #Save shapefile
 writeVector(europe_coastline_borders, 
@@ -44,9 +43,6 @@ europeRaster_poly_wgs84_coords <- data.frame(europeRaster_poly_wgs84, europeRast
 
 ################################################################################
 
-#red_listed_3
-#fw_list
-
 fw_list_with_status <- fw_list
 
 #Add IUCN status
@@ -58,8 +54,8 @@ for(i in 1:length(fw_list_with_status)){
   
   if(any(new_species_iucn$scientificName %in% sp_fw3))
     {
-    sp_fw3_redList <- new_species_iucn[new_species_iucn$scientificName %in% sp_fw3,]
-    fw4 <- merge(fw3, sp_fw3_redList, by.x = "SP_NAME", by.y = "scientificName", all.x = TRUE)
+    sp_fw3_redList <- all_species_status_body_mass_amph_13[all_species_status_body_mass_amph_13$species %in% sp_fw3 | all_species_status_body_mass_amph_13$synonym %in% sp_fw3,]
+    fw4 <- merge(fw3, sp_fw3_redList, by.x = "SP_NAME", by.y = "species", all.x = TRUE)
     fw_list_with_status[[i]] <- fw4
   }
 
@@ -68,67 +64,34 @@ message(i)
 
 }
 
-#save(fw_list_with_status, file = "fw_list_with_status_19OUT.RData")
+#fw_list_with_status[[2]]
 
-#Add aggregated IUCN status
-fw_list_with_status_aggreg <- fw_list_with_status
-
-#Add threatened/non-threatened
-for(i in 1:length(fw_list_with_status)){
-  
-  fw5 <- fw_list_with_status[[i]]
-  
-  if(nrow(fw5)!=0){
-  
-  categories_fw5 <- fw5$europeanRegionalRedListCategory
-  #
-  categories_fw5 <- stringr::str_replace(categories_fw5, "VU", "threatened")
-  categories_fw5 <- stringr::str_replace(categories_fw5, "EN", "threatened")
-  categories_fw5 <- stringr::str_replace(categories_fw5, "CR", "threatened")
-  #
-  categories_fw5 <- stringr::str_replace(categories_fw5, "LC", "non-threatened")
-  categories_fw5 <- stringr::str_replace(categories_fw5, "NT", "non-threatened")
-  #
-  categories_fw5 <- stringr::str_replace(categories_fw5, "DD", "others")
-  categories_fw5 <- stringr::str_replace(categories_fw5, "NE", "others")
-  categories_fw5 <- stringr::str_replace(categories_fw5, "RE", "others")
-  #
-  
-  fw5 <- data.frame(fw5, categories_fw5)
-  names(fw5)[12] <- "aggreg_IUCN"
-  
-  fw_list_with_status_aggreg[[i]] <- fw5
-  }
-  message(i)
-  
-}
+#save(fw_list_with_status, file = "fw_list_with_status_20OUT.RData")
 
 #IVI - NOT THREATENED ##########################################################
 
-ivi_nt <- rep(NA, length(fw_list_with_status_aggreg))
+ivi_nt <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  ivi_fw <- fw_list_with_status_aggreg[[i]]
-  fw_nt_ivi <- ivi_fw[ivi_fw$aggreg_IUCN == "non-threatened",]$ivi
+  ivi_fw <- fw_list_with_status[[i]]
+  fw_nt_ivi <- ivi_fw[ivi_fw$agreg_ts == "not_threatened",]$ivi
   if(length(fw_nt_ivi)!=0) ivi_nt[i] <- mean(fw_nt_ivi, na.rm=TRUE)
   
   message(i)
   
 }
 
-ivi_nt <- data.frame(names(fw_list_with_status_aggreg), ivi_nt)
+ivi_nt <- data.frame(names(fw_list_with_status), ivi_nt)
 names(ivi_nt) <- c("grid", "ivi")
 #head(ivi_nt)
 #hist(ivi_nt$ivi)
 
 ivi_nt_spatial <- merge(europeRaster_poly, ivi_nt, by.x = "PageName", by.y = "grid")
-#plot(ivi_nt_spatial)
-#plot(europeRaster_poly)
-#save(ivi_nt_spatial, file = "ivi_nt_spatial.Rdata")
+#save(ivi_nt_spatial, file = "ivi_nt_spatial_20OUT.Rdata")
 
 writeVector(ivi_nt_spatial, 
-            filename = "ivi_nt_spatial_second_version.shp",
+            filename = "shapes_20OUT23\\ivi_nt_spatial_second_version_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -136,33 +99,31 @@ writeVector(ivi_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
-ivi_nt_spatial <- terra::vect("ivi_nt_spatial_second_version.shp")
+#ivi_nt_spatial <- terra::vect("shapes_20OUT23\\ivi_nt_spatial_second_version_20OUT.shp")
 
 #IVI - THREATENED ##############################################################
 
-ivi_t <- rep(NA, length(fw_list_with_status_aggreg))
+ivi_t <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  ivi_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_t_ivi2 <- ivi_fw2[ivi_fw2$aggreg_IUCN == "threatened",]$ivi
+  ivi_fw2 <- fw_list_with_status[[i]]
+  fw_t_ivi2 <- ivi_fw2[ivi_fw2$agreg_ts == "threatened",]$ivi
   if(length(fw_t_ivi2)!=0) ivi_t[i] <- mean(fw_t_ivi2, na.rm=TRUE)
   
   message(i)
   
 }
 
-ivi_t <- data.frame(names(fw_list_with_status_aggreg), ivi_t)
+ivi_t <- data.frame(names(fw_list_with_status), ivi_t)
 names(ivi_t) <- c("grid", "ivi")
 #head(ivi_t)
-#hist(ivi_t$ivi)
 
 ivi_t_spatial <- merge(europeRaster_poly, ivi_t, by.x = "PageName", by.y = "grid")
-#plot(ivi_t_spatial)
-#save(ivi_t_spatial, file = "ivi_t_spatial.Rdata")
+#save(ivi_t_spatial, file = "ivi_t_spatial_20OUT.Rdata")
 
 writeVector(ivi_t_spatial, 
-            filename = "ivi_t_spatial_second_version.shp",
+            filename = "shapes_20OUT23\\ivi_t_spatial_second_version_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -170,33 +131,32 @@ writeVector(ivi_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-ivi_t_spatial <- terra::vect("ivi_t_spatial_second_version.shp")
+ivi_t_spatial <- terra::vect("ivi_t_spatial_second_version_20OUT.shp")
 
 #CENTRALITY - NON-THREATENED #######################################################
 
-centrality_nt <- rep(NA, length(fw_list_with_status_aggreg))
+centrality_nt <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  cent_nt_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_nt_cent2 <- cent_nt_fw2[cent_nt_fw2$aggreg_IUCN == "non-threatened",]$centrality
+  cent_nt_fw2 <- fw_list_with_status[[i]]
+  fw_nt_cent2 <- cent_nt_fw2[cent_nt_fw2$agreg_ts == "not_threatened",]$centrality
   if(length(fw_nt_cent2)!=0) centrality_nt[i] <- mean(fw_nt_cent2, na.rm=TRUE)
   
   message(i)
   
 }
 
-centrality_nt <- data.frame(names(fw_list_with_status_aggreg), centrality_nt)
+centrality_nt <- data.frame(names(fw_list_with_status), centrality_nt)
 names(centrality_nt) <- c("grid", "centrality")
 #head(centrality_nt)
-#hist(centrality_nt$centrality)
 
 centrality_nt_spatial <- merge(europeRaster_poly, centrality_nt, by.x = "PageName", by.y = "grid")
 #plot(centrality_nt_spatial)
-#save(centrality_nt_spatial, file = "centrality_nt_spatial.Rdata")
+#save(centrality_nt_spatial, file = "centrality_nt_spatial_20OUT23.Rdata")
 
 writeVector(centrality_nt_spatial, 
-            filename = "centrality_nt_spatial.shp",
+            filename = "shapes_20OUT23\\centrality_nt_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -204,33 +164,33 @@ writeVector(centrality_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
-centrality_nt_spatial <- terra::vect("centrality_nt_spatial.shp")
+#centrality_nt_spatial <- terra::vect("centrality_nt_spatial_20OUT.shp")
 
 #CENTRALITY - THREATENED #######################################################
 
-centrality_t <- rep(NA, length(fw_list_with_status_aggreg))
+centrality_t <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  cent_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_t_cent2 <- cent_fw2[cent_fw2$aggreg_IUCN == "threatened",]$centrality
+  cent_fw2 <- fw_list_with_status[[i]]
+  fw_t_cent2 <- cent_fw2[cent_fw2$agreg_ts == "threatened",]$centrality
   if(length(fw_t_cent2)!=0) centrality_t[i] <- mean(fw_t_cent2, na.rm=TRUE)
   
   message(i)
   
 }
 
-centrality_t <- data.frame(names(fw_list_with_status_aggreg), centrality_t)
+centrality_t <- data.frame(names(fw_list_with_status), centrality_t)
 names(centrality_t) <- c("grid", "centrality")
 #head(centrality_t)
 #hist(centrality_t$centrality)
 
 centrality_t_spatial <- merge(europeRaster_poly, centrality_t, by.x = "PageName", by.y = "grid")
 #plot(centrality_t_spatial)
-#save(centrality_t_spatial, file = "centrality_t_spatial.Rdata")
+#save(centrality_t_spatial, file = "centrality_t_spatial_20OUT.Rdata")
 
 writeVector(centrality_t_spatial, 
-            filename = "centrality_t_spatial.shp",
+            filename = "shapes_20OUT23\\centrality_t_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -238,33 +198,32 @@ writeVector(centrality_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-centrality_t_spatial <- terra::vect("centrality_t_spatial.shp")
+#centrality_t_spatial <- terra::vect("centrality_t_spatial_20OUT.shp")
 
 #IN-DEGREE - THREATENED ########################################################
 
-indegree_t <- rep(NA, length(fw_list_with_status_aggreg))
+indegree_t <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  indeg_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_t_indeg2 <- indeg_fw2[indeg_fw2$aggreg_IUCN == "threatened",]$indegree
+  indeg_fw2 <- fw_list_with_status[[i]]
+  fw_t_indeg2 <- indeg_fw2[indeg_fw2$agreg_ts == "threatened",]$indegree
   if(length(fw_t_indeg2)!=0) indegree_t[i] <- mean(fw_t_indeg2, na.rm=TRUE)
   
   message(i)
   
 }
 
-indegree_t <- data.frame(names(fw_list_with_status_aggreg), indegree_t)
+indegree_t <- data.frame(names(fw_list_with_status), indegree_t)
 names(indegree_t) <- c("grid", "indegree")
 #head(indegree_t)
-#hist(indegree_t$indegree)
 
 indegree_t_spatial <- merge(europeRaster_poly, indegree_t, by.x = "PageName", by.y = "grid")
 #plot(indegree_t_spatial)
-#save(indegree_t_spatial, file = "indegree_t_spatial.Rdata")
+#save(indegree_t_spatial, file = "indegree_t_spatial_20OUT.Rdata")
 
 writeVector(indegree_t_spatial, 
-            filename = "indegree_t_spatial.shp",
+            filename = "shapes_20OUT23\\indegree_t_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -272,33 +231,32 @@ writeVector(indegree_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-indegree_t_spatial <- terra::vect("indegree_t_spatial.shp")
+#indegree_t_spatial <- terra::vect("indegree_t_spatial_20OUT.shp")
 
 #IN-DEGREE - NON-THREATENED ####################################################
 
-indegree_nt <- rep(NA, length(fw_list_with_status_aggreg))
+indegree_nt <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  indeg_nt_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_nt_indeg2 <- indeg_nt_fw2[indeg_nt_fw2$aggreg_IUCN == "non-threatened",]$indegree
+  indeg_nt_fw2 <- fw_list_with_status[[i]]
+  fw_nt_indeg2 <- indeg_nt_fw2[indeg_nt_fw2$agreg_ts == "not_threatened",]$indegree
   if(length(fw_nt_indeg2)!=0) indegree_nt[i] <- mean(fw_nt_indeg2, na.rm=TRUE)
   
   message(i)
   
 }
 
-indegree_nt <- data.frame(names(fw_list_with_status_aggreg), indegree_nt)
+indegree_nt <- data.frame(names(fw_list_with_status), indegree_nt)
 names(indegree_nt) <- c("grid", "indegree")
 #head(indegree_nt)
-#hist(indegree_nt$indegree)
 
 indegree_nt_spatial <- merge(europeRaster_poly, indegree_nt, by.x = "PageName", by.y = "grid")
 #plot(indegree_nt_spatial)
-#save(indegree_nt_spatial, file = "indegree_nt_spatial.Rdata")
+#save(indegree_nt_spatial, file = "indegree_nt_spatial_20OUT.Rdata")
 
 writeVector(indegree_nt_spatial, 
-            filename = "indegree_nt_spatial.shp",
+            filename = "shapes_20OUT23\\indegree_nt_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -306,33 +264,32 @@ writeVector(indegree_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
-indegree_nt_spatial <- terra::vect("indegree_nt_spatial.shp")
+#indegree_nt_spatial <- terra::vect("indegree_nt_spatial_20OUT.shp")
 
 #OUT-DEGREE - THREATENED ########################################################
 
-outegree_t <- rep(NA, length(fw_list_with_status_aggreg))
+outegree_t <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  outdeg_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_t_outdeg2 <- outdeg_fw2[outdeg_fw2$aggreg_IUCN == "threatened",]$outdegree
+  outdeg_fw2 <- fw_list_with_status[[i]]
+  fw_t_outdeg2 <- outdeg_fw2[outdeg_fw2$agreg_ts == "threatened",]$outdegree
   if(length(fw_t_outdeg2)!=0) outegree_t[i] <- mean(fw_t_outdeg2, na.rm=TRUE)
   
   message(i)
   
 }
 
-outdegree_t <- data.frame(names(fw_list_with_status_aggreg), outegree_t)
+outdegree_t <- data.frame(names(fw_list_with_status), outegree_t)
 names(outdegree_t) <- c("grid", "outdegree")
 #head(outdegree_t)
-#hist(outdegree_t$outdegree)
 
 outdegree_t_spatial <- merge(europeRaster_poly, outdegree_t, by.x = "PageName", by.y = "grid")
 #plot(outdegree_t_spatial)
-#save(outdegree_t_spatial, file = "outdegree_t_spatial.Rdata")
+#save(outdegree_t_spatial, file = "outdegree_t_spatial_20OUT.Rdata")
 
 writeVector(outdegree_t_spatial, 
-            filename = "outdegree_t_spatial.shp",
+            filename = "shapes_20OUT23\\outdegree_t_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -340,33 +297,32 @@ writeVector(outdegree_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-outdegree_t_spatial <- terra::vect("outdegree_t_spatial.shp")
+#outdegree_t_spatial <- terra::vect("outdegree_t_spatial_20OUT.shp")
 
 #OUT-DEGREE - NON-THREATENED ####################################################
 
-outegree_nt <- rep(NA, length(fw_list_with_status_aggreg))
+outegree_nt <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  outdeg_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_nt_outdeg2 <- outdeg_fw2[outdeg_fw2$aggreg_IUCN == "non-threatened",]$outdegree
+  outdeg_fw2 <- fw_list_with_status[[i]]
+  fw_nt_outdeg2 <- outdeg_fw2[outdeg_fw2$agreg_ts == "not_threatened",]$outdegree
   if(length(fw_nt_outdeg2)!=0) outegree_nt[i] <- mean(fw_nt_outdeg2, na.rm=TRUE)
   
   message(i)
   
 }
 
-outdegree_nt <- data.frame(names(fw_list_with_status_aggreg), outegree_nt)
+outdegree_nt <- data.frame(names(fw_list_with_status), outegree_nt)
 names(outdegree_nt) <- c("grid", "outdegree")
 #head(outdegree_nt)
-#hist(outdegree_nt$outdegree)
 
 outdegree_nt_spatial <- merge(europeRaster_poly, outdegree_nt, by.x = "PageName", by.y = "grid")
 #plot(outdegree_nt_spatial)
-#save(outdegree_nt_spatial, file = "outdegree_nt_spatial.Rdata")
+#save(outdegree_nt_spatial, file = "outdegree_nt_spatial_20OUT.Rdata")
 
 writeVector(outdegree_nt_spatial, 
-            filename = "outdegree_nt_spatial.shp",
+            filename = "shapes_20OUT23\\outdegree_nt_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -374,33 +330,31 @@ writeVector(outdegree_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
-outdegree_nt_spatial <- terra::vect("outdegree_nt_spatial.shp")
+#outdegree_nt_spatial <- terra::vect("outdegree_nt_spatial_20OUT.shp")
 
 #CLOSENESS - THREATENED ########################################################
 
-closeness_t <- rep(NA, length(fw_list_with_status_aggreg))
+closeness_t <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  close_t_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_t_close2 <- close_t_fw2[close_t_fw2$aggreg_IUCN == "threatened",]$closeness
+  close_t_fw2 <- fw_list_with_status[[i]]
+  fw_t_close2 <- close_t_fw2[close_t_fw2$agreg_ts == "threatened",]$closeness
   if(length(fw_t_close2)!=0) closeness_t[i] <- mean(fw_t_close2, na.rm=TRUE)
   
   message(i)
   
 }
 
-closeness_t <- data.frame(names(fw_list_with_status_aggreg), closeness_t)
+closeness_t <- data.frame(names(fw_list_with_status), closeness_t)
 names(closeness_t) <- c("grid", "closeness")
 #head(closeness_t)
-#hist(closeness_t$closeness)
 
 closeness_t_spatial <- merge(europeRaster_poly, closeness_t, by.x = "PageName", by.y = "grid")
-#plot(closeness_t_spatial)
-#save(closeness_t_spatial, file = "closeness_t_spatial.Rdata")
+#save(closeness_t_spatial, file = "closeness_t_spatial_20OUT.Rdata")
 
 writeVector(closeness_t_spatial, 
-            filename = "closeness_t_spatial.shp",
+            filename = "shapes_20OUT23\\closeness_t_spatial_20OUT23.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -408,33 +362,31 @@ writeVector(closeness_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-closeness_t_spatial <- terra::vect("closeness_t_spatial.shp")
+#closeness_t_spatial <- terra::vect("closeness_t_spatial_20OUT23.shp")
 
 #CLOSENESS - NON-THREATENED ####################################################
 
-closeness_nt <- rep(NA, length(fw_list_with_status_aggreg))
+closeness_nt <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  close_nt_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_nt_close2 <- close_nt_fw2[close_nt_fw2$aggreg_IUCN == "non-threatened",]$closeness
+  close_nt_fw2 <- fw_list_with_status[[i]]
+  fw_nt_close2 <- close_nt_fw2[close_nt_fw2$agreg_ts == "not_threatened",]$closeness
   if(length(fw_nt_close2)!=0) closeness_nt[i] <- mean(fw_nt_close2, na.rm=TRUE)
   
   message(i)
   
 }
 
-closeness_nt <- data.frame(names(fw_list_with_status_aggreg), closeness_nt)
+closeness_nt <- data.frame(names(fw_list_with_status), closeness_nt)
 names(closeness_nt) <- c("grid", "closeness")
 #head(closeness_nt)
-#hist(closeness_nt$closeness)
 
 closeness_nt_spatial <- merge(europeRaster_poly, closeness_nt, by.x = "PageName", by.y = "grid")
-#plot(closeness_nt_spatial)
-#save(closeness_nt_spatial, file = "closeness_nt_spatial.Rdata")
+#save(closeness_nt_spatial, file = "closeness_nt_spatial_20OUT.Rdata")
 
 writeVector(closeness_nt_spatial, 
-            filename = "closeness_nt_spatial.shp",
+            filename = "shapes_20OUT23\\closeness_nt_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -442,33 +394,31 @@ writeVector(closeness_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
-closeness_nt_spatial <- terra::vect("closeness_nt_spatial.shp")
+#closeness_nt_spatial <- terra::vect("closeness_nt_spatial_20OUT.shp")
 
 #TROPHIC LEVEL - NON-THREATENED ################################################
 
-TL_nt <- rep(NA, length(fw_list_with_status_aggreg))
+TL_nt <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  tl_nt_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_nt_TL2 <- tl_nt_fw2[tl_nt_fw2$aggreg_IUCN == "non-threatened",]$TL
+  tl_nt_fw2 <- fw_list_with_status[[i]]
+  fw_nt_TL2 <- tl_nt_fw2[tl_nt_fw2$agreg_ts == "not_threatened",]$TL
   if(length(fw_nt_TL2)!=0) TL_nt[i] <- mean(fw_nt_TL2, na.rm=TRUE)
   
   message(i)
   
 }
 
-TL_nt <- data.frame(names(fw_list_with_status_aggreg), TL_nt)
+TL_nt <- data.frame(names(fw_list_with_status), TL_nt)
 names(TL_nt) <- c("grid", "trophic_level")
 #head(TL_nt)
-#hist(TL_nt$trophic_level)
 
 tl_nt_spatial <- merge(europeRaster_poly, TL_nt, by.x = "PageName", by.y = "grid")
-#plot(closeness_t_spatial)
-#save(tl_nt_spatial, file = "tl_nt_spatial.Rdata")
+#save(tl_nt_spatial, file = "tl_nt_spatial_20OUT.Rdata")
 
 writeVector(tl_nt_spatial, 
-            filename = "tl_nt_spatial.shp",
+            filename = "shapes_20OUT23\\tl_nt_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -476,33 +426,31 @@ writeVector(tl_nt_spatial,
             options="ENCODING=UTF-8"
 )
 
-tl_nt_spatial <- terra::vect("tl_nt_spatial.shp")
+#tl_nt_spatial <- terra::vect("tl_nt_spatial_20OUT.shp")
 
 #TROPHIC LEVEL - THREATENED ####################################################
 
-TL_t <- rep(NA, length(fw_list_with_status_aggreg))
+TL_t <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  tl_t_fw2 <- fw_list_with_status_aggreg[[i]]
-  fw_t_TL2 <- tl_t_fw2[tl_t_fw2$aggreg_IUCN == "threatened",]$TL
+  tl_t_fw2 <- fw_list_with_status[[i]]
+  fw_t_TL2 <- tl_t_fw2[tl_t_fw2$agreg_ts == "threatened",]$TL
   if(length(fw_t_TL2)!=0) TL_t[i] <- mean(fw_t_TL2, na.rm=TRUE)
   
   message(i)
   
 }
 
-TL_t <- data.frame(names(fw_list_with_status_aggreg), TL_t)
+TL_t <- data.frame(names(fw_list_with_status), TL_t)
 names(TL_t) <- c("grid", "trophic_level")
 #head(TL_t)
-#hist(TL_t$trophic_level)
 
 tl_t_spatial <- merge(europeRaster_poly, TL_t, by.x = "PageName", by.y = "grid")
-#plot(closeness_t_spatial)
-#save(tl_t_spatial, file = "tl_t_spatial.Rdata")
+#save(tl_t_spatial, file = "tl_t_spatial_20OUT.Rdata")
 
 writeVector(tl_t_spatial, 
-            filename = "tl_t_spatial.shp",
+            filename = "shapes_20OUT23\\tl_t_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -510,16 +458,16 @@ writeVector(tl_t_spatial,
             options="ENCODING=UTF-8"
 )
 
-tl_t_spatial <- terra::vect("tl_t_spatial.shp")
+#tl_t_spatial <- terra::vect("tl_t_spatial_20OUT.shp")
 
 #PROPORTION OF THREATENED SPECIES ##############################################
 
-propT <- rep(NA, length(fw_list_with_status_aggreg))
+propT <- rep(NA, length(fw_list_with_status))
 
-for(i in 1:length(fw_list_with_status_aggreg)){
+for(i in 1:length(fw_list_with_status)){
   
-  propT_fw2 <- fw_list_with_status_aggreg[[i]]
-  prop <- propT_fw2$aggreg_IUCN
+  propT_fw2 <- fw_list_with_status[[i]]
+  prop <- propT_fw2$agreg_ts
   n_t <- length(prop[prop=="threatened"])
   n_total <- length(prop)
   propT[i] <- n_t/n_total
@@ -530,17 +478,15 @@ for(i in 1:length(fw_list_with_status_aggreg)){
   
 }
 
-propT <- data.frame(names(fw_list_with_status_aggreg), propT)
+propT <- data.frame(names(fw_list_with_status), propT)
 names(propT) <- c("grid", "proportion")
 #head(propT)
-#hist(propT$proportion)
 
 proportion_spatial <- merge(europeRaster_poly, propT, by.x = "PageName", by.y = "grid")
-#plot(proportion_spatial)
-#save(proportion_spatial, file = "proportion_spatial.Rdata")
+#save(proportion_spatial, file = "proportion_spatial_20OUT.Rdata")
 
 writeVector(proportion_spatial, 
-            filename = "proportion_spatial.shp",
+            filename = "shapes_20OUT23\\proportion_spatial_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -548,7 +494,7 @@ writeVector(proportion_spatial,
             options="ENCODING=UTF-8"
 )
 
-proportion_spatial <- terra::vect("proportion_spatial.shp")
+#proportion_spatial <- terra::vect("proportion_spatial_20OUT.shp")
 
 ##################################################################################################################
 #                                                #STANDARDIZE MAPS
@@ -559,18 +505,6 @@ proportion_spatial <- terra::vect("proportion_spatial.shp")
 #Load packages
 library(vegan)
 library(terra)
-
-load("C:/Users/FMest/Documents/github/red_listed_networks/ivi_nt_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/ivi_t_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/centrality_nt_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/centrality_t_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/indegree_t_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/indegree_nt_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/closeness_t_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/closeness_nt_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/tl_nt_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/tl_t_spatial.Rdata")
-load("C:/Users/FMest/Documents/github/red_listed_networks/proportion_spatial.Rdata")
 
 ###########
 #   IVI
@@ -583,7 +517,7 @@ ivi_nt_spatial_STD <- ivi_nt_spatial
 ivi_nt_spatial_STD$ivi_STD <- ivi_nt_std_vector
 #
 writeVector(ivi_nt_spatial_STD, 
-            filename = "ivi_nt_spatial_STD.shp",
+            filename = "shapes_20OUT23\\ivi_nt_spatial_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -598,7 +532,7 @@ ivi_t_spatial_STD <- ivi_t_spatial
 ivi_t_spatial_STD$ivi_STD <- ivi_t_std_vector
 #
 writeVector(ivi_t_spatial_STD, 
-            filename = "ivi_t_spatial_STD.shp",
+            filename = "shapes_20OUT23\\ivi_t_spatial_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -617,7 +551,7 @@ centrality_nt_std_vector_STD <- centrality_nt_spatial
 centrality_nt_std_vector_STD$centrality_STD <- centrality_nt_std_vector
 #
 writeVector(centrality_nt_std_vector_STD, 
-            filename = "centrality_nt_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\centrality_nt_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -632,7 +566,7 @@ centrality_t_std_vector_STD <- centrality_t_spatial
 centrality_t_std_vector_STD$centrality_STD <- centrality_t_std_vector
 #
 writeVector(centrality_t_std_vector_STD, 
-            filename = "centrality_t_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\centrality_t_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -652,7 +586,7 @@ indegree_nt_std_vector_STD <- indegree_nt_spatial
 indegree_nt_std_vector_STD$indegree_STD <- indegree_nt_std_vector
 #
 writeVector(indegree_nt_std_vector_STD, 
-            filename = "indegree_nt_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\indegree_nt_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -667,7 +601,7 @@ indegree_t_std_vector_STD <- indegree_t_spatial
 indegree_t_std_vector_STD$indegree_STD <- indegree_t_std_vector
 #
 writeVector(indegree_t_std_vector_STD, 
-            filename = "indegree_t_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\indegree_t_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -687,7 +621,7 @@ outdegree_nt_std_vector_STD <- outdegree_nt_spatial
 outdegree_nt_std_vector_STD$outdegree_STD <- outdegree_nt_std_vector
 #
 writeVector(outdegree_nt_std_vector_STD, 
-            filename = "outdegree_nt_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\outdegree_nt_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -702,7 +636,7 @@ outdegree_t_std_vector_STD <- outdegree_t_spatial
 outdegree_t_std_vector_STD$outdegree_STD <- outdegree_t_std_vector
 #
 writeVector(outdegree_t_std_vector_STD, 
-            filename = "outdegree_t_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\outdegree_t_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -722,7 +656,7 @@ closeness_nt_std_vector_STD <- closeness_nt_spatial
 closeness_nt_std_vector_STD$closeness_STD <- closeness_nt_std_vector
 #
 writeVector(closeness_nt_std_vector_STD, 
-            filename = "closeness_nt_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\closeness_nt_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
@@ -737,7 +671,7 @@ closeness_t_std_vector_STD <- closeness_t_spatial
 closeness_t_std_vector_STD$closeness_STD <- closeness_t_std_vector
 #
 writeVector(closeness_t_std_vector_STD, 
-            filename = "closeness_t_std_vector_STD.shp",
+            filename = "shapes_20OUT23\\closeness_t_std_vector_STD_20OUT.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
