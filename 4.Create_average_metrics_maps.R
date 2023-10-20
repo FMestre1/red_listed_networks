@@ -10,7 +10,7 @@ library(terra)
 #grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europa_10km/europe_10km.shp")
 #crs(grid)
 
-europe <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
+europe <- terra::vect("C:/Users/asus/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
 #terra::crs(europe)
 
 europe_coastline_borders <- aggregate(europe, dissolve = TRUE)
@@ -27,8 +27,8 @@ writeVector(europe_coastline_borders,
             options="ENCODING=UTF-8"
             )
 
-europeRaster <- terra::rast(x="C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img")
-cells_info <- foreign::read.dbf(file = "C:/Users/FMest/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img.vat.dbf")
+europeRaster <- terra::rast(x="C:\\Users\\asus\\Documents\\github\\red_listed_networks\\mask10k-20230214T144658Z-001\\mask10k\\reference_grid_10km.img")
+cells_info <- foreign::read.dbf(file = "C:/Users/asus/Documents/github/red_listed_networks/mask10k-20230214T144658Z-001/mask10k/reference_grid_10km.img.vat.dbf")
 
 #To vector
 europeRaster_poly <- terra::as.polygons(europeRaster, values = TRUE, extent=FALSE)
@@ -56,10 +56,10 @@ for(i in 1:length(fw_list_with_status)){
   fw3$SP_NAME <- stringr::str_replace(fw3$SP_NAME, "_", " ")
   sp_fw3 <- fw3$SP_NAME
   
-  if(any(red_listed_3$full_name %in% sp_fw3))
+  if(any(new_species_iucn$scientificName %in% sp_fw3))
     {
-    sp_fw3_redList <- red_listed_3[red_listed_3$full_name %in% sp_fw3,]
-    fw4 <- merge(fw3, sp_fw3_redList, by.x = "SP_NAME", by.y = "full_name", all.x = TRUE)
+    sp_fw3_redList <- new_species_iucn[new_species_iucn$scientificName %in% sp_fw3,]
+    fw4 <- merge(fw3, sp_fw3_redList, by.x = "SP_NAME", by.y = "scientificName", all.x = TRUE)
     fw_list_with_status[[i]] <- fw4
   }
 
@@ -68,8 +68,7 @@ message(i)
 
 }
 
-#table(fw_list_with_status_aggreg_BS[[i]]$SP_NAME == "Natrix natrix")
-#identical(as.vector(unlist(lapply(fw_list_with_status, nrow))), as.vector(unlist(lapply(fw_list, nrow))))
+#save(fw_list_with_status, file = "fw_list_with_status_19OUT.RData")
 
 #Add aggregated IUCN status
 fw_list_with_status_aggreg <- fw_list_with_status
