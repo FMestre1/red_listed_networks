@@ -681,7 +681,7 @@ writeVector(closeness_t_std_vector_STD,
 
 
 ################################################################################
-#                                 COMPARE MAPS
+#                            COMPARE MAPS - WILCOXON
 ################################################################################
 
 #FMestre
@@ -716,3 +716,15 @@ cor.test(centrality_t_spatial$centrality, centrality_nt_spatial$centrality, meth
 ctrl_test <- data.frame(centrality_t_spatial$centrality, centrality_nt_spatial$centrality)
 ctrl_test <- ctrl_test[complete.cases(ctrl_test),]
 ctrl_ivi <- wilcox.test(ctrl_test[,1], ctrl_test[,2], paired = TRUE)
+
+
+################################################################################
+#              Rasterize
+################################################################################
+
+template_raster <- terra::rast("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\old_results\\outdeg_diff.tif")
+
+nt_ivi <- terra::rasterize(x = ivi_nt_spatial, 
+                 y = template_raster, 
+                 field = "ivi",
+                 fun=sum)
