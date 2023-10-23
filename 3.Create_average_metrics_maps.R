@@ -4,8 +4,44 @@
 #FMestre
 #09-02-2023
 
+load("C:\\Users\\asus\\Desktop\\igraph_list_02SET23.RData")
+load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
+load("all_species_status_body_mass_amph_13_20OUT.RData")
+#
+terra::vect("shapes_20OUT23\\sp_richness_23OUT.shp")
+terra::vect("shapes_20OUT23\\ivi_nt_spatial_second_version_20OUT.shp")
+terra::vect("shapes_20OUT23\\ivi_t_spatial_second_version_20OUT.shp")
+terra::vect("shapes_20OUT23\\centrality_nt_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\centrality_t_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\indegree_t_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\indegree_nt_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\outdegree_t_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\outdegree_nt_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\closeness_t_spatial_20OUT23.shp")
+terra::vect("shapes_20OUT23\\closeness_nt_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\tl_nt_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\tl_t_spatial_20OUT.shp")
+terra::vect("shapes_20OUT23\\proportion_spatial_20OUT.shp")
+#
+terra::rast("rasters_21OUT\\nt_ivi_20OUT.tif")
+terra::rast("rasters_21OUT\\t_ivi_20OUT.tif")
+terra::rast("rasters_21OUT\\t_centrality_20OUT.tif")
+terra::rast("rasters_21OUT\\nt_centrality_20OUT.tif")
+terra::rast("rasters_21OUT\\t_indegree_20OUT.tif")
+terra::rast("rasters_21OUT\\nt_indegree_20OUT.tif")
+terra::rast("rasters_21OUT\\nt_outdegree_20OUT.tif")
+terra::rast("rasters_21OUT\\t_outdegree_20OUT.tif")
+terra::rast("rasters_21OUT\\t_closeness_20OUT.tif")
+terra::rast("rasters_21OUT\\nt_closeness_20OUT.tif")
+terra::rast("rasters_21OUT\\t_tl_20OUT.tif")
+terra::rast("rasters_21OUT\\nt_tl_20OUT.tif")
+terra::rast("rasters_21OUT\\proportion_r_20OUT.tif")
+
 #Load packages
 library(terra)
+library(viridis)
+library(rasterVis)
+library(gridExtra)
 
 #grid <- terra::vect("C:/Users/FMest/Documents/0. Artigos/IUCN_networks/shapefiles/Europa_10km/europe_10km.shp")
 #crs(grid)
@@ -43,6 +79,46 @@ europeRaster_poly_wgs84_coords <- data.frame(europeRaster_poly_wgs84, europeRast
 
 ################################################################################
 
+################################################################################
+#                               Species Richnesss          
+################################################################################
+
+#fw_list_with_status
+#cheddar_list
+#igraph_list
+
+length(fw_list_with_status)
+length(cheddar_list)
+length(igraph_list)
+
+#Get number of species, checking if the three sources of information agree
+
+richness_23OUT <- data.frame(matrix(ncol = 3, nrow = length(igraph_list)))
+names(richness_23OUT) <- c("grid", "spe_igraph", "spe_cheddar")
+
+for(i in 1:length(igraph_list)){
+  
+  richness_23OUT$grid[i] <- names(cheddar_list)[i]
+  richness_23OUT$spe_igraph[i] <- length(igraph::V(igraph_list[[i]]))
+  richness_23OUT$spe_cheddar[i] <- cheddar::NumberOfNodes(cheddar_list[[i]])
+  
+  message(i)
+
+}
+
+sp_richness_23OUT <- merge(europeRaster_poly, richness_23OUT, by.x = "PageName", by.y = "grid")
+
+writeVector(sp_richness_23OUT, 
+            filename = "shapes_20OUT23\\sp_richness_23OUT.shp",
+            filetype=NULL, 
+            layer=NULL, 
+            insert=FALSE,
+            overwrite=TRUE, 
+            options="ENCODING=UTF-8"
+)
+
+################################################################################
+
 fw_list_with_status <- fw_list
 
 #Add IUCN status
@@ -67,6 +143,7 @@ message(i)
 #fw_list_with_status[[2]]
 
 #save(fw_list_with_status, file = "fw_list_with_status_20OUT.RData")
+#load("fw_list_with_status_20OUT.RData")
 
 #IVI - NOT THREATENED ##########################################################
 
@@ -152,7 +229,6 @@ names(centrality_nt) <- c("grid", "centrality")
 #head(centrality_nt)
 
 centrality_nt_spatial <- merge(europeRaster_poly, centrality_nt, by.x = "PageName", by.y = "grid")
-#plot(centrality_nt_spatial)
 #save(centrality_nt_spatial, file = "centrality_nt_spatial_20OUT23.Rdata")
 
 writeVector(centrality_nt_spatial, 
@@ -183,10 +259,8 @@ for(i in 1:length(fw_list_with_status)){
 centrality_t <- data.frame(names(fw_list_with_status), centrality_t)
 names(centrality_t) <- c("grid", "centrality")
 #head(centrality_t)
-#hist(centrality_t$centrality)
 
 centrality_t_spatial <- merge(europeRaster_poly, centrality_t, by.x = "PageName", by.y = "grid")
-#plot(centrality_t_spatial)
 #save(centrality_t_spatial, file = "centrality_t_spatial_20OUT.Rdata")
 
 writeVector(centrality_t_spatial, 
@@ -219,7 +293,6 @@ names(indegree_t) <- c("grid", "indegree")
 #head(indegree_t)
 
 indegree_t_spatial <- merge(europeRaster_poly, indegree_t, by.x = "PageName", by.y = "grid")
-#plot(indegree_t_spatial)
 #save(indegree_t_spatial, file = "indegree_t_spatial_20OUT.Rdata")
 
 writeVector(indegree_t_spatial, 
@@ -252,7 +325,6 @@ names(indegree_nt) <- c("grid", "indegree")
 #head(indegree_nt)
 
 indegree_nt_spatial <- merge(europeRaster_poly, indegree_nt, by.x = "PageName", by.y = "grid")
-#plot(indegree_nt_spatial)
 #save(indegree_nt_spatial, file = "indegree_nt_spatial_20OUT.Rdata")
 
 writeVector(indegree_nt_spatial, 
@@ -285,7 +357,6 @@ names(outdegree_t) <- c("grid", "outdegree")
 #head(outdegree_t)
 
 outdegree_t_spatial <- merge(europeRaster_poly, outdegree_t, by.x = "PageName", by.y = "grid")
-#plot(outdegree_t_spatial)
 #save(outdegree_t_spatial, file = "outdegree_t_spatial_20OUT.Rdata")
 
 writeVector(outdegree_t_spatial, 
@@ -318,7 +389,6 @@ names(outdegree_nt) <- c("grid", "outdegree")
 #head(outdegree_nt)
 
 outdegree_nt_spatial <- merge(europeRaster_poly, outdegree_nt, by.x = "PageName", by.y = "grid")
-#plot(outdegree_nt_spatial)
 #save(outdegree_nt_spatial, file = "outdegree_nt_spatial_20OUT.Rdata")
 
 writeVector(outdegree_nt_spatial, 
@@ -719,12 +789,281 @@ ctrl_ivi <- wilcox.test(ctrl_test[,1], ctrl_test[,2], paired = TRUE)
 
 
 ################################################################################
-#              Rasterize
+#                             Convert to rasters
 ################################################################################
 
 template_raster <- terra::rast("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\old_results\\outdeg_diff.tif")
 
+#IVI
 nt_ivi <- terra::rasterize(x = ivi_nt_spatial, 
                  y = template_raster, 
-                 field = "ivi",
-                 fun=sum)
+                 field = "ivi")
+
+#terra::writeRaster(nt_ivi, "rasters_21OUT\\nt_ivi_20OUT.tif")
+
+t_ivi <- terra::rasterize(x = ivi_t_spatial, 
+                           y = template_raster, 
+                           field = "ivi")
+
+#terra::writeRaster(t_ivi, "rasters_21OUT\\t_ivi_20OUT.tif")
+
+
+#Centrality
+t_centrality <- terra::rasterize(x = centrality_t_spatial, 
+                          y = template_raster, 
+                          field = "centrality")
+
+#terra::writeRaster(t_centrality, "rasters_21OUT\\t_centrality_20OUT.tif")
+
+nt_centrality <- terra::rasterize(x = centrality_nt_spatial, 
+                                 y = template_raster, 
+                                 field = "centrality")
+
+#terra::writeRaster(nt_centrality, "rasters_21OUT\\nt_centrality_20OUT.tif")
+
+#Indegree
+t_indegree <- terra::rasterize(x = indegree_t_spatial, 
+                                 y = template_raster, 
+                                 field = "indegree")
+
+#terra::writeRaster(t_indegree, "rasters_21OUT\\t_indegree_20OUT.tif")
+
+nt_indegree <- terra::rasterize(x = indegree_nt_spatial, 
+                                  y = template_raster, 
+                                  field = "indegree")
+
+#terra::writeRaster(nt_indegree, "rasters_21OUT\\nt_indegree_20OUT.tif")
+
+#Outdegree
+nt_outdegree <- terra::rasterize(x = outdegree_nt_spatial, 
+                                y = template_raster, 
+                                field = "outdegree")
+
+#terra::writeRaster(nt_outdegree, "rasters_21OUT\\nt_outdegree_20OUT.tif")
+
+t_outdegree <- terra::rasterize(x = outdegree_t_spatial, 
+                                 y = template_raster, 
+                                 field = "outdegree")
+
+#terra::writeRaster(t_outdegree, "rasters_21OUT\\t_outdegree_20OUT.tif")
+
+
+#Closeness
+t_closeness <- terra::rasterize(x = closeness_t_spatial, 
+                                y = template_raster, 
+                                field = "closeness")
+
+#terra::writeRaster(t_closeness, "rasters_21OUT\\t_closeness_20OUT.tif")
+
+nt_closeness <- terra::rasterize(x = closeness_nt_spatial, 
+                                y = template_raster, 
+                                field = "closeness")
+
+#terra::writeRaster(nt_closeness, "rasters_21OUT\\nt_closeness_20OUT.tif")
+
+#TL
+t_tl <- terra::rasterize(x = tl_t_spatial, 
+                                 y = template_raster, 
+                                 field = "trophic_level")
+
+#terra::writeRaster(t_tl, "rasters_21OUT\\t_tl_20OUT.tif")
+
+nt_tl <- terra::rasterize(x = tl_nt_spatial, 
+                          y = template_raster, 
+                          field = "trophic_level")
+
+#terra::writeRaster(nt_tl, "rasters_21OUT\\nt_tl_20OUT.tif")
+
+
+#Proportion
+proportion_r <- terra::rasterize(x = proportion_spatial, 
+                          y = template_raster, 
+                          field = "proportion")
+
+#terra::writeRaster(proportion_r, "rasters_21OUT\\proportion_r_20OUT.tif")
+
+################################################################################
+#                          Plot maps and frequency           
+################################################################################
+
+#Plot with rastervis
+##
+my.col.regions <- rev(terrain.colors(100))
+######################
+#max(nt_indegree) #max value: 25.28488 
+#max(t_indegree) #max value: 61.000 
+ind_min_max <- seq(0, 61, length.out = 100)
+ind1 <- rasterVis::levelplot(nt_indegree, col.regions=my.col.regions, at=ind_min_max, main = "Not-threatened")
+ind2 <- rasterVis::levelplot(t_indegree, col.regions=my.col.regions, at=ind_min_max, main = "Threatened")
+ind_title <- textGrob("Average In-degree", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(ind1, ind2, ncol=2, top=ind_title)
+######################
+#max(nt_outdegree) #max value: 22.2991447
+#max(t_outdegree) #max value: 20.4444447
+out_min_max <- seq(0, 23, length.out = 100)
+out1 <- rasterVis::levelplot(nt_outdegree, col.regions=my.col.regions, at=out_min_max, main = "Not-threatened")
+out2 <- rasterVis::levelplot(t_outdegree, col.regions=my.col.regions, at=out_min_max, main = "Threatened")
+out_title <- textGrob("Average Out-degree", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(out1, out2, ncol=2, top=out_title)
+######################
+#max(nt_t_level) #max value: 2
+#max(t_t_level) #max value: 3 
+tl_min_max <- seq(0, 3, length.out = 100)
+tl1 <- rasterVis::levelplot(nt_t_level, col.regions=my.col.regions, at=tl_min_max, main = "Not-threatened")
+tl2 <- rasterVis::levelplot(t_t_level, col.regions=my.col.regions, at=tl_min_max, main = "Threatened")
+tl_title <- textGrob("Average Trophic Level", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(tl1, tl2, ncol=2, top=tl_title)
+######################
+#max(nt_closeness) #max value:
+#max(t_closeness) #max value:
+closeness_min_max <- seq(0, 1, length.out = 100)
+cl1 <- rasterVis::levelplot(nt_closeness, col.regions=my.col.regions, at=closeness_min_max, main = "Not-threatened")
+cl2 <- rasterVis::levelplot(t_closeness, col.regions=my.col.regions, at=closeness_min_max, main = "Threatened")
+cl_title <- textGrob("Average Closeness Centrality", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(cl1, cl2, ncol=2, top=cl_title)
+######################
+#max(nt_centrality) #max value: 115.24037170
+#max(t_centrality) #max value: 459.1808
+centrality_min_max <- seq(0, 460, length.out = 100)
+bt1 <- rasterVis::levelplot(nt_centrality, col.regions=my.col.regions, at=centrality_min_max, main = "Not-threatened")
+bt2 <- rasterVis::levelplot(t_centrality, col.regions=my.col.regions, at=centrality_min_max, main = "Threatened")
+bt_title <- textGrob("Average Betweenness Centrality", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(bt1, bt2, ncol=2, top=bt_title)
+######################
+#max(nt_ivi) #max value: 82.45447
+#max(t_ivi) #max value: 100
+ivi_min_max <- seq(0, 100, length.out = 100)
+ivi1 <- rasterVis::levelplot(nt_ivi, col.regions=my.col.regions, at=ivi_min_max, main = "Not-threatened")
+ivi2 <- rasterVis::levelplot(t_ivi, col.regions=my.col.regions, at=ivi_min_max, main = "Threatened")
+ivi_title <- textGrob("Average IVI", gp = gpar(fontsize = 25, fontface = "bold"))
+grid.arrange(ivi1, ivi2, ncol=2, top=ivi_title)
+######################
+rasterVis::levelplot(proportion_r, par.settings = rasterTheme(viridis_pal()(255)), main = "Proportion of threatened species")
+rasterVis::levelplot(xxx, par.settings = rasterTheme(viridis_pal()(255)), main = "Number of nodes in each network")
+
+################################################################################
+#                             Histogram plots
+################################################################################
+
+################################### indegree ###################################
+
+nt_indegree_df <- as.data.frame(indegree_nt_spatial)
+t_indegree_df <- as.data.frame(indegree_t_spatial)
+#head(nt_indegree_df)
+#head(t_indegree_df)
+nt_indegree_df <- nt_indegree_df[,c(1,4)]
+t_indegree_df <- t_indegree_df[,c(1,4)]
+#
+names(nt_indegree_df)[2] <- "NT_indegree"
+names(t_indegree_df)[2] <- "T_indegree"
+#
+indegree_compare <- merge(nt_indegree_df, t_indegree_df)
+indegree_compare <- indegree_compare[complete.cases(indegree_compare),]
+#View(indegree_compare)
+indegree_ttest <- t.test(indegree_compare[,2], indegree_compare[,3], paired = TRUE)
+#print(indegree_ttest)
+indegree_cohens_d <- effsize::cohen.d(indegree_compare[,2], indegree_compare[,3])
+#print(indegree_cohens_d)
+#plot(indegree_compare[,2], indegree_compare[,3])
+cor(indegree_compare[,2], indegree_compare[,3], method = "pearson")
+
+####### Plot
+
+#frequency plots
+min(indegree_compare[,2])
+max(indegree_compare[,2])
+min(indegree_compare[,3])
+max(indegree_compare[,3])
+
+#names(indegree_compare)
+par(mfrow=c(2, 1))
+h_in_nt <- hist(indegree_compare[,2])
+h_in_t <- hist(indegree_compare[,3])
+# Convert the counts to percentages
+h_in_nt$counts <- h_in_nt$counts / sum(h_in_nt$counts) * 100
+h_in_t$counts <- h_in_t$counts / sum(h_in_t$counts) * 100
+# Create the line plot
+plot(h_in_nt$mids, h_in_nt$counts, type = "n", xlab = "In-degree", ylab = "Frequency (%)", main = "In-degree", ylim = c(0,45))
+lines(h_in_nt$mids, h_in_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_in_t$mids, h_in_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
+
+################################## outdegree ###################################
+
+nt_outdegree_df <- as.data.frame(outdegree_nt_spatial)
+t_outegree_df <- as.data.frame(outdegree_t_spatial)
+#head(nt_outdegree_df)
+#head(t_outdegree_df)
+nt_outdegree_df <- nt_outdegree_df[,c(1,4)]
+t_outdegree_df <- t_outdegree_df[,c(1,4)]
+#
+names(nt_outdegree_df)[2] <- "NT_outdegree"
+names(t_outdegree_df)[2] <- "T_outdegree"
+#
+outdegree_compare <- merge(nt_outdegree_df, t_outdegree_df)
+outdegree_compare <- outdegree_compare[complete.cases(outdegree_compare),]
+#View(outdegree_compare)
+outdegree_ttest <- t.test(outdegree_compare[,2], outdegree_compare[,3], paired = TRUE)
+#print(outdegree_ttest)
+outdegree_cohens_d <- effsize::cohen.d(outdegree_compare[,2], outdegree_compare[,3])
+#print(outdegree_cohens_d)
+#plot(outdegree_compare[,2], outdegree_compare[,3])
+cor(outdegree_compare[,2], outdegree_compare[,3], method = "pearson")
+
+####### Plot
+
+#frequency plots
+min(outdegree_compare[,2])
+max(outdegree_compare[,2])
+min(outdegree_compare[,3])
+max(outdegree_compare[,3])
+
+#names(indegree_compare)
+par(mfrow=c(2, 1))
+h_out_nt <- hist(outdegree_compare[,2])
+h_out_t <- hist(outdegree_compare[,3])
+# Convert the counts to percentages
+h_out_nt$counts <- h_out_nt$counts / sum(h_out_nt$counts) * 100
+h_out_t$counts <- h_out_t$counts / sum(h_out_t$counts) * 100
+# Create the line plot
+plot(h_out_nt$mids, h_out_nt$counts, type = "n", xlab = "In-degree", ylab = "Frequency (%)", main = "Out-degree", ylim = c(0,25))
+lines(h_out_nt$mids, h_out_nt$counts, lwd = 3, col = "darkgreen")
+lines(h_out_t$mids, h_out_t$counts, lwd = 3, col = "darkred")
+# Add legend
+legend("topright", legend = c("Non-threatened", "Threatened"), col = c("darkgreen", "darkred"), lwd = 3)
+
+
+
+
+
+
+
+################################################################################
+#                          Compute differences           
+################################################################################
+
+indeg_diff <- t_indegree - nt_indegree
+terra::writeRaster(indeg_diff, filename = "rasters_21OUT\\indeg_diff.tif")
+#plot(indeg_diff)
+#
+outdeg_diff <- t_outdegree - nt_outdegree
+terra::writeRaster(outdeg_diff, filename = "rasters_21OUT\\outdeg_diff.tif")
+#plot(outdeg_diff)
+#
+trophic_level_diff <- t_tl - nt_tl
+terra::writeRaster(trophic_level_diff, filename = "rasters_21OUT\\trophic_level_diff.tif")
+#plot(trophic_level_diff)
+#
+closeness_diff <- t_closeness - nt_closeness
+terra::writeRaster(closeness_diff, filename = "rasters_21OUT\\closeness_diff.tif")
+#plot(closeness_diff)
+#
+centrality_diff <- t_centrality - nt_centrality
+terra::writeRaster(centrality_diff, filename = "rasters_21OUT\\centrality_diff.tif")
+#plot(centrality_diff)
+#
+ivi_diff <- t_ivi - nt_ivi
+terra::writeRaster(ivi_diff, filename = "rasters_21OUT\\ivi_diff.tif")
+#plot(ivi_diff)
+
