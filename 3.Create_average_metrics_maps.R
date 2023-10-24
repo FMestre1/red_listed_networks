@@ -61,8 +61,8 @@ load("outdegree_compare_23OUT.RData")
 europe <- terra::vect("C:/Users/asus/Documents/0. Artigos/IUCN_networks/shapefiles/Europe/Europe.shp")
 #terra::crs(europe)
 
-europe_coastline_borders <- aggregate(europe, dissolve = TRUE)
-#plot(europe_coastline_borders)
+europe_coastline_borders <- terra::aggregate(europe, dissolve = TRUE, "merge")
+plot(europe_coastline_borders)
 
 #Save shapefile
 writeVector(europe_coastline_borders, 
