@@ -12,7 +12,7 @@ library(rasterVis)
 library(gridExtra)
 library(grid)
 
-my.theme <- rasterTheme(viridis_pal(option = "D")(10))
+#my.theme <- rasterTheme(YlOrRdTheme(option = "D")(10))
 
 ### In-degree ###
 nt_indegree_df <- as.data.frame(indegree_nt_spatial)
@@ -44,8 +44,8 @@ names(df_indegreee_plot_t) <- c("mids", "counts")
 #
 ind_title <- textGrob("Average In-degree", gp = gpar(fontsize = 25, fontface = "bold"))
 ind_min_max <- seq(0, 65, length.out = 100)
-ind1 <- rasterVis::levelplot(nt_indegree, par.settings=my.theme, at=ind_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-ind2 <- rasterVis::levelplot(t_indegree, par.settings=my.theme, at=ind_min_max, main = "Threatened", scales = list(draw = FALSE))
+ind1 <- rasterVis::levelplot(nt_indegree, par.settings=BuRdTheme, at=ind_min_max, main = "Not-threatened", scales = list(draw = FALSE))
+ind2 <- rasterVis::levelplot(t_indegree, par.settings=BuRdTheme, at=ind_min_max, main = "Threatened", scales = list(draw = FALSE))
 #
 indeg_plot <- ggplot() +
   geom_line(data=df_indegreee_plot_t, aes(x=mids, y=counts), color = "darkred", lwd=1) +
@@ -84,8 +84,8 @@ names(df_outdegreee_plot_t) <- c("mids", "counts")
 #
 out_title <- textGrob("Average Out-degree", gp = gpar(fontsize = 25, fontface = "bold"))
 outd_min_max <- seq(0, 35, length.out = 100)
-out1 <- rasterVis::levelplot(nt_outdegree, par.settings=my.theme, at=outd_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-out2 <- rasterVis::levelplot(t_outdegree, par.settings=my.theme, at=outd_min_max, main = "Threatened", scales = list(draw = FALSE))
+out1 <- rasterVis::levelplot(nt_outdegree, par.settings=BuRdTheme, at=outd_min_max, main = "Not-threatened", scales = list(draw = FALSE))
+out2 <- rasterVis::levelplot(t_outdegree, par.settings=BuRdTheme, at=outd_min_max, main = "Threatened", scales = list(draw = FALSE))
 #
 outdeg_plot <- ggplot() +
   geom_line(data=df_outdegreee_plot_t, aes(x=mids, y=counts), color = "darkred", lwd=1) +
@@ -120,8 +120,8 @@ names(df_tl_plot_t) <- c("mids", "counts")
 #
 tl_title <- textGrob("Average Trophic level", gp = gpar(fontsize = 25, fontface = "bold"))
 tl_min_max <- seq(0, 3, length.out = 100)
-tl1 <- rasterVis::levelplot(nt_tl, par.settings=my.theme, at=tl_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-tl2 <- rasterVis::levelplot(t_tl, par.settings=my.theme, at=tl_min_max, main = "Threatened", scales = list(draw = FALSE))
+tl1 <- rasterVis::levelplot(nt_tl, par.settings=BuRdTheme, at=tl_min_max, main = "Not-threatened", scales = list(draw = FALSE))
+tl2 <- rasterVis::levelplot(t_tl, par.settings=BuRdTheme, at=tl_min_max, main = "Threatened", scales = list(draw = FALSE))
 #
 tl_plot <- ggplot() +
   geom_line(data=df_tl_plot_t, aes(x=mids, y=counts), color = "darkred", lwd=1) +
@@ -175,8 +175,8 @@ names(df_ivi_plot_t) <- c("mids", "counts")
 #
 ivi_title <- textGrob("IVI", gp = gpar(fontsize = 25, fontface = "bold"))
 ivi_min_max <- seq(0, 100, length.out = 100)
-ivi1 <- rasterVis::levelplot(nt_ivi, par.settings=my.theme, at=ivi_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-ivi2 <- rasterVis::levelplot(t_ivi, par.settings=my.theme, at=ivi_min_max, main = "Threatened", scales = list(draw = FALSE))
+ivi1 <- rasterVis::levelplot(nt_ivi, par.settings=BuRdTheme, at=ivi_min_max, main = "Not-threatened", scales = list(draw = FALSE))
+ivi2 <- rasterVis::levelplot(t_ivi, par.settings=BuRdTheme, at=ivi_min_max, main = "Threatened", scales = list(draw = FALSE))
 #
 ivi_plot <- ggplot() +
   geom_line(data=df_ivi_plot_t, aes(x=mids, y=counts), color = "darkred", lwd=1) +
@@ -213,8 +213,8 @@ names(df_btcent_plot_t) <- c("mids", "counts")
 #
 btcent_title <- textGrob("Betweenness centrality", gp = gpar(fontsize = 25, fontface = "bold"))
 btcent_min_max <- seq(0, 460, length.out = 100)
-bt_cent1 <- rasterVis::levelplot(nt_centrality, par.settings=my.theme, at=btcent_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-bt_cent2 <- rasterVis::levelplot(t_centrality, par.settings=my.theme, at=btcent_min_max, main = "Threatened", scales = list(draw = FALSE))
+bt_cent1 <- rasterVis::levelplot(nt_centrality, par.settings=BuRdTheme, at=btcent_min_max, main = "Not-threatened", scales = list(draw = FALSE))
+bt_cent2 <- rasterVis::levelplot(t_centrality, par.settings=BuRdTheme, at=btcent_min_max, main = "Threatened", scales = list(draw = FALSE))
 #
 btcent_plot <- ggplot() +
   geom_line(data=df_btcent_plot_t, aes(x=mids, y=counts), color = "darkred", lwd=1) +
@@ -249,8 +249,8 @@ names(df_close_plot_t) <- c("mids", "counts")
 #
 close_title <- textGrob("Closeness centrality", gp = gpar(fontsize = 25, fontface = "bold"))
 close_min_max <- seq(0, 35, length.out = 100)
-close_cent1 <- rasterVis::levelplot(nt_outdegree, par.settings=my.theme, at=close_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-close_cent2 <- rasterVis::levelplot(t_outdegree,  par.settings=my.theme, at=close_min_max, main = "Threatened", scales = list(draw = FALSE))
+close_cent1 <- rasterVis::levelplot(nt_outdegree, par.settings=BuRdTheme, at=close_min_max, main = "Not-threatened", scales = list(draw = FALSE))
+close_cent2 <- rasterVis::levelplot(t_outdegree,  par.settings=BuRdTheme, at=close_min_max, main = "Threatened", scales = list(draw = FALSE))
 #
 close_plot <- ggplot() +
   geom_line(data=df_close_plot_t, aes(x=mids, y=counts), color = "darkred", lwd=1) +
