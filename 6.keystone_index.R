@@ -254,9 +254,12 @@ keystone_indexes_df <- data.frame(names_keystone_2,
            )
 
 
+colnames(keystone_indexes_df) <- c("grid", "k_nt", "kbu_nt", "ktd_nt", "kdir_nt", "kindir_nt", "k_t",
+"kbu_t", "ktd_t", "kdir_t", "kindir_t") 
+
 #Create maps
 
-keystone_index_geo <- merge(europeRaster_poly, keystone_indexes_df, by.x = "PageName", by.y = "names_keystone_2")
+keystone_index_geo <- merge(europeRaster_poly, keystone_indexes_df, by.x = "PageName", by.y = "grid")
 
 writeVector(keystone_index_geo, 
             filename = "shapes_20OUT23\\keystone_indexes_03NOV.shp",
