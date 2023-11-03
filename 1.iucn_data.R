@@ -22,7 +22,6 @@ iucn_sept23_aves_SYN[,2] <- trimws(iucn_sept23_aves_SYN[,2])
 #Join both
 new_species_iucn <- rbind(iucn_sept23_rep_mamm_amph, iucn_sept23_aves)
 
-
 class_species <- c(rep(NA, nrow(iucn_sept23_rep_mamm_amph)), rep("aves", nrow(iucn_sept23_aves)))
 
 for(i in 1:nrow(iucn_sept23_rep_mamm_amph)){

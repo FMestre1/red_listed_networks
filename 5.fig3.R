@@ -9,7 +9,6 @@ library(terra)
 library(rasterVis)
 library(gridExtra)
 
-
 indeg_diff <- t_indegree - nt_indegree
 terra::writeRaster(indeg_diff, filename = "rasters_21OUT\\indeg_diff.tif")
 #plot(indeg_diff)
