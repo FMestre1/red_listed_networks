@@ -42,6 +42,9 @@ cheddar1 <- cheddar_list[[10]]
 
 keystone_index <- list()
 
+#which(names(cheddar_list) == "DX550")
+#cheddar_list[[3122]]
+
 for(m in 1:length(cheddar_list)){
 
 data1 <- data.frame(cheddar_list[[m]]$trophic.links,1)
@@ -216,24 +219,48 @@ keystone_ktd_t <- rep(NA, length(keystone_index_2))
 keystone_kdir_t <- rep(NA, length(keystone_index_2))
 keystone_kindir_t <- rep(NA, length(keystone_index_2))
 
+t_species <- rep(0, length(keystone_index_2))
+nt_species <- rep(0, length(keystone_index_2))
+
 for(i in 1:length(keystone_index_2)){
   
   #grid_name <- names(keystone_index_2)[i]
-  tab1 <- keystone_index_2[[i]]
+  2 <- keystone_index_2[[i]]
   tab1_nt <- tab1[tab1$agreg_ts == "not_threatened",]
   tab1_t <- tab1[tab1$agreg_ts == "threatened",]
   
-  keystone_k_nt[i] <- mean(tab1_nt$k)
-  keystone_kbu_nt[i] <- mean(tab1_nt$kbu)
-  keystone_ktd_nt[i] <- mean(tab1_nt$ktd)
-  keystone_kdir_nt[i] <- mean(tab1_nt$kdir)
-  keystone_kindir_nt[i] <- mean(tab1_nt$kindir)
-  #
-  keystone_k_t[i] <- mean(tab1_t$k)
-  keystone_kbu_t[i] <- mean(tab1_t$kbu)
-  keystone_ktd_t[i] <- mean(tab1_t$ktd)
-  keystone_kdir_t[i] <- mean(tab1_t$kdir)
-  keystone_kindir_t[i] <- mean(tab1_t$kindir)
+  nt_species[i] <- nrow(tab1_nt)
+  t_species[i] <- nrow(tab1_t)
+
+  if(nrow(tab1_nt) != 0)
+  {
+  keystone_k_nt[i] <- mean(tab1_nt$k, na.rm = TRUE)
+  keystone_kbu_nt[i] <- mean(tab1_nt$kbu, na.rm = TRUE)
+  keystone_ktd_nt[i] <- mean(tab1_nt$ktd, na.rm = TRUE)
+  keystone_kdir_nt[i] <- mean(tab1_nt$kdir, na.rm = TRUE)
+  keystone_kindir_nt[i] <- mean(tab1_nt$kindir, na.rm = TRUE)
+  }else{
+    keystone_k_nt[i] <- 0
+    keystone_kbu_nt[i] <- 0
+    keystone_ktd_nt[i] <- 0
+    keystone_kdir_nt[i] <- 0
+    keystone_kindir_nt[i] <- 0
+  }
+  
+  if(nrow(tab1_t) != 0)
+  {
+  keystone_k_t[i] <- mean(tab1_t$k, na.rm = TRUE)
+  keystone_kbu_t[i] <- mean(tab1_t$kbu, na.rm = TRUE)
+  keystone_ktd_t[i] <- mean(tab1_t$ktd, na.rm = TRUE)
+  keystone_kdir_t[i] <- mean(tab1_t$kdir, na.rm = TRUE)
+  keystone_kindir_t[i] <- mean(tab1_t$kindir, na.rm = TRUE)
+  }else{
+    keystone_k_t[i] <- 0
+    keystone_kbu_t[i] <- 0
+    keystone_ktd_t[i] <- 0
+    keystone_kdir_t[i] <- 0
+    keystone_kindir_t[i] <- 0
+    }
   
   message(i)
   
@@ -241,6 +268,8 @@ for(i in 1:length(keystone_index_2)){
 
 #Combine in a frame
 keystone_indexes_df <- data.frame(names_keystone_2,
+           t_species,
+           nt_species,
            keystone_k_nt,
            keystone_kbu_nt,
            keystone_ktd_nt,
@@ -253,11 +282,21 @@ keystone_indexes_df <- data.frame(names_keystone_2,
            keystone_kindir_t
            )
 
+colnames(keystone_indexes_df) <- c("grid", "nr_t_spe", "nr_nt_spe", "k_nt", 
+                                   "kbu_nt", "ktd_nt", "kdir_nt", "kindir_nt", "k_t",
+                                   "kbu_t", "ktd_t", "kdir_t", "kindir_t") 
 
-colnames(keystone_indexes_df) <- c("grid", "k_nt", "kbu_nt", "ktd_nt", "kdir_nt", "kindir_nt", "k_t",
-"kbu_t", "ktd_t", "kdir_t", "kindir_t") 
+#table(is.na(keystone_indexes_df$k_nt))
+#which(is.na(keystone_indexes_df$k_nt))
+#which(is.na(keystone_indexes_df$k_t))
+#i = 3122
+#DX550
+keystone_indexes_df[i,]
 
 #Create maps
+
+#table(europeRaster_poly$PageName %in% keystone_indexes_df$grid)
+#table(keystone_indexes_df$grid %in% europeRaster_poly$PageName)
 
 keystone_index_geo <- merge(europeRaster_poly, keystone_indexes_df, by.x = "PageName", by.y = "grid")
 
