@@ -311,7 +311,3 @@ writeVector(keystone_index_geo,
 
 
 
-
-
-
-
