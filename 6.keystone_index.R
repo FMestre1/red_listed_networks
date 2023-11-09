@@ -1,3 +1,7 @@
+################################################################################
+#                   Derive keystone species indexes           
+################################################################################
+
 #FMestre
 #31-10-23
 
@@ -15,7 +19,6 @@ europeRaster_poly <- terra::merge(europeRaster_poly, cells_info)
 #Loading the newly created lists
 #load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\igraph_list_02SET23.RData")
 #load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
-
 #load("fw_list_with_status_20OUT.RData")
 
 #Having...
@@ -30,8 +33,8 @@ cheddar_list
 
 #Adapted from code gently provided by F. Jordán 
 
-igraph1 <- igraph_list[[10]]
-cheddar1 <- cheddar_list[[10]]
+#igraph1 <- igraph_list[[10]]
+#cheddar1 <- cheddar_list[[10]]
 
 #as.data.frame(igraph::E(igraph1))
 
@@ -39,6 +42,10 @@ cheddar1 <- cheddar_list[[10]]
 #par(mfrow = c(1, 2))    
 #plot(igraph1)
 #plot(cheddar1)
+
+################################################################################
+# 1. Compute the keystone species indexes from F. Jordán
+################################################################################
 
 keystone_index <- list()
 
@@ -70,16 +77,25 @@ vw <- numeric(numnode)
 for (i in 1:numnode) vw[i]<- -1*sum(coef1[i,])
 for (i in 1:numnode) coef1[i,i] <- coef1[i,i]+(-1)
 
-#kbu <- solve(coef1,vw)
-kbu <- tryCatch(solve(coef1,vw), error=function(e) NA)
+kbu <- as.vector(MASS::ginv(coef1) %*% vw)
+
+#if (det(coef1) != 0) kbu <- solve(coef1,vw)
+#if (det(coef1) == 0) kbu <- as.vector(MASS::ginv(coef1) %*% vw)
+
+#kbu <- tryCatch(solve(coef1,vw), error=function(e) NA)
+
 for (i in 1:numnode) {coef1[i,] <- predator1*mx[,i]}
 for (i in 1:numnode) for (j in 1:numnode) {if (coef1[i,j]!=0) coef1[i,j]<-1/coef1[i,j]}
 vw <- numeric(numnode)
 for (i in 1:numnode) vw[i] <- -1*sum(coef1[i,])
 for (i in 1:numnode) coef1[i,i] <- coef1[i,i]+(-1)
 
-#ktd <- solve(coef1,vw)
-ktd <- tryCatch(solve(coef1,vw), error=function(e) NA)
+ktd <- as.vector(MASS::ginv(coef1) %*% vw)
+
+#if (det(coef1) != 0) ktd <- solve(coef1,vw)
+#if (det(coef1) == 0) ktd <- as.vector(MASS::ginv(coef1) %*% vw)
+
+#ktd <- tryCatch(solve(coef1,vw), error=function(e) NA)
 
 for (i in 1:numnode) {coef1[i,] <- prey1*mx[i,]}
 for (i in 1:numnode) for (j in 1:numnode) {if (coef1[i,j]!=0) coef1[i,j] <- 1/coef1[i,j]}
@@ -175,6 +191,13 @@ message(m)
 
 names(keystone_index) <- names(cheddar_list)
 
+#Save
+#save(keystone_index, file = "keystone_index_08NOV23_ginv.RData")
+
+################################################################################
+# 2. Adding other centrality indexes
+################################################################################
+
 keystone_index_2 <- list()
 names_keystone_2 <- c()
 
@@ -201,11 +224,15 @@ message(i)
 
 names(keystone_index_2) <- names_keystone_2
 
-#Save
-#save(keystone_index, file = "keystone_index_02NOV23.RData")
-#save(keystone_index_2, file = "keystone_index_2_02NOV23.RData")
+head(keystone_index_2)
 
-#Average indexes for threatened and non-threatened species
+#Save
+#save(keystone_index_2, file = "keystone_index_2_08OUT23_ginv.RData")
+#load("keystone_index_2_08OUT23_ginv.RData")
+
+################################################################################
+# 3. Average indexes for threatened and non-threatened species
+################################################################################
 
 keystone_k_nt <- rep(NA, length(keystone_index_2))
 keystone_kbu_nt <- rep(NA, length(keystone_index_2))
@@ -225,7 +252,7 @@ nt_species <- rep(0, length(keystone_index_2))
 for(i in 1:length(keystone_index_2)){
   
   #grid_name <- names(keystone_index_2)[i]
-  2 <- keystone_index_2[[i]]
+  tab1 <- keystone_index_2[[i]]
   tab1_nt <- tab1[tab1$agreg_ts == "not_threatened",]
   tab1_t <- tab1[tab1$agreg_ts == "threatened",]
   
@@ -286,28 +313,17 @@ colnames(keystone_indexes_df) <- c("grid", "nr_t_spe", "nr_nt_spe", "k_nt",
                                    "kbu_nt", "ktd_nt", "kdir_nt", "kindir_nt", "k_t",
                                    "kbu_t", "ktd_t", "kdir_t", "kindir_t") 
 
-#table(is.na(keystone_indexes_df$k_nt))
-#which(is.na(keystone_indexes_df$k_nt))
-#which(is.na(keystone_indexes_df$k_t))
-#i = 3122
-#DX550
-keystone_indexes_df[i,]
-
-#Create maps
-
-#table(europeRaster_poly$PageName %in% keystone_indexes_df$grid)
-#table(keystone_indexes_df$grid %in% europeRaster_poly$PageName)
+################################################################################
+# 4. Create map
+################################################################################
 
 keystone_index_geo <- merge(europeRaster_poly, keystone_indexes_df, by.x = "PageName", by.y = "grid")
 
 writeVector(keystone_index_geo, 
-            filename = "shapes_20OUT23\\keystone_indexes_03NOV.shp",
+            filename = "keystone_indexes_09NOV23.shp",
             filetype=NULL, 
             layer=NULL, 
             insert=FALSE,
             overwrite=TRUE, 
             options="ENCODING=UTF-8"
 )
-
-
-
