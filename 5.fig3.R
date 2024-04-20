@@ -5,10 +5,34 @@
 #FMestre
 #23-10-2023
 
+#load packages
 library(terra)
 library(rasterVis)
 library(gridExtra)
 
+#Load Rasters
+nt_ivi <- terra::rast("rasters_21OUT\\nt_ivi_20OUT.tif")
+t_ivi <- terra::rast("rasters_21OUT\\t_ivi_20OUT.tif")
+t_centrality <- terra::rast("rasters_21OUT\\t_centrality_20OUT.tif")
+nt_centrality <- terra::rast("rasters_21OUT\\nt_centrality_20OUT.tif")
+t_indegree <- terra::rast("rasters_21OUT\\t_indegree_20OUT.tif")
+nt_indegree <- terra::rast("rasters_21OUT\\nt_indegree_20OUT.tif")
+nt_outdegree <- terra::rast("rasters_21OUT\\nt_outdegree_20OUT.tif")
+t_outdegree <- terra::rast("rasters_21OUT\\t_outdegree_20OUT.tif")
+t_closeness <- terra::rast("rasters_21OUT\\t_closeness_20OUT.tif")
+nt_closeness <- terra::rast("rasters_21OUT\\nt_closeness_20OUT.tif")
+t_tl <- terra::rast("rasters_21OUT\\t_tl_20OUT.tif")
+nt_tl <- terra::rast("rasters_21OUT\\nt_tl_20OUT.tif")
+proportion_r <- terra::rast("rasters_21OUT\\proportion_r_20OUT.tif")
+#
+indeg_diff <- terra::rast("rasters_21OUT\\indeg_diff.tif")
+outdeg_diff <- terra::rast("rasters_21OUT\\outdeg_diff.tif")
+trophic_level_diff <- terra::rast("rasters_21OUT\\trophic_level_diff.tif")
+closeness_diff <- terra::rast("rasters_21OUT\\closeness_diff.tif")
+centrality_diff <- terra::rast("rasters_21OUT\\centrality_diff.tif")
+ivi_diff <- terra::rast("rasters_21OUT\\ivi_diff.tif")
+
+#Calculate differences
 indeg_diff <- t_indegree - nt_indegree
 terra::writeRaster(indeg_diff, filename = "rasters_21OUT\\indeg_diff.tif")
 #plot(indeg_diff)
@@ -33,16 +57,8 @@ ivi_diff <- t_ivi - nt_ivi
 terra::writeRaster(ivi_diff, filename = "rasters_21OUT\\ivi_diff.tif")
 #plot(ivi_diff)
 
-#Load Rasters
-indeg_diff <- terra::rast("rasters_21OUT\\indeg_diff.tif")
-outdeg_diff <- terra::rast("rasters_21OUT\\outdeg_diff.tif")
-trophic_level_diff <- terra::rast("rasters_21OUT\\trophic_level_diff.tif")
-closeness_diff <- terra::rast("rasters_21OUT\\closeness_diff.tif")
-centrality_diff <- terra::rast("rasters_21OUT\\centrality_diff.tif")
-ivi_diff <- terra::rast("rasters_21OUT\\ivi_diff.tif")
-#
-
-
+################################################################################
+# Plot
 ################################################################################
 
 #Required function obtained from https://gist.github.com/johnbaums/306e4b7e69c87b1826db
