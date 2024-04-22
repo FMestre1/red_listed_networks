@@ -2769,18 +2769,209 @@ nt_ivi <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\ra
 t_ivi <- terra::rast("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\raster_results_IUCN_NETWORKS\\t_ivi.tif")
 
 #####################################################################################
-
+#                           Keystone Species Index
 #####################################################################################
 
+res_test <- c("sp2", "sp3", "sp4", "sp5", "sp5", "sp6", "sp7", "sp7", "sp8")
+cons_test <- c("sp1", "sp1", "sp1", "sp3", "sp4", "sp2", "sp2", "sp5", "sp5")
+data2 <- data.frame(res_test, cons_test, 1)
+names(data2) <- c("resource", "consumer", "link")
+data1 <- data2
+
+##
+
+nodeID <- levels(factor(c(as.character(data1[,1]),as.character(data1[,2]))))
+numnode <- length(nodeID)
+mx <- matrix(rep(0,numnode^2),nrow=numnode,ncol=numnode)
+rownames(mx) <- nodeID
+colnames(mx) <- nodeID
+for (i in 1:length(data1[,1])) mx[as.character(data1[i,1]),as.character(data1[i,2])] <- 1
+
+#Nr of preys per species
+prey1 <- numeric(numnode)
+for (i in 1:numnode) prey1[i] <- sum(mx[,i])
+#Nr of predators per species
+predator1 <- numeric(numnode)
+for (i in 1:numnode) predator1[i] <- sum(mx[i,])
+
+coef1 <- matrix(rep(0,numnode^2), nrow=numnode, ncol=numnode)
+for (i in 1:numnode) coef1[i,] <- prey1*mx[i,]
+for (i in 1:numnode) for (j in 1:numnode) {if (coef1[i,j]!=0) coef1[i,j]<-1/coef1[i,j]}
+vw <- numeric(numnode)
+for (i in 1:numnode) vw[i]<- -1*sum(coef1[i,])
+for (i in 1:numnode) coef1[i,i] <- coef1[i,i]+(-1)
+kbu <- round(as.vector(MASS::ginv(coef1) %*% vw), 3)
+#kbu <- round(solve(coef1,vw),3)
+
+for (i in 1:numnode) {coef1[i,] <- predator1*mx[,i]}
+for (i in 1:numnode) for (j in 1:numnode) {if (coef1[i,j]!=0) coef1[i,j]<-1/coef1[i,j]}
+vw <- numeric(numnode)
+for (i in 1:numnode) vw[i] <- -1*sum(coef1[i,])
+for (i in 1:numnode) coef1[i,i] <- coef1[i,i]+(-1)
+ktd <- round(as.vector(MASS::ginv(coef1) %*% vw),3)
+#ktd <- round(solve(coef1,vw),3)
+
+for (i in 1:numnode) {coef1[i,] <- prey1*mx[i,]}
+for (i in 1:numnode) for (j in 1:numnode) {if (coef1[i,j]!=0) coef1[i,j] <- 1/coef1[i,j]}
+vw <- numeric(numnode)
+for (i in 1:numnode) vw [i]<- sum(coef1[i,])
+kdir <- vw
+for (i in 1:numnode) {coef1[i,] <- kbu*coef1[i,]}
+kindir <- numeric(numnode)
+for (i in 1:numnode) {kindir[i] <- sum(coef1[i,])}
+for (i in 1:numnode) {coef1[,i] <- predator1*mx[,i]}
+for (i in 1:numnode) for (j in 1:numnode) {if (coef1[i,j]!=0) coef1[i,j] <- 1/coef1[i,j]}
+vw <- numeric(numnode)
+for (i in 1:numnode) vw[i]<-sum(coef1[,i])
+kdir <- kdir+vw
+for (i in 1:numnode) {coef1[,i] <- ktd*coef1[,i]}
+for (i in 1:numnode) {kindir[i] <- kindir[i]+sum(coef1[,i])}
+
+#Derive k
+k <- kbu + ktd
+
+#prey2 <- prey1
+#predator2 <- predator1
+
+#for(i in 1:length(prey2)) prey2[i] <- ifelse(prey2[i] == 0, 0, 1) 
+#for(i in 1:length(predator2)) predator2[i] <- ifelse(predator2[i] == 0, 0, 1) 
+
+resu <- data.frame(nodeID,k,kbu,ktd,kdir,kindir)
+
+#resu$kbu <- resu$kbu * predator2
+#resu$ktd <- resu$ktd * prey2
+
+rm(data1,
+   nodeID,
+   numnode,
+   mx,
+   prey1,
+   predator1,
+   coef1,
+   vw,
+   ktd,
+   kbu,
+   kdir,
+   kindir,
+   k,
+   resu,
+   resu2
+)
 
 
 
 
+####################################### CHECK ERROR START
+
+is_dag <- c()
+for(m in 1:length(cheddar_list)) {
+  is_dag[m] <- igraph::is.dag(igraph_list[[m]])
+  message(m)
+}
+
+head(which(!is_dag),20)
+
+length(keystone_index)
+
+has_index_k <- c()
+has_index_kbu <- c()
+has_index_ktd <- c()
+has_index_kdir <- c()
+has_index_kindir <- c()
+
+for(n in 1:length(keystone_index)){
+  df_indx <- keystone_index[[n]]
+  df_indx_colnames <- colnames(df_indx)
+  has_index_k[n] <- "k" %in% df_indx_colnames
+  has_index_kbu[n] <-  "kbu" %in% df_indx_colnames
+  has_index_ktd[n] <-  "ktd" %in% df_indx_colnames
+  has_index_kdir[n] <-  "kdir" %in% df_indx_colnames
+  has_index_kindir[n] <-  "kindir" %in% df_indx_colnames
+}
+
+table(has_index_k)
+table(has_index_kbu)
+table(has_index_ktd)
+table(has_index_kdir)
+table(has_index_kindir)
+
+####################################### CHECK ERROR END
 
 
 
 
+if(!is.na("kbu") & !is.na("ktd")){
+  
+  k <- kbu+ktd
+  
+  kdir <- round(kdir, 3)
+  kindir <- round(kindir, 3)
+  
+  resu <- data.frame(nodeID,k,kbu,ktd,kdir,kindir)
+  
+  prey2 <- prey1
+  predator2 <- predator1
+  
+  for(i in 1:length(prey2)) prey2[i] <- ifelse(prey2[i] == 0, 0, 1) 
+  for(i in 1:length(predator2)) predator2[i] <- ifelse(predator2[i] == 0, 0, 1) 
+  
+  #resu <- data.frame(nodeID,k,kbu,ktd,kdir,kindir)
+  resu$kbu <- resu$kbu * predator2
+  resu$ktd <- resu$ktd * prey2
+  
+  nodes1 <- cheddar_list[[m]]$nodes
+  
+  resu2 <- merge(x = nodes1,
+                 y = resu,
+                 by.x = "node",
+                 by.y = "nodeID"
+  )
+  
+  keystone_index[[m]] <- resu2
+  
+}
 
+if(!is.na("kbu") & is.na("ktd")){
+  
+  #k <- kbu+ktd
+  
+  #resu <- data.frame(nodeID,k,kbu,ktd,kdir,kindir)
+  
+  predator2 <- predator1
+  for(i in 1:length(predator2)) predator2[i] <- ifelse(predator2[i] == 0, 0, 1) 
+  resu <- data.frame(nodeID,kbu)
+  resu$kbu <- resu$kbu * predator2
+  
+  nodes1 <- cheddar_list[[m]]$nodes
+  
+  resu2 <- merge(x = nodes1,
+                 y = resu,
+                 by.x = "node",
+                 by.y = "nodeID"
+  )
+  
+  keystone_index[[m]] <- resu2
+  
+}
 
-
-
+if(is.na("kbu") & !is.na("ktd")){
+  
+  #k <- kbu+ktd
+  
+  #resu <- data.frame(nodeID,k,kbu,ktd,kdir,kindir)
+  resu <- data.frame(nodeID,ktd)
+  prey2 <- prey1
+  for(i in 1:length(prey2)) prey2[i] <- ifelse(prey2[i] == 0, 0, 1) 
+  resu$ktd <- resu$ktd * prey2
+  
+  nodes1 <- cheddar_list[[m]]$nodes
+  
+  resu2 <- merge(x = nodes1,
+                 y = resu,
+                 by.x = "node",
+                 by.y = "nodeID"
+  )
+  
+  keystone_index[[m]] <- resu2
+  
+}
