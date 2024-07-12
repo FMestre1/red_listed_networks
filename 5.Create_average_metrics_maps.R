@@ -12,8 +12,8 @@ library(gridExtra)
 library(grid)
 
 #Load objects
-load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\igraph_list_02SET23.RData")
-load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
+load("igraph_list_02SET23.RData")
+load("cheddar_list_02SET23.RData")
 load("all_species_status_body_mass_amph_13_20OUT.RData")
 #
 sp_richness <- terra::vect("shapes_20OUT23\\sp_richness_23OUT.shp")
@@ -154,6 +154,7 @@ message(i)
 
 #fw_list_with_status[[2]]
 
+#Save & Load
 #save(fw_list_with_status, file = "fw_list_with_status_20OUT.RData")
 #load("fw_list_with_status_20OUT.RData")
 
@@ -578,11 +579,11 @@ writeVector(proportion_spatial,
 
 #proportion_spatial <- terra::vect("proportion_spatial_20OUT.shp")
 
-##################################################################################################################
-#                                                #STANDARDIZE MAPS
-##################################################################################################################
+################################################################################
+#                              #STANDARDIZE MAPS
+################################################################################
+
 #FMestre
-#09-03-2023
 
 #Load packages
 library(vegan)
@@ -951,8 +952,3 @@ ivi_title <- textGrob("Average IVI", gp = gpar(fontsize = 25, fontface = "bold")
 grid.arrange(ivi1, ivi2, ncol=2, top=ivi_title)
 ######################
 rasterVis::levelplot(proportion_r, par.settings = rasterTheme(viridis_pal()(255)), main = "Proportion of threatened species")
-rasterVis::levelplot(xxx, par.settings = rasterTheme(viridis_pal()(255)), main = "Number of nodes in each network")
-
-
-
-

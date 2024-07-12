@@ -1,9 +1,10 @@
 ################################################################################
-#                    FIRST NÚRIA DATASET (node metrics)
+#                            DATASET ON NODE METRICS
 ################################################################################
-#FMestre
-#07-02-2023
 
+#FMestre
+
+#Load packages
 library(igraph)
 library(cheddar)
 
@@ -18,7 +19,8 @@ for(i in 1:length(files_folder)){
   names(fw_list)[i] <- stringr::str_split(files_folder[i], ".csv")[[1]][1]
   message(i)
 }
-#
+
+#Load & Save
 #save(fw_list, file = "fw_list.RData")
 #load("fw_list.RData")
 
@@ -41,7 +43,7 @@ species_names2 <- unique(species_names)
 #save(species_names2, file = "species_names2.RData")
 
 ################################################################################
-#                   SECOND NÚRIA DATASET (network metrics)
+#                          DATASET ON NETWORK METRICS
 ################################################################################
 
 dataset2_nuria <- list.files("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_2")
@@ -71,11 +73,8 @@ metrics_dataset_3 <- unique(metrics_dataset_2)
 #save(metrics_dataset_3, file = "metrics_dataset_FINAL_26SET2023.RData")
 
 ################################################################################
-#                       THIRD NÚRIA DATASET (networks)
+#                     ACTUAL POTENTIAL LOCAL FOOD WEBS
 ################################################################################
-
-#FMestre
-#22-05-23
 
 network_list <- list()
 path3 <- "C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3"
@@ -93,6 +92,7 @@ for(i in 1:length(dataset3_nuria)){
 
 #Load & Save
 #save(network_list, file = "network_list24SET23.RData")
+#load("network_list24SET23.RData")
 
 #Convert to igraph and cheddar
 
@@ -139,18 +139,17 @@ for(i in 1:length(network_list)){
   
 }
 
-#I had to run this in chunks...
-#...combining partial lists after:
-
 ################################################################################
-#                                  igraph list
+#                                IGRAPH LIST
 ################################################################################
 
 #load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_until_38636.RData")
+
 list1_igraph <- get("network_list_igraph")
 rm(network_list_igraph)
-list1_igraph[[1]]
-list1_igraph[[38635]]
+
+#list1_igraph[[1]]
+#list1_igraph[[38635]]
 
 #load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_igraph_until_from_38636_until_54275.RData")
 list2_igraph <- get("network_list_igraph")
@@ -190,9 +189,9 @@ igraph_class <- data.frame(unlist(lapply(igraph_list, class)))
 igraph_class <- igraph_class$unlist.lapply.igraph_list..class..
 table(igraph_class)
 
-#Save
-#load("C:\\Users\\asus\\Desktop\\igraph_list_02SET23.RData")
-#save(igraph_list, file = "C:\\Users\\asus\\Desktop\\igraph_list_02SET23.RData")
+#Load & Save
+#load("igraph_list.RData")
+#save(igraph_list, file = "igraph_list.RData")
 
 #Delete objects
 rm(igraph_list,
@@ -205,7 +204,7 @@ rm(igraph_list,
 )
 
 ################################################################################
-#                               cheddar list
+#                                 CHEDDAR LIST
 ################################################################################
 
 #load("C:\\Users\\asus\\Documents\\github\\red_listed_networks\\new_sept23_dataset\\network_list_cheddar_until_38636.RData")
@@ -264,8 +263,8 @@ cheddar_class <- cheddar_class$unlist.lapply.cheddar_list..class..
 table(cheddar_class)
 
 #Save
-#load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
-#save(cheddar_list, file = "C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
+#load("cheddar_list_02SET23.RData")
+#save(cheddar_list, file = "cheddar_list_02SET23.RData")
 
 #Delete objects
 rm(cheddar_list,
@@ -276,8 +275,3 @@ rm(cheddar_list,
    list4_cheddar,
    list5_cheddar
 )
-
-#Loading the newly created lists
-#load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\igraph_list_02SET23.RData")
-#load("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\networks_SET23\\cheddar_list_02SET23.RData")
-

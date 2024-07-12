@@ -1,8 +1,8 @@
 ################################################################################
-#                     Newer data downloaded from IUCN...
+#                     Uploading data downloaded from IUCN
 ################################################################################
+
 #FMestre
-#22-09-2023
 
 #Load packages
 library(taxize)
@@ -26,10 +26,7 @@ class_species <- c(rep(NA, nrow(iucn_sept23_rep_mamm_amph)), rep("aves", nrow(iu
 
 for(i in 1:nrow(iucn_sept23_rep_mamm_amph)){
   
-  #zz <- taxize::classification(iucn_sept23_rep_mamm_amph[i,1], get = "class", db = 'itis')
-  
-  
-  tryCatch(
+tryCatch(
     expr = {zz <- taxize::classification(iucn_sept23_rep_mamm_amph[i,1], get = "class", db = 'itis')
     },
     error = function(e) NULL
@@ -47,10 +44,6 @@ for(i in 1:nrow(iucn_sept23_rep_mamm_amph)){
   message(i)
 
 }
-
-################################################################################
-
-#head(new_species_iucn)
 
 new_species_iucn <- data.frame(new_species_iucn, NA)
 
@@ -99,4 +92,6 @@ for(i in 1:nrow(all_species_status_body_mass_amph_13)){
   message(i)
 }
 
-#save(all_species_status_body_mass_amph_13, file = "all_species_status_body_mass_amph_13_20OUT.RData")
+#Save & Load
+#save(all_species_status_body_mass_amph_13, file = "all_species_status_body_mass_amph_13.RData")
+#load("all_species_status_body_mass_amph_13.RData")
