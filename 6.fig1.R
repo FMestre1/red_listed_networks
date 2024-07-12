@@ -37,7 +37,8 @@ table(class_species)
 
 #################################
 
-write.csv(red_listed_3, "red_listed_3.csv", row.names=FALSE)
+#write.csv(red_listed_3, "red_listed_3.csv", row.names=FALSE)
+#red_listed_3 <- read.csv("old_results/red_listed_3.csv", sep = ";")
 pivot_table1 <- read.csv("old_results/pivot_table1.csv", sep = ";")
 #sum(pivot_table1$count)
 
