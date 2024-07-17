@@ -62,21 +62,21 @@ diverge0 <- function(p, ramp) {
 }
 
 #Create plots
-indeg_diff_plot <- rasterVis::levelplot(indeg_diff, 
+indeg_diff_plot <- rasterVis::levelplot(indegree_diff, 
                      contour = FALSE, 
                      margin = NA,
                      main = "In-degree",
                      scales = list(draw = FALSE)
                      )
 
-outdeg_diff_plot <- rasterVis::levelplot(outdeg_diff, 
+outdeg_diff_plot <- rasterVis::levelplot(outdegree_diff, 
                                         contour = FALSE, 
                                         margin = NA,
                                         main = "Out-degree",
                                         scales = list(draw = FALSE)
 )
 
-trophic_level_diff_plot <- rasterVis::levelplot(trophic_level_diff, 
+trophic_level_diff_plot <- rasterVis::levelplot(t_level_diff, 
                                          contour = FALSE, 
                                          margin = NA,
                                          main = "Trophic level",
@@ -111,8 +111,7 @@ pl4 <- diverge0(closeness_diff_plot, 'Spectral')
 pl5 <- diverge0(centrality_diff_plot, 'Spectral')
 pl6 <- diverge0(ivi_diff_plot, 'Spectral')
 
+#Compose pairs of maps
 grid.arrange(pl3, pl6, ncol=2)
 grid.arrange(pl1, pl4, ncol=2)
 grid.arrange(pl2, pl5, ncol=2)
-
-

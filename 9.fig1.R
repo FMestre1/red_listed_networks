@@ -15,6 +15,7 @@ table(all_species_status_body_mass_amph_15$corrected_status)
 table(all_species_status_body_mass_amph_15$corrected_agreg_ts)
 
 pivot_table2 <- read.csv("pivot_table_2.csv", sep = ";")
+pivot_table2 <- pivot_table2[-15,]
 
 #Plot
 png(filename = "tree_2.png",width = 2000, height = 1600)

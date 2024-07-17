@@ -64,20 +64,12 @@ writeRaster(ivi_diff, "rasters_15JUL\\ivi_diff.tif", overwrite=TRUE)
 #From: 
 #https://sesync-ci.github.io/blog/raster-change-analysis.html
 
-indeg_diff_mean <- as.numeric(terra::global(indeg_diff, "mean", na.rm=TRUE))# mean
-indeg_diff_sd <- as.numeric(terra::global(indeg_diff, "sd", na.rm=TRUE))# sd
-indeg_diff_std <- (indeg_diff - indeg_diff_mean)/indeg_diff_sd # standardized image
-terra::writeRaster(indeg_diff_std, "indeg_diff_std.tif")
-
-threshold_val <- c(1.96,1.64)
-plot(indeg_diff_std)
-
-hist(indeg_diff_std,
-     main="Standardized difference",
-     xlab="Difference")
-
-abline(v=indeg_diff_mean + indeg_diff_std,col="red",lty=1)
-abline(v=indeg_diff_mean - indeg_diff_std,col="red",lty=1)
+#indeg_diff_mean <- as.numeric(terra::global(indegree_diff, "mean", na.rm=TRUE))# mean
+#indeg_diff_sd <- as.numeric(terra::global(indegree_diff, "sd", na.rm=TRUE))# sd
+#indegree_diff_std <- (indegree_diff - indeg_diff_mean)/indeg_diff_sd # standardized image
+#terra::writeRaster(indegree_diff_std, "rasters_15JUL\\indegree_diff_std.tif")
+#terra::plot(indegree_diff_std)
+#hist(indegree_diff_std, main="Standardized difference", xlab="Difference")
 
 #(...)
 
