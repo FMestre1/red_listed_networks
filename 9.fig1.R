@@ -35,3 +35,6 @@ treemap(pivot_table2, index=c("class","status"),
 
 dev.off()
 
+
+#How many of each
+#table(all_species_status_body_mass_amph_15$corrected_agreg_ts)
