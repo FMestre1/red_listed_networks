@@ -2,6 +2,9 @@
 #                                 Map Comparison
 ################################################################################
 
+#Load package
+library(terra)
+
 #Delete everything from the environment
 rm(list = ls())
 
@@ -121,3 +124,5 @@ ivi_compare <- ivi_compare[complete.cases(ivi_compare),]
 #ivi_ttest <- t.test(ivi_compare[,2], ivi_compare[,3], paired = TRUE)
 ivi_cohens_d <- effsize::cohen.d(ivi_compare[,2], ivi_compare[,3])
 ivi_wicox <- wilcox.test(ivi_compare[,2], ivi_compare[,3], paired = TRUE, alternative = "two.sided")
+
+
