@@ -24,6 +24,14 @@ closeness_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.ti
 tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
 tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 
+#################################################
+
+# process in parallel
+library(doParallel) 
+detectCores()
+cl <- makeCluster(4, type='PSOCK')
+registerDoParallel(cl)
+
 #################### COMPARE #################### 
 
 ?raster.modified.ttest
