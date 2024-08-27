@@ -9,6 +9,10 @@
 library(spatialEco)
 library(terra)
 
+#terraOptions(memfrac = 0.5)
+?terraOptions
+terraOptions()
+
 #################### LOAD RASTERS #################### 
 
 ivi_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
