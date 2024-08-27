@@ -33,7 +33,7 @@ tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 # process in parallel
 library(doParallel) 
 detectCores()
-cl <- makeCluster(4, type='PSOCK')
+cl <- makeCluster(4, type='PSOCK') # number of cores adjusted to the total number (maybe not use all!)
 registerDoParallel(cl)
 
 #################### COMPARE #################### 
