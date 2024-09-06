@@ -10,7 +10,7 @@ library(spatialEco)
 library(terra)
 
 #terraOptions(memfrac = 0.5)
-?terraOptions
+#?terraOptions
 #terraOptions()
 
 #################### LOAD RASTERS #################### 
@@ -107,19 +107,19 @@ save(tl_compare, file = "tl_compare.RData")
 #Use smaller area to test function
 
 portugal <- terra::vect("C:/Users/mestr/Documents/0. Artigos/IUCN_networks/shapefiles/portugal.shp")
-terra::crs(portugal)
+#terra::crs(portugal)
 portugal_p <- terra::project(portugal, ivi_nt_spatial_raster)
-terra::crs(portugal_p)
-plot(portugal)
+#terra::crs(portugal_p)
+#plot(portugal)
 #terra::crs(ivi_nt_spatial_raster)
 
 #plot(ivi_nt_spatial_raster)
 #plot(portugal_p, add=TRUE)
 
 ivi_nt_spatial_raster_PT <- terra::crop(ivi_nt_spatial_raster, portugal_p)
-plot(ivi_nt_spatial_raster_PT)
+#plot(ivi_nt_spatial_raster_PT)
 ivi_t_spatial_raster_PT <- terra::crop(ivi_t_spatial_raster, portugal_p)
-plot(ivi_t_spatial_raster_PT)
+#plot(ivi_t_spatial_raster_PT)
 
 #ivi_compare <- raster.modified.ttest(
 #  ivi_nt_spatial_raster_PT, 
