@@ -11,7 +11,7 @@ library(terra)
 
 #terraOptions(memfrac = 0.5)
 ?terraOptions
-terraOptions()
+#terraOptions()
 
 #################### LOAD RASTERS #################### 
 
@@ -100,4 +100,51 @@ tl_compare <- raster.modified.ttest(
 )
 
 save(tl_compare, file = "tl_compare.RData")
+
+
+################################################################################
+
+#Use smaller area to test function
+
+portugal <- terra::vect("C:/Users/mestr/Documents/0. Artigos/IUCN_networks/shapefiles/portugal.shp")
+terra::crs(portugal)
+portugal_p <- terra::project(portugal, ivi_nt_spatial_raster)
+terra::crs(portugal_p)
+plot(portugal)
+#terra::crs(ivi_nt_spatial_raster)
+
+#plot(ivi_nt_spatial_raster)
+#plot(portugal_p, add=TRUE)
+
+ivi_nt_spatial_raster_PT <- terra::crop(ivi_nt_spatial_raster, portugal_p)
+plot(ivi_nt_spatial_raster_PT)
+ivi_t_spatial_raster_PT <- terra::crop(ivi_t_spatial_raster, portugal_p)
+plot(ivi_t_spatial_raster_PT)
+
+#ivi_compare <- raster.modified.ttest(
+#  ivi_nt_spatial_raster_PT, 
+#  ivi_t_spatial_raster_PT, 
+#  sample = "random",
+#  p = 0.01
+#)
+
+####
+#Comare maps
+plot(terra::compare(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, oper = "<"))
+#terra::compareGeom(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT)
+
+#Using diffeR
+?terra::compare
+
+test <- diffeR::differenceMR(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT)
+#test <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster)
+test
+
+# process in parallel
+library(doParallel) 
+detectCores()
+cl <- makeCluster(4, type='PSOCK') # number of cores adjusted to the total number (maybe not use all!)
+registerDoParallel(cl)
+
+test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, stat = "t.test")
 
