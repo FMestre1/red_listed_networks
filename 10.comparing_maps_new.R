@@ -136,15 +136,19 @@ plot(terra::compare(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, oper = "<
 #Using diffeR
 ?terra::compare
 
-test <- diffeR::differenceMR(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT)
+test <- diffeR::differenceMR(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, eval = "original")
 #test <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster)
-test
+#test
 
 # process in parallel
-library(doParallel) 
-detectCores()
-cl <- makeCluster(4, type='PSOCK') # number of cores adjusted to the total number (maybe not use all!)
-registerDoParallel(cl)
+#library(doParallel) 
+#detectCores()
+#cl <- makeCluster(4, type='PSOCK') # number of cores adjusted to the total number (maybe not use all!)
+#registerDoParallel(cl)
 
-test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, stat = "t.test")
+#test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, stat = "t.test")
 
+
+#################
+
+#cor.test(as.vector(ivi_nt_spatial_raster_PT), as.vector(ivi_t_spatial_raster_PT))
