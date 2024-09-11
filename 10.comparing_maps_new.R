@@ -6,8 +6,8 @@
 #26-07-2024
 
 #Load package
-library(spatialEco)
 library(terra)
+library(SSIMmap)
 
 #terraOptions(memfrac = 0.5)
 #?terraOptions
@@ -30,125 +30,46 @@ tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 
 #################################################
 
-# process in parallel
-library(doParallel) 
-detectCores()
-cl <- makeCluster(4, type='PSOCK') # number of cores adjusted to the total number (maybe not use all!)
-registerDoParallel(cl)
+ivi_ssi_compare <- SSIMmap::ssim_raster(ivi_nt_spatial_raster, ivi_t_spatial_raster, global = FALSE)
+centrality_ssi_compare <- SSIMmap::ssim_raster(centrality_nt_spatial_raster, centrality_t_spatial_raster, global = FALSE)
+indegree_ssi_compare <- SSIMmap::ssim_raster(indegree_nt_spatial_raster, indegree_t_spatial_raster, global = FALSE)
+outdegree_ssi_compare <- SSIMmap::ssim_raster(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, global = FALSE)
+closeness_ssi_compare <- SSIMmap::ssim_raster(closeness_nt_spatial_raster, closeness_t_spatial_raster, global = FALSE)
+tl_ssi_compare <- SSIMmap::ssim_raster(tl_nt_spatial_raster, tl_t_spatial_raster, global = FALSE)
 
-#################### COMPARE #################### 
-
-?raster.modified.ttest
-
-#IVI
-ivi_compare <- raster.modified.ttest(
-  ivi_nt_spatial_raster, 
-  ivi_t_spatial_raster, 
-  sample = "random",
-  p = 0.1
-)
-
-save(ivi_compare, file = "ivi_compare.RData")
-
-#CENTRALITY
-centrality_compare <- raster.modified.ttest(
-  centrality_nt_spatial_raster, 
-  centrality_t_spatial_raster, 
-  sample = "random",
-  p = 0.1
-)
-
-save(centrality_compare, file = "centrality_compare.RData")
-
-#IN-DEGREE
-indegree_compare <- raster.modified.ttest(
-  indegree_nt_spatial_raster, 
-  indegree_t_spatial_raster, 
-  sample = "random",
-  p = 0.1
-)
-
-save(indegree_compare, file = "indegree_compare.RData")
-
-
-#OUT-DEGREE
-outdegree_compare <- raster.modified.ttest(
-  outdegree_nt_spatial_raster, 
-  outdegree_t_spatial_raster, 
-  sample = "random",
-  p = 0.1
-)
-
-save(outdegree_compare, file = "outdegree_compare.RData")
-
-#CLOSENNESS
-closeness_compare <- raster.modified.ttest(
-  closeness_nt_spatial_raster, 
-  closeness_t_spatial_raster, 
-  sample = "random",
-  p = 0.1
-)
-
-save(closeness_compare, file = "closeness_compare.RData")
-
-#TROPHIC LEVEL
-tl_compare <- raster.modified.ttest(
-  tl_nt_spatial_raster, 
-  tl_t_spatial_raster, 
-  sample = "random",
-  p = 0.1
-)
-
-save(tl_compare, file = "tl_compare.RData")
-
-
-################################################################################
-
-#Use smaller area to test function
-
-portugal <- terra::vect("C:/Users/mestr/Documents/0. Artigos/IUCN_networks/shapefiles/portugal.shp")
-#terra::crs(portugal)
-portugal_p <- terra::project(portugal, ivi_nt_spatial_raster)
-#terra::crs(portugal_p)
-#plot(portugal)
-#terra::crs(ivi_nt_spatial_raster)
-
-#plot(ivi_nt_spatial_raster)
-#plot(portugal_p, add=TRUE)
-
-ivi_nt_spatial_raster_PT <- terra::crop(ivi_nt_spatial_raster, portugal_p)
-#plot(ivi_nt_spatial_raster_PT)
-ivi_t_spatial_raster_PT <- terra::crop(ivi_t_spatial_raster, portugal_p)
-#plot(ivi_t_spatial_raster_PT)
-
-#ivi_compare <- raster.modified.ttest(
-#  ivi_nt_spatial_raster_PT, 
-#  ivi_t_spatial_raster_PT, 
-#  sample = "random",
-#  p = 0.01
-#)
-
-####
-#Comare maps
-plot(terra::compare(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, oper = "<"))
-#terra::compareGeom(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT)
-
-#Using diffeR
-?terra::compare
-
-test <- diffeR::differenceMR(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, eval = "original")
-#test <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster)
-#test
-
-# process in parallel
-#library(doParallel) 
-#detectCores()
-#cl <- makeCluster(4, type='PSOCK') # number of cores adjusted to the total number (maybe not use all!)
-#registerDoParallel(cl)
-
-#test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster_PT, ivi_t_spatial_raster_PT, stat = "t.test")
-
-
-#################
-
-#cor.test(as.vector(ivi_nt_spatial_raster_PT), as.vector(ivi_t_spatial_raster_PT))
+#SAVE
+save(ivi_ssi_compare, file = "ivi_ssi_compare.RData")
+terra::writeRaster(ivi_ssi_compare[[1]], filename = "ivi_ssi_compare_SSIM.tif")
+terra::writeRaster(ivi_ssi_compare[[2]], filename = "ivi_ssi_compare_SIM.tif")
+terra::writeRaster(ivi_ssi_compare[[3]], filename = "ivi_ssi_compare_SIV.tif")
+terra::writeRaster(ivi_ssi_compare[[4]], filename = "ivi_ssi_compare_SIP.tif")
+#
+save(centrality_ssi_compare, file = "centrality_ssi_compare.RData")
+terra::writeRaster(centrality_ssi_compare[[1]], filename = "centrality_ssi_compare_SSIM.tif")
+terra::writeRaster(centrality_ssi_compare[[2]], filename = "centrality_ssi_compare_SIM.tif")
+terra::writeRaster(centrality_ssi_compare[[3]], filename = "centrality_ssi_compare_SIV.tif")
+terra::writeRaster(centrality_ssi_compare[[4]], filename = "centrality_ssi_compare_SIP.tif")
+#
+save(indegree_ssi_compare, file = "indegree_ssi_compare.RData")
+terra::writeRaster(indegree_ssi_compare[[1]], filename = "indegree_ssi_compare_SSIM.tif")
+terra::writeRaster(indegree_ssi_compare[[2]], filename = "indegree_ssi_compare_SIM.tif")
+terra::writeRaster(indegree_ssi_compare[[3]], filename = "indegree_ssi_compare_SIV.tif")
+terra::writeRaster(indegree_ssi_compare[[4]], filename = "indegree_ssi_compare_SIP.tif")
+#
+save(outdegree_ssi_compare, file = "outdegree_ssi_compare.RData")
+terra::writeRaster(outdegree_ssi_compare[[1]], filename = "outdegree_ssi_compare_SSIM.tif")
+terra::writeRaster(outdegree_ssi_compare[[2]], filename = "outdegree_ssi_compare_SIM.tif")
+terra::writeRaster(outdegree_ssi_compare[[3]], filename = "outdegree_ssi_compare_SIV.tif")
+terra::writeRaster(outdegree_ssi_compare[[4]], filename = "outdegree_ssi_compare_SIP.tif")
+#
+save(closeness_ssi_compare, file = "closeness_ssi_compare.RData")
+terra::writeRaster(closeness_ssi_compare[[1]], filename = "closeness_ssi_compare_SSIM.tif")
+terra::writeRaster(closeness_ssi_compare[[2]], filename = "closeness_ssi_compare_SIM.tif")
+terra::writeRaster(closeness_ssi_compare[[3]], filename = "closeness_ssi_compare_SIV.tif")
+terra::writeRaster(closeness_ssi_compare[[4]], filename = "closeness_ssi_compare_SIP.tif")
+#
+save(tl_ssi_compare, file = "tl_ssi_compare.RData")
+terra::writeRaster(tl_ssi_compare[[1]], filename = "tl_ssi_compare_SSIM.tif")
+terra::writeRaster(tl_ssi_compare[[2]], filename = "tl_ssi_compare_SIM.tif")
+terra::writeRaster(tl_ssi_compare[[3]], filename = "tl_ssi_compare_SIV.tif")
+terra::writeRaster(tl_ssi_compare[[4]], filename = "tl_ssi_compare_SIP.tif")
