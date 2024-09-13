@@ -87,10 +87,10 @@ outdegree_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\outdegree_ssi_c
 outdegree_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIV.tif")
 outdegree_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIP.tif")
 #
-outdegree_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SSIM.tif")
-outdegree_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIM.tif")
-outdegree_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIV.tif")
-outdegree_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIP.tif")
+indegree_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SSIM.tif")
+indegree_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SIM.tif")
+indegree_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SIV.tif")
+indegree_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SIP.tif")
 #
 closeness_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\closeness_ssi_compare_SSIM.tif")
 closeness_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\closeness_ssi_compare_SIM.tif")
@@ -146,8 +146,7 @@ gridExtra::grid.arrange(plot_tl_SSIM,
                         plot_tl_SIV,
                         plot_tl_SIP,
                         ncol=2,
-                        top=grid::textGrob("tl"))
-
+                        top=grid::textGrob("Trophic Level"))
 
 ##
 
@@ -161,7 +160,7 @@ gridExtra::grid.arrange(plot_outdegree_SSIM,
                         plot_outdegree_SIV,
                         plot_outdegree_SIP,
                         ncol=2,
-                        top=grid::textGrob("outdegree"))
+                        top=grid::textGrob("Outdegree"))
 
 ##
 
@@ -175,7 +174,7 @@ gridExtra::grid.arrange(plot_indegree_SSIM,
                         plot_indegree_SIV,
                         plot_indegree_SIP,
                         ncol=2,
-                        top=grid::textGrob("indegree"))
+                        top=grid::textGrob("Indegree"))
 
 ##
 
@@ -189,4 +188,5 @@ gridExtra::grid.arrange(plot_closeness_SSIM,
                         plot_closeness_SIV,
                         plot_closeness_SIP,
                         ncol=2,
-                        top=grid::textGrob("closeness"))
+                        top=grid::textGrob("Closeness"))
+
