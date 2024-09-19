@@ -34,11 +34,11 @@ tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 ################################################################################
 
 test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster, ivi_t_spatial_raster, stat = "t.test")
-test_centrality <- SSIMmap::ssim_raster(centrality_nt_spatial_raster, centrality_t_spatial_raster, stat = "t.test")
-test_closeness <- SSIMmap::ssim_raster(closeness_nt_spatial_raster, closeness_t_spatial_raster, stat = "t.test")
-test_indegree <- SSIMmap::ssim_raster(indegree_nt_spatial_raster, indegree_t_spatial_raster, stat = "t.test")
-test_outdegree <- SSIMmap::ssim_raster(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, stat = "t.test")
-test_tl <- SSIMmap::ssim_raster(tl_nt_spatial_raster, tl_t_spatial_raster, stat = "t.test")
+test_centrality <- spatialEco::raster.change(centrality_nt_spatial_raster, centrality_t_spatial_raster, stat = "t.test")
+test_closeness <- spatialEco::raster.change(closeness_nt_spatial_raster, closeness_t_spatial_raster, stat = "t.test")
+test_indegree <- spatialEco::raster.change(indegree_nt_spatial_raster, indegree_t_spatial_raster, stat = "t.test")
+test_outdegree <- spatialEco::raster.change(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, stat = "t.test")
+test_tl <- spatialEco::raster.change(tl_nt_spatial_raster, tl_t_spatial_raster, stat = "t.test")
 
 ################################################################################
 #                                 Using SSIMmap
