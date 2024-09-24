@@ -8,10 +8,12 @@
 #Load package
 library(terra)
 library(SSIMmap)
+library(textGrob)
 library(gridExtra)
 library(grid)
 library(RColorBrewer)
-library(spatialEco)
+#library(spatialEco)
+library(SSIMmap)
 
 #################### LOAD RASTERS #################### 
 
@@ -32,45 +34,212 @@ tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 #                               Using spatialEco
 ################################################################################
 
-test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster, ivi_t_spatial_raster, stat = "t.test")
-test_centrality <- spatialEco::raster.change(centrality_nt_spatial_raster, centrality_t_spatial_raster, stat = "t.test")
-test_closeness <- spatialEco::raster.change(closeness_nt_spatial_raster, closeness_t_spatial_raster, stat = "t.test")
-test_indegree <- spatialEco::raster.change(indegree_nt_spatial_raster, indegree_t_spatial_raster, stat = "t.test")
-test_outdegree <- spatialEco::raster.change(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, stat = "t.test")
-test_tl <- spatialEco::raster.change(tl_nt_spatial_raster, tl_t_spatial_raster, stat = "t.test")
+#test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster, ivi_t_spatial_raster, stat = "t.test")
+#test_ivi <- spatialEco::raster.change(ivi_nt_spatial_raster, ivi_t_spatial_raster, stat = "t.test")
+#test_centrality <- spatialEco::raster.change(centrality_nt_spatial_raster, centrality_t_spatial_raster, stat = "t.test")
+#test_closeness <- spatialEco::raster.change(closeness_nt_spatial_raster, closeness_t_spatial_raster, stat = "t.test")
+#test_indegree <- spatialEco::raster.change(indegree_nt_spatial_raster, indegree_t_spatial_raster, stat = "t.test")
+#test_outdegree <- spatialEco::raster.change(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, stat = "t.test")
+#test_tl <- spatialEco::raster.change(tl_nt_spatial_raster, tl_t_spatial_raster, stat = "t.test")
 
 #Save ...
-terra::writeRaster(test_ivi[[1]], filename = "ivi_raster_change_1.tif")
-terra::writeRaster(test_ivi[[2]], filename = "ivi_raster_change_2.tif")
+#terra::writeRaster(test_ivi[[1]], filename = "ivi_raster_change_1.tif")
+#terra::writeRaster(test_ivi[[2]], filename = "ivi_raster_change_2.tif")
 
-terra::writeRaster(test_centrality[[1]], filename = "centrality_raster_change_1.tif")
-terra::writeRaster(test_centrality[[2]], filename = "centrality_raster_change_2.tif")
+#terra::writeRaster(test_centrality[[1]], filename = "centrality_raster_change_1.tif")
+#terra::writeRaster(test_centrality[[2]], filename = "centrality_raster_change_2.tif")
 
-terra::writeRaster(test_closeness[1]], filename = "closeness_raster_change_1.tif")
-terra::writeRaster(test_closeness[[2]], filename = "closeness_raster_change_2.tif")
+#terra::writeRaster(test_closeness[[1]], filename = "closeness_raster_change_1.tif")
+#terra::writeRaster(test_closeness[[2]], filename = "closeness_raster_change_2.tif")
 
-terra::writeRaster(test_indegree[[1]], filename = "indegree_raster_change_1.tif")
-terra::writeRaster(test_indegree[[2]], filename = "indegree_raster_change_2.tif")
+#terra::writeRaster(test_indegree[[1]], filename = "indegree_raster_change_1.tif")
+#terra::writeRaster(test_indegree[[2]], filename = "indegree_raster_change_2.tif")
 
-terra::writeRaster(test_outdegree[[1]], filename = "outdegree_raster_change_1.tif")
-terra::writeRaster(test_outdegree[[2]], filename = "outdegree_raster_change_2.tif")
+#terra::writeRaster(test_outdegree[[1]], filename = "outdegree_raster_change_1.tif")
+#terra::writeRaster(test_outdegree[[2]], filename = "outdegree_raster_change_2.tif")
 
-terra::writeRaster(test_tl[[1]], filename = "tl_raster_change_1.tif")
-terra::writeRaster(test_tl[[2]], filename = "tl_raster_change_2.tif")
+#terra::writeRaster(test_tl[[1]], filename = "tl_raster_change_1.tif")
+#terra::writeRaster(test_tl[[2]], filename = "tl_raster_change_2.tif")
 
 ################################################################################
 #                                 Using SSIMmap
 ################################################################################
 
+##### Previously apply a z score transformation to every raster #####
+
+############### 1. IVI ###############
+
+# Calculate the mean and standard deviation
+#mean
+ivi_nt_spatial_raster_mean <- as.numeric(global(ivi_nt_spatial_raster, mean, na.rm = TRUE))
+ivi_t_spatial_raster_mean <- as.numeric(global(ivi_t_spatial_raster, mean, na.rm = TRUE))
+#sd
+ivi_nt_spatial_raster_sd <- as.numeric(global(ivi_nt_spatial_raster, sd, na.rm = TRUE))
+ivi_t_spatial_raster_sd <- as.numeric(global(ivi_t_spatial_raster, sd, na.rm = TRUE))
+
+print(ivi_nt_spatial_raster_mean)
+print(ivi_t_spatial_raster_mean)
+print(ivi_nt_spatial_raster_sd)
+print(ivi_t_spatial_raster_sd)
+
+# Apply Z-score transformation
+ivi_nt_spatial_raster_z_raster <- (ivi_nt_spatial_raster - ivi_nt_spatial_raster_mean)/ivi_nt_spatial_raster_sd
+ivi_t_spatial_raster_z_raster <- (ivi_t_spatial_raster - ivi_t_spatial_raster_mean)/ivi_t_spatial_raster_sd
+
+# Plot the Z-score transformed raster
+#plot(ivi_nt_spatial_raster_z_raster, main = "IVI NT - Z-score Transformed")
+#plot(ivi_t_spatial_raster_z_raster, main = "IVI T - Z-score Transformed")
+
+# Save the transformed rasters
+writeRaster(ivi_nt_spatial_raster_z_raster, "ivi_nt_spatial_raster_z_raster.tif", overwrite = TRUE)
+writeRaster(ivi_t_spatial_raster_z_raster, "ivi_t_spatial_raster_z_raster.tif", overwrite = TRUE)
+
+############### 2. TROPHIC LEVEL ###############
+
+# Calculate the mean and standard deviation
+#mean
+tl_nt_spatial_raster_mean <- as.numeric(global(tl_nt_spatial_raster, mean, na.rm = TRUE))
+tl_t_spatial_raster_mean <- as.numeric(global(tl_t_spatial_raster, mean, na.rm = TRUE))
+#sd
+tl_nt_spatial_raster_sd <- as.numeric(global(tl_nt_spatial_raster, sd, na.rm = TRUE))
+tl_t_spatial_raster_sd <- as.numeric(global(tl_t_spatial_raster, sd, na.rm = TRUE))
+
+print(tl_nt_spatial_raster_mean)
+print(tl_t_spatial_raster_mean)
+print(tl_nt_spatial_raster_sd)
+print(tl_t_spatial_raster_sd)
+
+# Apply Z-score transformation
+tl_nt_spatial_raster_z_raster <- (tl_nt_spatial_raster - tl_nt_spatial_raster_mean)/tl_nt_spatial_raster_sd
+tl_t_spatial_raster_z_raster <- (tl_t_spatial_raster - tl_t_spatial_raster_mean)/tl_t_spatial_raster_sd
+
+# Plot the Z-score transformed raster
+#plot(tl_nt_spatial_raster_z_raster, main = "TL NT - Z-score Transformed")
+#plot(tl_t_spatial_raster_z_raster, main = "TL T - Z-score Transformed")
+
+# Save the transformed rasters
+writeRaster(tl_nt_spatial_raster_z_raster, "tl_nt_spatial_raster_z_raster.tif", overwrite = TRUE)
+writeRaster(tl_t_spatial_raster_z_raster, "tl_t_spatial_raster_z_raster.tif", overwrite = TRUE)
+
+############### 3. CENTRALITY ###############
+
+# Calculate the mean and standard deviation
+#mean
+centrality_nt_spatial_raster_mean <- as.numeric(global(centrality_nt_spatial_raster, mean, na.rm = TRUE))
+centrality_t_spatial_raster_mean <- as.numeric(global(centrality_t_spatial_raster, mean, na.rm = TRUE))
+#sd
+centrality_nt_spatial_raster_sd <- as.numeric(global(centrality_nt_spatial_raster, sd, na.rm = TRUE))
+centrality_t_spatial_raster_sd <- as.numeric(global(centrality_t_spatial_raster, sd, na.rm = TRUE))
+
+print(centrality_nt_spatial_raster_mean)
+print(centrality_t_spatial_raster_mean)
+print(centrality_nt_spatial_raster_sd)
+print(centrality_t_spatial_raster_sd)
+
+# Apply Z-score transformation
+centrality_nt_spatial_raster_z_raster <- (centrality_nt_spatial_raster - centrality_nt_spatial_raster_mean)/centrality_nt_spatial_raster_sd
+centrality_t_spatial_raster_z_raster <- (centrality_t_spatial_raster - centrality_t_spatial_raster_mean)/centrality_t_spatial_raster_sd
+
+# Plot the Z-score transformed raster
+#plot(centrality_nt_spatial_raster_z_raster, main = "Centrality NT - Z-score Transformed")
+#plot(centrality_t_spatial_raster_z_raster, main = "Centrality T - Z-score Transformed")
+
+# Save the transformed rasters
+writeRaster(centrality_nt_spatial_raster_z_raster, "centrality_nt_spatial_raster_z_raster.tif", overwrite = TRUE)
+writeRaster(centrality_t_spatial_raster_z_raster, "centrality_t_spatial_raster_z_raster.tif", overwrite = TRUE)
+
+############### 4. CLOSENESS ###############
+
+# Calculate the mean and standard deviation
+#mean
+closeness_nt_spatial_raster_mean <- as.numeric(global(closeness_nt_spatial_raster, mean, na.rm = TRUE))
+closeness_t_spatial_raster_mean <- as.numeric(global(closeness_t_spatial_raster, mean, na.rm = TRUE))
+#sd
+closeness_nt_spatial_raster_sd <- as.numeric(global(closeness_nt_spatial_raster, sd, na.rm = TRUE))
+closeness_t_spatial_raster_sd <- as.numeric(global(closeness_t_spatial_raster, sd, na.rm = TRUE))
+
+print(closeness_nt_spatial_raster_mean)
+print(closeness_t_spatial_raster_mean)
+print(closeness_nt_spatial_raster_sd)
+print(closeness_t_spatial_raster_sd)
+
+# Apply Z-score transformation
+closeness_nt_spatial_raster_z_raster <- (closeness_nt_spatial_raster - closeness_nt_spatial_raster_mean)/closeness_nt_spatial_raster_sd
+closeness_t_spatial_raster_z_raster <- (closeness_t_spatial_raster - closeness_t_spatial_raster_mean)/closeness_t_spatial_raster_sd
+
+# Plot the Z-score transformed raster
+#plot(closeness_nt_spatial_raster_z_raster, main = "closeness NT - Z-score Transformed")
+#plot(closeness_t_spatial_raster_z_raster, main = "closeness T - Z-score Transformed")
+
+# Save the transformed rasters
+writeRaster(closeness_nt_spatial_raster_z_raster, "closeness_nt_spatial_raster_z_raster.tif", overwrite = TRUE)
+writeRaster(closeness_t_spatial_raster_z_raster, "closeness_t_spatial_raster_z_raster.tif", overwrite = TRUE)
+
+############### 5. IN-DEGREE ###############
+
+# Calculate the mean and standard deviation
+#mean
+indegree_nt_spatial_raster_mean <- as.numeric(global(indegree_nt_spatial_raster, mean, na.rm = TRUE))
+indegree_t_spatial_raster_mean <- as.numeric(global(indegree_t_spatial_raster, mean, na.rm = TRUE))
+#sd
+indegree_nt_spatial_raster_sd <- as.numeric(global(indegree_nt_spatial_raster, sd, na.rm = TRUE))
+indegree_t_spatial_raster_sd <- as.numeric(global(indegree_t_spatial_raster, sd, na.rm = TRUE))
+
+print(indegree_nt_spatial_raster_mean)
+print(indegree_t_spatial_raster_mean)
+print(indegree_nt_spatial_raster_sd)
+print(indegree_t_spatial_raster_sd)
+
+# Apply Z-score transformation
+indegree_nt_spatial_raster_z_raster <- (indegree_nt_spatial_raster - indegree_nt_spatial_raster_mean)/indegree_nt_spatial_raster_sd
+indegree_t_spatial_raster_z_raster <- (indegree_t_spatial_raster - indegree_t_spatial_raster_mean)/indegree_t_spatial_raster_sd
+
+# Plot the Z-score transformed raster
+#plot(indegree_nt_spatial_raster_z_raster, main = "indegree NT - Z-score Transformed")
+#plot(indegree_t_spatial_raster_z_raster, main = "indegree T - Z-score Transformed")
+
+# Save the transformed rasters
+writeRaster(indegree_nt_spatial_raster_z_raster, "indegree_nt_spatial_raster_z_raster.tif", overwrite = TRUE)
+writeRaster(indegree_t_spatial_raster_z_raster, "indegree_t_spatial_raster_z_raster.tif", overwrite = TRUE)
+
+############### 6. OUT-DEGREE ###############
+
+# Calculate the mean and standard deviation
+#mean
+outdegree_nt_spatial_raster_mean <- as.numeric(global(outdegree_nt_spatial_raster, mean, na.rm = TRUE))
+outdegree_t_spatial_raster_mean <- as.numeric(global(outdegree_t_spatial_raster, mean, na.rm = TRUE))
+#sd
+outdegree_nt_spatial_raster_sd <- as.numeric(global(outdegree_nt_spatial_raster, sd, na.rm = TRUE))
+outdegree_t_spatial_raster_sd <- as.numeric(global(outdegree_t_spatial_raster, sd, na.rm = TRUE))
+
+print(outdegree_nt_spatial_raster_mean)
+print(outdegree_t_spatial_raster_mean)
+print(outdegree_nt_spatial_raster_sd)
+print(outdegree_t_spatial_raster_sd)
+
+# Apply Z-score transformation
+outdegree_nt_spatial_raster_z_raster <- (outdegree_nt_spatial_raster - outdegree_nt_spatial_raster_mean)/outdegree_nt_spatial_raster_sd
+outdegree_t_spatial_raster_z_raster <- (outdegree_t_spatial_raster - outdegree_t_spatial_raster_mean)/outdegree_t_spatial_raster_sd
+
+# Plot the Z-score transformed raster
+#plot(outdegree_nt_spatial_raster_z_raster, main = "outdegree NT - Z-score Transformed")
+#plot(outdegree_t_spatial_raster_z_raster, main = "outdegree T - Z-score Transformed")
+
+# Save the transformed rasters
+writeRaster(outdegree_nt_spatial_raster_z_raster, "outdegree_nt_spatial_raster_z_raster.tif", overwrite = TRUE)
+writeRaster(outdegree_t_spatial_raster_z_raster, "outdegree_t_spatial_raster_z_raster.tif", overwrite = TRUE)
+
+############### 7. COMPARE MAPS ###############
+
+tl_ssi_compare <- SSIMmap::ssim_raster(tl_nt_spatial_raster, tl_t_spatial_raster, global = FALSE)
 ivi_ssi_compare <- SSIMmap::ssim_raster(ivi_nt_spatial_raster, ivi_t_spatial_raster, global = FALSE)
+
 centrality_ssi_compare <- SSIMmap::ssim_raster(centrality_nt_spatial_raster, centrality_t_spatial_raster, global = FALSE)
 closeness_ssi_compare <- SSIMmap::ssim_raster(closeness_nt_spatial_raster, closeness_t_spatial_raster, global = FALSE)
 indegree_ssi_compare <- SSIMmap::ssim_raster(indegree_nt_spatial_raster, indegree_t_spatial_raster, global = FALSE)
 outdegree_ssi_compare <- SSIMmap::ssim_raster(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, global = FALSE)
-tl_ssi_compare <- SSIMmap::ssim_raster(tl_nt_spatial_raster, tl_t_spatial_raster, global = FALSE)
 
 #Save...
-
 terra::writeRaster(ivi_ssi_compare[[1]], filename = "ivi_ssi_compare_SSIM.tif")
 terra::writeRaster(ivi_ssi_compare[[2]], filename = "ivi_ssi_compare_SIM.tif")
 terra::writeRaster(ivi_ssi_compare[[3]], filename = "ivi_ssi_compare_SIV.tif")
@@ -94,7 +263,7 @@ terra::writeRaster(indegree_ssi_compare[[4]], filename = "indegree_ssi_compare_S
 terra::writeRaster(closeness_ssi_compare[[1]], filename = "closeness_ssi_compare_SSIM.tif")
 terra::writeRaster(closeness_ssi_compare[[2]], filename = "closeness_ssi_compare_SIM.tif")
 terra::writeRaster(closeness_ssi_compare[[3]], filename = "closeness_ssi_compare_SIV.tif")
-terra::writeRaster(closeness_ssi_compare[[4]], filename = "closeness_ssi_compare_SIP.tif")
+terra::writeRaster(closeness_ssi_compare[[4]], filename = "closeness_ssi_compare_SIP.tif") 
 #
 terra::writeRaster(tl_ssi_compare[[1]], filename = "tl_ssi_compare_SSIM.tif")
 terra::writeRaster(tl_ssi_compare[[2]], filename = "tl_ssi_compare_SIM.tif")
