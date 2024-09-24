@@ -8,7 +8,6 @@
 #Load package
 library(terra)
 library(SSIMmap)
-library(textGrob)
 library(gridExtra)
 library(grid)
 library(RColorBrewer)
@@ -39,6 +38,25 @@ test_closeness <- spatialEco::raster.change(closeness_nt_spatial_raster, closene
 test_indegree <- spatialEco::raster.change(indegree_nt_spatial_raster, indegree_t_spatial_raster, stat = "t.test")
 test_outdegree <- spatialEco::raster.change(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, stat = "t.test")
 test_tl <- spatialEco::raster.change(tl_nt_spatial_raster, tl_t_spatial_raster, stat = "t.test")
+
+#Save ...
+terra::writeRaster(test_ivi[[1]], filename = "ivi_raster_change_1.tif")
+terra::writeRaster(test_ivi[[2]], filename = "ivi_raster_change_2.tif")
+
+terra::writeRaster(test_centrality[[1]], filename = "centrality_raster_change_1.tif")
+terra::writeRaster(test_centrality[[2]], filename = "centrality_raster_change_2.tif")
+
+terra::writeRaster(test_closeness[1]], filename = "closeness_raster_change_1.tif")
+terra::writeRaster(test_closeness[[2]], filename = "closeness_raster_change_2.tif")
+
+terra::writeRaster(test_indegree[[1]], filename = "indegree_raster_change_1.tif")
+terra::writeRaster(test_indegree[[2]], filename = "indegree_raster_change_2.tif")
+
+terra::writeRaster(test_outdegree[[1]], filename = "outdegree_raster_change_1.tif")
+terra::writeRaster(test_outdegree[[2]], filename = "outdegree_raster_change_2.tif")
+
+terra::writeRaster(test_tl[[1]], filename = "tl_raster_change_1.tif")
+terra::writeRaster(test_tl[[2]], filename = "tl_raster_change_2.tif")
 
 ################################################################################
 #                                 Using SSIMmap
