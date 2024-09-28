@@ -232,62 +232,62 @@ writeRaster(outdegree_t_spatial_raster_z_raster, "outdegree_t_spatial_raster_z_r
 ############### 7. COMPARE MAPS ###############
 
 #Load required rasters (if these have been deleted from the environment)
-tl_nt_spatial_raster <- terra::rast("tl_nt_spatial_raster_z_raster.tif")
-tl_t_spatial_raster <- terra::rast("tl_t_spatial_raster_z_raster.tif")
+tl_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\tl_nt_spatial_raster_z_raster.tif")
+tl_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\tl_t_spatial_raster_z_raster.tif")
 
-ivi_nt_spatial_raster <- terra::rast("ivi_nt_spatial_raster_z_raster.tif")
-ivi_t_spatial_raster <- terra::rast("ivi_t_spatial_raster_z_raster.tif")
+ivi_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\ivi_nt_spatial_raster_z_raster.tif")
+ivi_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\ivi_t_spatial_raster_z_raster.tif")
 
-centrality_nt_spatial_raster <- terra::rast("centrality_nt_spatial_raster_z_raster.tif")
-centrality_t_spatial_raster <- terra::rast("centrality_t_spatial_raster_z_raster.tif")
+centrality_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\centrality_nt_spatial_raster_z_raster.tif")
+centrality_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\centrality_t_spatial_raster_z_raster.tif")
 
-closeness_nt_spatial_raster <- terra::rast("closeness_nt_spatial_raster_z_raster.tif")
-closeness_t_spatial_raster <- terra::rast("closeness_t_spatial_raster_z_raster.tif")
+closeness_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\closeness_nt_spatial_raster_z_raster.tif")
+closeness_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\closeness_t_spatial_raster_z_raster.tif")
 
-indegree_nt_spatial_raster <- terra::rast("indegree_nt_spatial_raster_z_raster.tif")
-indegree_t_spatial_raster <- terra::rast("indegree_t_spatial_raster_z_raster.tif")
+indegree_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\indegree_nt_spatial_raster_z_raster.tif")
+indegree_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\indegree_t_spatial_raster_z_raster.tif")
 
-outdegree_nt_spatial_raster <- terra::rast("outdegree_nt_spatial_raster_z_raster.tif")
-outdegree_t_spatial_raster <- terra::rast("outdegree_t_spatial_raster_z_raster.tif")
+outdegree_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\outdegree_nt_spatial_raster_z_raster.tif")
+outdegree_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\outdegree_t_spatial_raster_z_raster.tif")
 
+#Run & Save...
 
-#tl_ssi_compare <- SSIMmap::ssim_raster(tl_nt_spatial_raster, tl_t_spatial_raster, global = FALSE)
 ivi_ssi_compare <- SSIMmap::ssim_raster(ivi_nt_spatial_raster, ivi_t_spatial_raster, global = FALSE)
+terra::writeRaster(ivi_ssi_compare[[1]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SSIM.tif")
+terra::writeRaster(ivi_ssi_compare[[2]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SIM.tif")
+terra::writeRaster(ivi_ssi_compare[[3]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SIV.tif")
+terra::writeRaster(ivi_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SIP.tif")
+#
+tl_ssi_compare <- SSIMmap::ssim_raster(tl_nt_spatial_raster, tl_t_spatial_raster, global = FALSE)
+terra::writeRaster(tl_ssi_compare[[1]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SSIM.tif")
+terra::writeRaster(tl_ssi_compare[[2]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SIM.tif")
+terra::writeRaster(tl_ssi_compare[[3]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SIV.tif")
+terra::writeRaster(tl_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SIP.tif")
+#
 centrality_ssi_compare <- SSIMmap::ssim_raster(centrality_nt_spatial_raster, centrality_t_spatial_raster, global = FALSE)
+terra::writeRaster(centrality_ssi_compare[[1]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SSIM.tif")
+terra::writeRaster(centrality_ssi_compare[[2]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SIM.tif")
+terra::writeRaster(centrality_ssi_compare[[3]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SIV.tif")
+terra::writeRaster(centrality_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SIP.tif")
+#
 closeness_ssi_compare <- SSIMmap::ssim_raster(closeness_nt_spatial_raster, closeness_t_spatial_raster, global = FALSE)
-indegree_ssi_compare <- SSIMmap::ssim_raster(indegree_nt_spatial_raster, indegree_t_spatial_raster, global = FALSE)
+terra::writeRaster(closeness_ssi_compare[[1]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SSIM.tif")
+terra::writeRaster(closeness_ssi_compare[[2]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SIM.tif")
+terra::writeRaster(closeness_ssi_compare[[3]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SIV.tif")
+terra::writeRaster(closeness_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SIP.tif") 
+#
 outdegree_ssi_compare <- SSIMmap::ssim_raster(outdegree_nt_spatial_raster, outdegree_t_spatial_raster, global = FALSE)
+terra::writeRaster(outdegree_ssi_compare[[1]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SSIM.tif")
+terra::writeRaster(outdegree_ssi_compare[[2]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SIM.tif")
+terra::writeRaster(outdegree_ssi_compare[[3]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SIV.tif")
+terra::writeRaster(outdegree_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SIP.tif")
+#
+indegree_ssi_compare <- SSIMmap::ssim_raster(indegree_nt_spatial_raster, indegree_t_spatial_raster, global = FALSE)
+terra::writeRaster(indegree_ssi_compare[[1]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SSIM.tif")
+terra::writeRaster(indegree_ssi_compare[[2]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SIM.tif")
+terra::writeRaster(indegree_ssi_compare[[3]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SIV.tif")
+terra::writeRaster(indegree_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SIP.tif")
 
-#Save...
-terra::writeRaster(ivi_ssi_compare[[1]], filename = "ivi_ssi_compare_SSIM.tif")
-terra::writeRaster(ivi_ssi_compare[[2]], filename = "ivi_ssi_compare_SIM.tif")
-terra::writeRaster(ivi_ssi_compare[[3]], filename = "ivi_ssi_compare_SIV.tif")
-terra::writeRaster(ivi_ssi_compare[[4]], filename = "ivi_ssi_compare_SIP.tif")
-#
-#terra::writeRaster(tl_ssi_compare[[1]], filename = "tl_ssi_compare_SSIM.tif")
-#terra::writeRaster(tl_ssi_compare[[2]], filename = "tl_ssi_compare_SIM.tif")
-#terra::writeRaster(tl_ssi_compare[[3]], filename = "tl_ssi_compare_SIV.tif")
-#terra::writeRaster(tl_ssi_compare[[4]], filename = "tl_ssi_compare_SIP.tif")
-#
-terra::writeRaster(centrality_ssi_compare[[1]], filename = "centrality_ssi_compare_SSIM.tif")
-terra::writeRaster(centrality_ssi_compare[[2]], filename = "centrality_ssi_compare_SIM.tif")
-terra::writeRaster(centrality_ssi_compare[[3]], filename = "centrality_ssi_compare_SIV.tif")
-terra::writeRaster(centrality_ssi_compare[[4]], filename = "centrality_ssi_compare_SIP.tif")
-#
-terra::writeRaster(outdegree_ssi_compare[[1]], filename = "outdegree_ssi_compare_SSIM.tif")
-terra::writeRaster(outdegree_ssi_compare[[2]], filename = "outdegree_ssi_compare_SIM.tif")
-terra::writeRaster(outdegree_ssi_compare[[3]], filename = "outdegree_ssi_compare_SIV.tif")
-terra::writeRaster(outdegree_ssi_compare[[4]], filename = "outdegree_ssi_compare_SIP.tif")
-#
-terra::writeRaster(indegree_ssi_compare[[1]], filename = "indegree_ssi_compare_SSIM.tif")
-terra::writeRaster(indegree_ssi_compare[[2]], filename = "indegree_ssi_compare_SIM.tif")
-terra::writeRaster(indegree_ssi_compare[[3]], filename = "indegree_ssi_compare_SIV.tif")
-terra::writeRaster(indegree_ssi_compare[[4]], filename = "indegree_ssi_compare_SIP.tif")
-#
-terra::writeRaster(closeness_ssi_compare[[1]], filename = "closeness_ssi_compare_SSIM.tif")
-terra::writeRaster(closeness_ssi_compare[[2]], filename = "closeness_ssi_compare_SIM.tif")
-terra::writeRaster(closeness_ssi_compare[[3]], filename = "closeness_ssi_compare_SIV.tif")
-terra::writeRaster(closeness_ssi_compare[[4]], filename = "closeness_ssi_compare_SIP.tif") 
 ################################################################################
 #                                  Plotting
 ################################################################################
