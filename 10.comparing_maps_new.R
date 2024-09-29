@@ -412,4 +412,5 @@ gridExtra::grid.arrange(plot_closeness_SSIM,
                         ncol=2,
                         top=grid::textGrob("Closeness"))
 
-#########################
+################################################################################
+
