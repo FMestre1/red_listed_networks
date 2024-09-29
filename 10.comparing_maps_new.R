@@ -294,35 +294,35 @@ terra::writeRaster(indegree_ssi_compare[[4]], filename = "D:\\THREATENED_NON_THR
 
 #https://cran.r-project.org/web/packages/SSIMmap/vignettes/Introduction_to_SSIMmap.html
 
-ivi_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\ivi_ssi_compare_SSIM.tif")
-ivi_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\ivi_ssi_compare_SIM.tif")
-ivi_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\ivi_ssi_compare_SIV.tif")
-ivi_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\ivi_ssi_compare_SIP.tif")
+ivi_ssi_compare_SSIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SSIM.tif")
+ivi_ssi_compare_SIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SIM.tif")
+ivi_ssi_compare_SIV <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SIV.tif")
+ivi_ssi_compare_SIP <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\ivi_ssi_compare_SIP.tif")
 #
-centrality_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\centrality_ssi_compare_SSIM.tif")
-centrality_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\centrality_ssi_compare_SIM.tif")
-centrality_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\centrality_ssi_compare_SIV.tif")
-centrality_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\centrality_ssi_compare_SIP.tif")
+centrality_ssi_compare_SSIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SSIM.tif")
+centrality_ssi_compare_SIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SIM.tif")
+centrality_ssi_compare_SIV <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SIV.tif")
+centrality_ssi_compare_SIP <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\centrality_ssi_compare_SIP.tif")
 #
-outdegree_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SSIM.tif")
-outdegree_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIM.tif")
-outdegree_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIV.tif")
-outdegree_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\outdegree_ssi_compare_SIP.tif")
+outdegree_ssi_compare_SSIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SSIM.tif")
+outdegree_ssi_compare_SIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SIM.tif")
+outdegree_ssi_compare_SIV <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SIV.tif")
+outdegree_ssi_compare_SIP <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\outdegree_ssi_compare_SIP.tif")
 #
-indegree_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SSIM.tif")
-indegree_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SIM.tif")
-indegree_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SIV.tif")
-indegree_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\indegree_ssi_compare_SIP.tif")
+indegree_ssi_compare_SSIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SSIM.tif")
+indegree_ssi_compare_SIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SIM.tif")
+indegree_ssi_compare_SIV <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SIV.tif")
+indegree_ssi_compare_SIP <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\indegree_ssi_compare_SIP.tif")
 #
-closeness_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\closeness_ssi_compare_SSIM.tif")
-closeness_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\closeness_ssi_compare_SIM.tif")
-closeness_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\closeness_ssi_compare_SIV.tif")
-closeness_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\closeness_ssi_compare_SIP.tif")
+closeness_ssi_compare_SSIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SSIM.tif")
+closeness_ssi_compare_SIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SIM.tif")
+closeness_ssi_compare_SIV <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SIV.tif")
+closeness_ssi_compare_SIP <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\closeness_ssi_compare_SIP.tif")
 #
-tl_ssi_compare_SSIM <- terra::rast("D:\\output_red_listed\\tl_ssi_compare_SSIM.tif")
-tl_ssi_compare_SIM <- terra::rast("D:\\output_red_listed\\tl_ssi_compare_SIM.tif")
-tl_ssi_compare_SIV <- terra::rast("D:\\output_red_listed\\tl_ssi_compare_SIV.tif")
-tl_ssi_compare_SIP <- terra::rast("D:\\output_red_listed\\tl_ssi_compare_SIP.tif")
+tl_ssi_compare_SSIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SSIM.tif")
+tl_ssi_compare_SIM <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SIM.tif")
+tl_ssi_compare_SIV <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SIV.tif")
+tl_ssi_compare_SIP <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\output\\tl_ssi_compare_SIP.tif")
 
 ##
 
@@ -413,65 +413,3 @@ gridExtra::grid.arrange(plot_closeness_SSIM,
                         top=grid::textGrob("Closeness"))
 
 #########################
-
-library(ade4)
-
-tl_nt_spatial_raster
-tl_t_spatial_raster
-
-# Reduce resolution by a factor of 2 (or more if needed)
-tl_nt_spatial_raster_resampled <- aggregate(tl_nt_spatial_raster, fact = 2)
-tl_t_spatial_raster_resampled <- aggregate(tl_t_spatial_raster, fact = 2)
-
-tl_ssi_compare_resample <- SSIMmap::ssim_raster(tl_nt_spatial_raster_resampled, 
-                                                tl_t_spatial_raster_resampled, 
-                                                global = FALSE)
-
-plot_tl_SSIM <- rasterVis::levelplot(tl_ssi_compare_resample[[1]], contour=FALSE, par.settings = myTheme, main= "SSIM", margin = FALSE)
-plot_tl_SIM <- rasterVis::levelplot(tl_ssi_compare_resample[[2]], contour=FALSE, par.settings = myTheme, main= "SIM", margin = FALSE)
-plot_tl_SIV <- rasterVis::levelplot(tl_ssi_compare_resample[[3]], contour=FALSE, par.settings = myTheme, main= "SIV", margin = FALSE)
-plot_tl_SIP <- rasterVis::levelplot(tl_ssi_compare_resample[[4]], contour=FALSE, par.settings = myTheme, main= "SIP", margin = FALSE)
-
-gridExtra::grid.arrange(plot_tl_SSIM,
-                        plot_tl_SIM,
-                        plot_tl_SIV,
-                        plot_tl_SIP,
-                        ncol=2,
-                        top=grid::textGrob("Trophic Level"))
-
-# Assuming map1 and map2 are matrices or rasters
-#dist_map1 <- dist(as.vector(tl_nt_spatial_raster_resampled))
-#dist_map2 <- dist(as.vector(tl_t_spatial_raster_resampled))
-
-# Perform Mantel test
-mantel_result <- mantel.rtest(dist_map1, dist_map2, nrepet = 999)
-
-##############################################
-
-library(spdep)
-
-# Create a spatial neighborhood structure (based on map coordinates)
-coords <- coordinates(map1)  # Assuming map1 is a raster
-nb <- dnearneigh(coords, 0, 1.5)  # Define neighbors within a certain distance
-lw <- nb2listw(nb, style = "W")
-
-# Compute the actual correlation or similarity
-actual_similarity <- cor(map1_vals, map2_vals)
-
-# Perform a spatially constrained permutation test
-n_permutations <- 999
-similarity_scores <- numeric(n_permutations)
-
-for (i in 1:n_permutations) {
-  # Perform spatially constrained permutation
-  permuted_map2_vals <- spsample(map2_vals, lw)
-  
-  # Compute the similarity for the permuted map
-  similarity_scores[i] <- cor(map1_vals, permuted_map2_vals)
-}
-
-# Calculate the p-value
-p_value <- sum(similarity_scores >= actual_similarity) / n_permutations
-
-print(paste("Spatially constrained permutation test p-value:", p_value))
-
