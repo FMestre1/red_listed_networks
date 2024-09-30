@@ -188,4 +188,113 @@ p_value <- sum(similarity_scores >= actual_similarity) / n_permutations
 
 print(paste("Spatially constrained permutation test p-value:", p_value))
 
+################################################################################
+################################################################################
 
+# Load required packages
+library(terra)
+library(spdep)
+library(ggplot2)
+library(gridExtra)
+library(viridis)
+library(doParallel)
+
+# Load your maps
+tl_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\tl_nt_spatial_raster_z_raster.tif")
+tl_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\tl_t_spatial_raster_z_raster.tif")
+ivi_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\ivi_nt_spatial_raster_z_raster.tif")
+ivi_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\ivi_t_spatial_raster_z_raster.tif")
+centrality_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\centrality_nt_spatial_raster_z_raster.tif")
+centrality_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\centrality_t_spatial_raster_z_raster.tif")
+closeness_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\closeness_nt_spatial_raster_z_raster.tif")
+closeness_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\closeness_t_spatial_raster_z_raster.tif")
+indegree_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\indegree_nt_spatial_raster_z_raster.tif")
+indegree_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\indegree_t_spatial_raster_z_raster.tif")
+outdegree_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\outdegree_nt_spatial_raster_z_raster.tif")
+outdegree_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\outdegree_t_spatial_raster_z_raster.tif")
+
+# Ensure both maps have the same extent and resolution
+#map2 <- resample(map2, map1)
+
+# Detect number of cores
+ncores <- detectCores() - 1  # Leave one core free for system tasks
+
+# Set up and register cluster
+cl <- makeCluster(ncores)
+registerDoParallel(cl)
+
+#######
+
+# Parallel computation using foreach
+results <- foreach(i = 1:100) %dopar% kappa <- kappa_calc(tl_nt_spatial_raster, tl_t_spatial_raster)
+
+# Stop cluster when done
+stopCluster(cl)
+
+## 1. Kappa Statistic
+# Note: terra doesn't have a direct kappa function, so we'll use a custom implementation
+kappa_calc <- function(map1, map2) {
+  confusion_matrix <- table(values(map1), values(map2))
+  n <- sum(confusion_matrix)
+  nc <- ncol(confusion_matrix)
+  diag <- diag(confusion_matrix)
+  rowsums <- rowSums(confusion_matrix)
+  colsums <- colSums(confusion_matrix)
+  expected <- rowsums %*% t(colsums) / n
+  
+  kappa <- (sum(diag) - sum(expected)) / (n - sum(expected))
+  return(kappa)
+}
+
+kappa <- kappa_calc(tl_nt_spatial_raster, tl_t_spatial_raster)
+print(paste("Kappa Statistic:", kappa))
+
+## 2. Moran's I Autocorrelation Index
+pts <- as.points(map1)
+nb <- dnearneigh(crds(pts), 0, res(map1)[1])
+lw <- nb2listw(nb, style = "W")
+
+moran_map1 <- moran.test(values(map1), lw)
+moran_map2 <- moran.test(values(map2), lw)
+
+print("Moran's I for Map 1:")
+print(moran_map1)
+print("Moran's I for Map 2:")
+print(moran_map2)
+
+## 3. Raster Subtraction
+diff_map <- map1 - map2
+
+# Visualize the difference
+plot(diff_map, main = "Difference between Map 1 and Map 2")
+
+## 4. Exploratory Spatial Data Analysis (ESDA)
+# Local Moran's I
+local_moran_map1 <- localmoran(values(map1), lw)
+local_moran_map2 <- localmoran(values(map2), lw)
+
+# Visualize Local Moran's I
+local_moran1 <- rast(map1)
+values(local_moran1) <- local_moran_map1[, 1]
+local_moran2 <- rast(map2)
+values(local_moran2) <- local_moran_map2[, 1]
+
+par(mfrow = c(1, 2))
+plot(local_moran1, main = "Local Moran's I - Map 1")
+plot(local_moran2, main = "Local Moran's I - Map 2")
+
+## 5. Statistical Comparison
+# Perform a paired t-test
+t_test_result <- t.test(values(map1), values(map2), paired = TRUE)
+print("Paired t-test result:")
+print(t_test_result)
+
+## 6. Visualization
+# Create a function to plot rasters
+plot_raster <- function(raster, title) {
+  df <- as.data.frame(raster, xy = TRUE)
+  names(df) <- c("x", "y", "value")
+  ggplot(df, aes(x = x, y = y, fill = value)) +
+    geom_tile() +
+    scale_fill_vi
+}  

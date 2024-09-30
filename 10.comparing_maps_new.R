@@ -413,4 +413,101 @@ gridExtra::grid.arrange(plot_closeness_SSIM,
                         top=grid::textGrob("Closeness"))
 
 ################################################################################
+#
+################################################################################
 
+#FMestre
+#29-09-2024
+
+library(spatialEco)
+
+#Load un-transformed rasters
+ivi_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
+ivi_t_spatial_raster <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
+centrality_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_centrality_15JUL.tif")
+centrality_t_spatial_raster <- terra::rast("rasters_15JUL\\t_centrality_15JUL.tif")
+outdegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_outdegree_15JUL.tif")
+outdegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_outdegree_15JUL.tif")
+indegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_indegree_15JUL.tif")
+indegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_indegree_15JUL.tif")
+closeness_t_spatial_raster <- terra::rast("rasters_15JUL\\t_closeness_15JUL.tif")
+closeness_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.tif")
+tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
+tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
+
+#Load transformed rasters
+tl_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\tl_nt_spatial_raster_z_raster.tif")
+tl_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\tl_t_spatial_raster_z_raster.tif")
+ivi_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\ivi_nt_spatial_raster_z_raster.tif")
+ivi_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\ivi_t_spatial_raster_z_raster.tif")
+centrality_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\centrality_nt_spatial_raster_z_raster.tif")
+centrality_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\centrality_t_spatial_raster_z_raster.tif")
+closeness_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\closeness_nt_spatial_raster_z_raster.tif")
+closeness_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\closeness_t_spatial_raster_z_raster.tif")
+indegree_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\indegree_nt_spatial_raster_z_raster.tif")
+indegree_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\indegree_t_spatial_raster_z_raster.tif")
+outdegree_nt_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\outdegree_nt_spatial_raster_z_raster.tif")
+outdegree_t_spatial_raster <- terra::rast("D:\\THREATENED_NON_THREATENED_ SPECIES\\transformed\\outdegree_t_spatial_raster_z_raster.tif")
+
+#Delete takes too long...
+#tl_ttest <- raster.modified.ttest(tl_nt_spatial_raster, tl_t_spatial_raster, d = "auto", sample = "regular", p = 0.0001)
+
+################################################################################
+#                             PEARSON CORRELATION
+################################################################################
+
+#?terra::layerCor
+cor_tl <- terra::layerCor(c(tl_nt_spatial_raster, tl_t_spatial_raster), fun = "cor")
+cor_indegree <- terra::layerCor(c(indegree_nt_spatial_raster, indegree_t_spatial_raster), fun = "cor")
+cor_outdegree <- terra::layerCor(c(outdegree_nt_spatial_raster, outdegree_t_spatial_raster), fun = "cor")
+cor_centrality <- terra::layerCor(c(centrality_nt_spatial_raster, centrality_t_spatial_raster), fun = "cor")
+cor_closeness <- terra::layerCor(c(closeness_nt_spatial_raster, closeness_t_spatial_raster), fun = "cor")
+cor_ivi <- terra::layerCor(c(ivi_nt_spatial_raster, ivi_t_spatial_raster), fun = "cor")
+#
+cor_tl$correlation[1,2]
+cor_indegree$correlation[1,2]
+cor_outdegree$correlation[1,2]
+cor_centrality$correlation[1,2]
+cor_closeness$correlation[1,2]
+cor_ivi$correlation[1,2]
+
+
+################################################################################
+#                                    GLMER
+################################################################################
+
+#Load packages
+library(lme4)
+
+??glmer
+#lme4::glmer(indices ~ fator+ (1 | lat:long)
+
+# Extract the values from the raster
+ivi_nt_spatial_raster_values <- terra::values(ivi_nt_spatial_raster)
+ivi_t_spatial_raster_values <- terra::values(ivi_t_spatial_raster)
+
+# Get the coordinates of the raster cells
+ivi_nt_spatial_raster_coords <- terra::crds(ivi_nt_spatial_raster)
+ivi_t_spatial_raster_coords <- terra::crds(ivi_t_spatial_raster)
+
+# Create a data frame with lat, long, and rich columns
+ivi_nt_df <- data.frame(lat = ivi_nt_spatial_raster_coords[, 2], long = ivi_nt_spatial_raster_coords[, 1], index = ivi_nt_spatial_raster_values)
+ivi_t_df <- data.frame(lat = ivi_t_spatial_raster_coords[, 2], long = ivi_t_spatial_raster_coords[, 1], index = ivi_t_spatial_raster_values)
+
+# Print the data frame
+head(ivi_nt_df)
+head(ivi_t_df)
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
