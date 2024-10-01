@@ -529,3 +529,11 @@ diff_closeness <- diffeR::differenceMR(closeness_nt_spatial_raster, closeness_t_
 diff_tl <- diffeR::differenceMR(tl_nt_spatial_raster, tl_t_spatial_raster, eval = "original")
 
 
+#Save
+saveRDS(diff_ivi, "diff_ivi.rds")
+saveRDS(diff_centrality, "diff_centrality.rds")
+saveRDS(diff_outdegee, "diff_outdegee.rds")
+saveRDS(diff_indegree, "diff_indegree.rds")
+saveRDS(diff_closeness, "diff_closeness.rds")
+saveRDS(diff_tl, "diff_tl.rds")
+
