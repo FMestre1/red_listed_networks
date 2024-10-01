@@ -413,7 +413,7 @@ gridExtra::grid.arrange(plot_closeness_SSIM,
                         top=grid::textGrob("Closeness"))
 
 ################################################################################
-#
+#                             raster.modified.ttest
 ################################################################################
 
 #FMestre
@@ -499,15 +499,33 @@ head(ivi_nt_df)
 head(ivi_t_df)
 
 
+################################################################################
+#                                    diffeR
+################################################################################
+
+#Load packages
+library(diffeR)
+
+#Load rasters
+ivi_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
+ivi_t_spatial_raster <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
+centrality_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_centrality_15JUL.tif")
+centrality_t_spatial_raster <- terra::rast("rasters_15JUL\\t_centrality_15JUL.tif")
+outdegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_outdegree_15JUL.tif")
+outdegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_outdegree_15JUL.tif")
+indegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_indegree_15JUL.tif")
+indegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_indegree_15JUL.tif")
+closeness_t_spatial_raster <- terra::rast("rasters_15JUL\\t_closeness_15JUL.tif")
+closeness_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.tif")
+tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
+tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
+
+#Difference metrics
+diff_ivi <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster, eval = "original")
+diff_centrality <- diffeR::differenceMR(centrality_nt_spatial_raster, centrality_t_spatial_raster, eval = "original")
+diff_outdegee <- diffeR::differenceMR(outdegee_nt_spatial_raster, outdegee_t_spatial_raster, eval = "original")
+diff_indegree <- diffeR::differenceMR(indegree_nt_spatial_raster, indegree_t_spatial_raster, eval = "original")
+diff_closeness <- diffeR::differenceMR(closeness_nt_spatial_raster, closeness_t_spatial_raster, eval = "original")
+diff_tl <- diffeR::differenceMR(tl_nt_spatial_raster, tl_t_spatial_raster, eval = "original")
 
 
-
-
-
-
-
-
-
-  
-  
-  
