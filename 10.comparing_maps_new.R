@@ -521,7 +521,10 @@ tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
 tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 
 #Difference metrics
-diff_ivi <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster, eval = "original")
+
+?diffeR::differenceMR
+
+diff_ivi <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster, eval = "multiple", percent = TRUE)
 diff_centrality <- diffeR::differenceMR(centrality_nt_spatial_raster, centrality_t_spatial_raster, eval = "original")
 diff_outdegee <- diffeR::differenceMR(outdegee_nt_spatial_raster, outdegee_t_spatial_raster, eval = "original")
 diff_indegree <- diffeR::differenceMR(indegree_nt_spatial_raster, indegree_t_spatial_raster, eval = "original")
@@ -537,3 +540,74 @@ saveRDS(diff_indegree, "diff_indegree.rds")
 saveRDS(diff_closeness, "diff_closeness.rds")
 saveRDS(diff_tl, "diff_tl.rds")
 
+#Load
+diff_ivi <- readRDS("diffeR_results/diff_ivi.rds")
+diff_centrality <- readRDS("diffeR_results/diff_centrality.rds")
+diff_outdegee <- readRDS("diffeR_results/diff_outdegee.rds")
+diff_indegree <- readRDS("diffeR_results/diff_indegree.rds")
+diff_closeness <- readRDS("diffeR_results/diff_closeness.rds")
+diff_tl <- readRDS("diffeR_results/diff_tl.rds")
+
+#Create a data frame with all the results
+diff_results <- data.frame(t(diff_ivi), 
+           t(diff_centrality),
+           t(diff_outdegee),
+           t(diff_indegree),
+           t(diff_closeness),
+           t(diff_tl)
+           )
+
+#Rename the table of results
+names(diff_results) <- c("ivi", 
+                         "centrality",  
+                         "outdegee", 
+                         "indegree", 
+                         "closeness",  
+                         "tl"
+                         ) 
+
+#View the table
+View(diff_results)
+
+# Compare at multiple scales
+diff_ivi_2 <- diffeR::differenceMR(ivi_nt_spatial_raster, ivi_t_spatial_raster, eval = "multiple", percent = TRUE)
+diff_centrality_2 <- diffeR::differenceMR(centrality_nt_spatial_raster, centrality_t_spatial_raster, eval = "multiple", percent = TRUE)
+diff_outdegee_2 <- diffeR::differenceMR(outdegee_nt_spatial_raster, outdegee_t_spatial_raster, eval = "multiple", percent = TRUE)
+diff_indegree_2 <- diffeR::differenceMR(indegree_nt_spatial_raster, indegree_t_spatial_raster, eval = "multiple", percent = TRUE)
+diff_closeness_2 <- diffeR::differenceMR(closeness_nt_spatial_raster, closeness_t_spatial_raster, eval = "multiple", percent = TRUE)
+diff_tl_2 <- diffeR::differenceMR(tl_nt_spatial_raster, tl_t_spatial_raster, eval = "multiple", percent = TRUE)
+
+#Save
+saveRDS(diff_ivi_2, "diff_ivi_2.rds")
+saveRDS(diff_centrality_2, "diff_centrality_2.rds")
+saveRDS(diff_outdegee_2, "diff_outdegee_2.rds")
+saveRDS(diff_indegree_2, "diff_indegree_2.rds")
+saveRDS(diff_closeness_2, "diff_closeness_2.rds")
+saveRDS(diff_tl_2, "diff_tl_2.rds")
+
+?diffeR::overallAllocD
+
+
+ivi_cross <- crosstabm(ivi_nt_spatial_raster, ivi_t_spatial_raster)
+ivi_overallAllocD <- overallAllocD(ivi_cross)
+saveRDS(ivi_overallAllocD, "ivi_overallAllocD.rds")
+#
+centrality_cross <- crosstabm(centrality_nt_spatial_raster, centrality_t_spatial_raster)
+centrality_overallAllocD <- overallAllocD(centrality_cross)
+saveRDS(centrality_overallAllocD, "centrality_overallAllocD.rds")
+#
+outdegree_cross <- crosstabm(outdegree_nt_spatial_raster, outdegree_t_spatial_raster)
+outdegree_overallAllocD <- overallAllocD(outdegree_cross)
+saveRDS(outdegree_overallAllocD, "outdegree_overallAllocD.rds")
+#
+indegree_cross <- crosstabm(indegree_nt_spatial_raster, indegree_t_spatial_raster)
+indegree_overallAllocD <- overallAllocD(indegree_cross)
+saveRDS(indegree_overallAllocD, "indegree_overallAllocD.rds")
+#
+closeness_cross <- crosstabm(closeness_nt_spatial_raster, closeness_t_spatial_raster)
+closeness_overallAllocD <- overallAllocD(closeness_cross)
+saveRDS(closeness_overallAllocD, "closeness_overallAllocD.rds")
+#
+tl_cross <- crosstabm(tl_nt_spatial_raster, tl_t_spatial_raster)
+tl_overallAllocD <- overallAllocD(tl_cross)
+saveRDS(tl_overallAllocD, "tl_overallAllocD.rds")
