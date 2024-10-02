@@ -587,7 +587,6 @@ saveRDS(diff_tl_2, "diff_tl_2.rds")
 
 ?diffeR::overallAllocD
 
-
 ivi_cross <- crosstabm(ivi_nt_spatial_raster, ivi_t_spatial_raster)
 ivi_overallAllocD <- overallAllocD(ivi_cross)
 saveRDS(ivi_overallAllocD, "ivi_overallAllocD.rds")
@@ -611,3 +610,15 @@ saveRDS(closeness_overallAllocD, "closeness_overallAllocD.rds")
 tl_cross <- crosstabm(tl_nt_spatial_raster, tl_t_spatial_raster)
 tl_overallAllocD <- overallAllocD(tl_cross)
 saveRDS(tl_overallAllocD, "tl_overallAllocD.rds")
+
+
+#Load
+ivi_overallAllocD <- readRDS("diffeR_results/ivi_overallAllocD.rds")
+centrality_overallAllocD <- readRDS("diffeR_results/centrality_overallAllocD.rds")
+outdegree_overallAllocD <- readRDS("diffeR_results/outdegree_overallAllocD.rds")
+indegree_overallAllocD <- readRDS("diffeR_results/indegree_overallAllocD.rds")
+closeness_overallAllocD <- readRDS("diffeR_results/closeness_overallAllocD.rds")
+tl_overallAllocD <- readRDS("diffeR_results/tl_overallAllocD.rds")
+
+
+
