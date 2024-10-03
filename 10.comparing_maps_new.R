@@ -621,4 +621,74 @@ closeness_overallAllocD <- readRDS("diffeR_results/closeness_overallAllocD.rds")
 tl_overallAllocD <- readRDS("diffeR_results/tl_overallAllocD.rds")
 
 
+################################################################################
+#                                   fuzzySim
+################################################################################
+
+#FMestre
+#03-10-2024
+
+#Load packages
+library(fuzzySim)
+
+#Load rasters
+ivi_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
+ivi_t_spatial_raster <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
+centrality_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_centrality_15JUL.tif")
+centrality_t_spatial_raster <- terra::rast("rasters_15JUL\\t_centrality_15JUL.tif")
+outdegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_outdegree_15JUL.tif")
+outdegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_outdegree_15JUL.tif")
+indegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_indegree_15JUL.tif")
+indegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_indegree_15JUL.tif")
+closeness_t_spatial_raster <- terra::rast("rasters_15JUL\\t_closeness_15JUL.tif")
+closeness_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.tif")
+tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
+tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
+
+
+#reduce resolution to avoid memory issues
+ivi_nt_spatial_raster_lower_res <- aggregate(ivi_nt_spatial_raster, fact = 2, fun = mean)
+ivi_t_spatial_raster_lower_res <- aggregate(ivi_t_spatial_raster, fact = 2, fun = mean)
+centrality_nt_spatial_raster_lower_res <- aggregate(centrality_nt_spatial_raster, fact = 2, fun = mean)
+centrality_t_spatial_raster_lower_res <- aggregate(centrality_t_spatial_raster, fact = 2, fun = mean)
+outdegree_nt_spatial_raster_lower_res <- aggregate(outdegree_nt_spatial_raster, fact = 2, fun = mean)
+outdegree_t_spatial_raster_lower_res <- aggregate(outdegree_t_spatial_raster, fact = 2, fun = mean)
+indegree_nt_spatial_raster_lower_res <- aggregate(indegree_nt_spatial_raster, fact = 2, fun = mean)
+indegree_t_spatial_raster_lower_res <- aggregate(indegree_t_spatial_raster, fact = 2, fun = mean)
+closeness_nt_spatial_raster_lower_res <- aggregate(closeness_nt_spatial_raster, fact = 2, fun = mean)
+closeness_t_spatial_raster_lower_res <- aggregate(closeness_t_spatial_raster, fact = 2, fun = mean)
+tl_nt_spatial_raster_lower_res <- aggregate(tl_nt_spatial_raster, fact = 2, fun = mean)
+tl_t_spatial_raster_lower_res <- aggregate(tl_t_spatial_raster, fact = 2, fun = mean)
+
+#Convert to vector
+ivi_nt_spatial_vector <- terra::values(ivi_nt_spatial_raster_lower_res, mat=FALSE)
+ivi_t_spatial_vector <- terra::values(ivi_t_spatial_raster_lower_res, mat=FALSE)
+centrality_nt_spatial_vector <- terra::values(centrality_nt_spatial_raster_lower_res, mat=FALSE)
+centrality_t_spatial_vector <- terra::values(centrality_t_spatial_raster_lower_res, mat=FALSE)
+outdegree_nt_spatial_vector <- terra::values(outdegree_nt_spatial_raster_lower_res, mat=FALSE)
+outdegree_t_spatial_vector <- terra::values(outdegree_t_spatial_raster_lower_res, mat=FALSE)
+indegree_nt_spatial_vector <- terra::values(indegree_nt_spatial_raster_lower_res, mat=FALSE)
+indegree_t_spatial_vector <- terra::values(indegree_t_spatial_raster_lower_res, mat=FALSE)
+closeness_nt_spatial_vector <- terra::values(closeness_nt_spatial_raster_lower_res, mat=FALSE)
+closeness_t_spatial_vector <- terra::values(closeness_t_spatial_raster_lower_res, mat=FALSE)
+tl_nt_spatial_vector <- terra::values(tl_nt_spatial_raster_lower_res, mat=FALSE)
+tl_t_spatial_vector <- terra::values(tl_t_spatial_raster_lower_res, mat=FALSE)
+
+#Run comparison
+?fuzzySim::modOverlap
+ivi_fuzzy_compare <- fuzzySim::modOverlap(ivi_nt_spatial_vector, ivi_t_spatial_vector)
+centrality_fuzzy_compare <- fuzzySim::modOverlap(centrality_nt_spatial_vector, centrality_t_spatial_vector)
+outdegree_fuzzy_compare <- fuzzySim::modOverlap(outdegree_nt_spatial_vector, outdegree_t_spatial_vector)
+indegree_fuzzy_compare <- fuzzySim::modOverlap(indegree_nt_spatial_vector, indegree_t_spatial_vector)
+closeness_fuzzy_compare <- fuzzySim::modOverlap(closeness_nt_spatial_vector, closeness_t_spatial_vector)
+tl_fuzzy_compare <- fuzzySim::modOverlap(tl_nt_spatial_vector, tl_t_spatial_vector)
+
+#Save
+saveRDS(ivi_fuzzy_compare, "fuzzy_ivi.rds")
+saveRDS(centrality_fuzzy_compare, "fuzzy_centrality.rds")
+saveRDS(outdegree_fuzzy_compare, "fuzzy_outdegee.rds")
+saveRDS(indegree_fuzzy_compare, "fuzzy_indegree.rds")
+saveRDS(closeness_fuzzy_compare, "fuzzy_closeness.rds")
+saveRDS(tl_fuzzy_compare, "fuzzy_tl.rds")
+
 
