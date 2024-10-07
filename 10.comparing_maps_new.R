@@ -676,12 +676,12 @@ tl_t_spatial_vector <- terra::values(tl_t_spatial_raster_lower_res, mat=FALSE)
 
 #Run comparison
 ?fuzzySim::modOverlap
-ivi_fuzzy_compare <- fuzzySim::modOverlap(ivi_nt_spatial_vector, ivi_t_spatial_vector)
-centrality_fuzzy_compare <- fuzzySim::modOverlap(centrality_nt_spatial_vector, centrality_t_spatial_vector)
-outdegree_fuzzy_compare <- fuzzySim::modOverlap(outdegree_nt_spatial_vector, outdegree_t_spatial_vector)
-indegree_fuzzy_compare <- fuzzySim::modOverlap(indegree_nt_spatial_vector, indegree_t_spatial_vector)
-closeness_fuzzy_compare <- fuzzySim::modOverlap(closeness_nt_spatial_vector, closeness_t_spatial_vector)
-tl_fuzzy_compare <- fuzzySim::modOverlap(tl_nt_spatial_vector, tl_t_spatial_vector)
+ivi_fuzzy_compare <- fuzzySim::modOverlap(ivi_nt_spatial_vector/100, ivi_t_spatial_vector/100)
+centrality_fuzzy_compare <- fuzzySim::modOverlap(centrality_nt_spatial_vector/1000, centrality_t_spatial_vector/1000)
+outdegree_fuzzy_compare <- fuzzySim::modOverlap(outdegree_nt_spatial_vector/100, outdegree_t_spatial_vector/100)
+indegree_fuzzy_compare <- fuzzySim::modOverlap(indegree_nt_spatial_vector/100, indegree_t_spatial_vector/100)
+closeness_fuzzy_compare <- fuzzySim::modOverlap(closeness_nt_spatial_vector/100, closeness_t_spatial_vector/100)
+tl_fuzzy_compare <- fuzzySim::modOverlap(tl_nt_spatial_vector/100, tl_t_spatial_vector/100)
 
 #Save
 saveRDS(ivi_fuzzy_compare, "fuzzy_ivi.rds")
@@ -691,4 +691,12 @@ saveRDS(indegree_fuzzy_compare, "fuzzy_indegree.rds")
 saveRDS(closeness_fuzzy_compare, "fuzzy_closeness.rds")
 saveRDS(tl_fuzzy_compare, "fuzzy_tl.rds")
 
+#Load
+fuzzy_centrality <- readRDS("t_nt_fuzzy_outputs/fuzzy_centrality.rds")
+fuzzy_closeness <- readRDS("t_nt_fuzzy_outputs/fuzzy_closeness.rds")
+fuzzy_indegree <- readRDS("t_nt_fuzzy_outputs/fuzzy_indegree.rds")
+fuzzy_ivi <- readRDS("t_nt_fuzzy_outputs/fuzzy_ivi.rds")
+fuzzy_outdegee <- readRDS("t_nt_fuzzy_outputs/fuzzy_outdegee.rds")
+fuzzy_tl <- readRDS("t_nt_fuzzy_outputs/fuzzy_tl.rds")
+ 
 
