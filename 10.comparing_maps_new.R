@@ -674,6 +674,11 @@ closeness_t_spatial_vector <- terra::values(closeness_t_spatial_raster_lower_res
 tl_nt_spatial_vector <- terra::values(tl_nt_spatial_raster_lower_res, mat=FALSE)
 tl_t_spatial_vector <- terra::values(tl_t_spatial_raster_lower_res, mat=FALSE)
 
+
+
+# Create a similarity matrix for continuous rasters
+?fuzzySim::similarity
+
 #Run comparison
 ?fuzzySim::modOverlap
 ivi_fuzzy_compare <- fuzzySim::modOverlap(ivi_nt_spatial_vector/100, ivi_t_spatial_vector/100)
@@ -698,5 +703,111 @@ fuzzy_indegree <- readRDS("t_nt_fuzzy_outputs/fuzzy_indegree.rds")
 fuzzy_ivi <- readRDS("t_nt_fuzzy_outputs/fuzzy_ivi.rds")
 fuzzy_outdegee <- readRDS("t_nt_fuzzy_outputs/fuzzy_outdegee.rds")
 fuzzy_tl <- readRDS("t_nt_fuzzy_outputs/fuzzy_tl.rds")
- 
+
+
+################################################################################
+#                                     RMSE
+################################################################################
+
+#Load rasters
+ivi_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
+ivi_t_spatial_raster <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
+centrality_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_centrality_15JUL.tif")
+centrality_t_spatial_raster <- terra::rast("rasters_15JUL\\t_centrality_15JUL.tif")
+outdegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_outdegree_15JUL.tif")
+outdegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_outdegree_15JUL.tif")
+indegree_t_spatial_raster <- terra::rast("rasters_15JUL\\t_indegree_15JUL.tif")
+indegree_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_indegree_15JUL.tif")
+closeness_t_spatial_raster <- terra::rast("rasters_15JUL\\t_closeness_15JUL.tif")
+closeness_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.tif")
+tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
+tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
+
+#reduce resolution to avoid memory issues
+ivi_nt_spatial_raster_lower_res <- aggregate(ivi_nt_spatial_raster, fact = 2, fun = mean)
+ivi_t_spatial_raster_lower_res <- aggregate(ivi_t_spatial_raster, fact = 2, fun = mean)
+centrality_nt_spatial_raster_lower_res <- aggregate(centrality_nt_spatial_raster, fact = 2, fun = mean)
+centrality_t_spatial_raster_lower_res <- aggregate(centrality_t_spatial_raster, fact = 2, fun = mean)
+outdegree_nt_spatial_raster_lower_res <- aggregate(outdegree_nt_spatial_raster, fact = 2, fun = mean)
+outdegree_t_spatial_raster_lower_res <- aggregate(outdegree_t_spatial_raster, fact = 2, fun = mean)
+indegree_nt_spatial_raster_lower_res <- aggregate(indegree_nt_spatial_raster, fact = 2, fun = mean)
+indegree_t_spatial_raster_lower_res <- aggregate(indegree_t_spatial_raster, fact = 2, fun = mean)
+closeness_nt_spatial_raster_lower_res <- aggregate(closeness_nt_spatial_raster, fact = 2, fun = mean)
+closeness_t_spatial_raster_lower_res <- aggregate(closeness_t_spatial_raster, fact = 2, fun = mean)
+
+tl_nt_spatial_raster_lower_res <- aggregate(tl_nt_spatial_raster, fact = 2, fun = mean)
+tl_t_spatial_raster_lower_res <- aggregate(tl_t_spatial_raster, fact = 2, fun = mean)
+
+#Save aggregated
+terra::writeRaster(ivi_nt_spatial_raster_lower_res, "ivi_nt_spatial_raster_lower_res.tif")
+terra::writeRaster(ivi_t_spatial_raster_lower_res, "ivi_t_spatial_raster_lower_res.tif")
+terra::writeRaster(centrality_nt_spatial_raster_lower_res, "centrality_nt_spatial_raster_lower_res.tif")
+terra::writeRaster(centrality_t_spatial_raster_lower_res, "centrality_t_spatial_raster_lower_res.tif")
+terra::writeRaster(outdegree_nt_spatial_raster_lower_res, "outdegree_nt_spatial_raster_lower_res.tif")
+terra::writeRaster(outdegree_t_spatial_raster_lower_res, "outdegree_t_spatial_raster_lower_res.tif")
+terra::writeRaster(indegree_nt_spatial_raster_lower_res, "indegree_nt_spatial_raster_lower_res.tif")
+terra::writeRaster(indegree_t_spatial_raster_lower_res, "indegree_t_spatial_raster_lower_res.tif")
+terra::writeRaster(closeness_nt_spatial_raster_lower_res, "closeness_nt_spatial_raster_lower_res.tif")
+terra::writeRaster(closeness_t_spatial_raster_lower_res, "closeness_t_spatial_raster_lower_res.tif")
+terra::writeRaster(tl_nt_spatial_raster_lower_res, "tl_nt_spatial_raster_lower_res.tif")
+terra::writeRaster(tl_t_spatial_raster_lower_res, "tl_t_spatial_raster_lower_res.tif")
+
+
+#Load aggregated
+ivi_nt_spatial_raster_lower_res <- terra::rast("ivi_nt_spatial_raster_lower_res.tif")
+ivi_t_spatial_raster_lower_res <- terra::rast("ivi_t_spatial_raster_lower_res.tif")
+centrality_nt_spatial_raster_lower_res <- terra::rast("centrality_nt_spatial_raster_lower_res.tif")
+centrality_t_spatial_raster_lower_res <- terra::rast("centrality_t_spatial_raster_lower_res.tif")
+outdegree_nt_spatial_raster_lower_res <- terra::rast("outdegree_nt_spatial_raster_lower_res.tif")
+outdegree_t_spatial_raster_lower_res <- terra::rast("outdegree_t_spatial_raster_lower_res.tif")
+indegree_nt_spatial_raster_lower_res <- terra::rast("indegree_nt_spatial_raster_lower_res.tif")
+indegree_t_spatial_raster_lower_res <- terra::rast("indegree_t_spatial_raster_lower_res.tif")
+closeness_nt_spatial_raster_lower_res <- terra::rast("closeness_nt_spatial_raster_lower_res.tif")
+closeness_t_spatial_raster_lower_res <- terra::rast("closeness_t_spatial_raster_lower_res.tif")
+tl_nt_spatial_raster_lower_res <- terra::rast("tl_nt_spatial_raster_lower_res.tif")
+tl_t_spatial_raster_lower_res <- terra::rast("tl_t_spatial_raster_lower_res.tif")
+
+
+# Function to compute RMSE
+rmse <- function(map1, map2) {
+  sqrt(mean((map1 - map2)^2, na.rm = TRUE))
+}
+
+# Calculate RMSE
+ivi_rmse <- rmse(ivi_t_spatial_raster_lower_res, ivi_nt_spatial_raster_lower_res)
+#print(ivi_rmse)
+plot(ivi_rmse)
+
+################################################################################
+#                Fuzzy Jaccard Index (Continuous Jaccard)
+################################################################################
+
+library(terra)
+
+# Get the minimum and maximum values cell by cell
+min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+max_vals_ivi <- pmax(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+
+# Calculate the Fuzzy Jaccard Index
+fuzzy_jaccard_ivi <- sum(min_vals_ivi, na.rm = TRUE) / sum(max_vals_ivi, na.rm = TRUE)
+fuzzy_jaccard_ivi
+
+################################################################################
+#          Overlap Coefficient (Sørensen-Dice for Continuous Data)
+################################################################################
+
+#ranges from 0 to 1, where 0 indicates that the sets have no common elements 
+#and 1 indicates that the sets are identical
+
+#Load packages
+library(terra)
+
+min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+
+# Calculate the Overlap Coefficient
+ivi_overlap_coefficient <- 2 * sum(min_vals_ivi, na.rm = TRUE) / (sum(values(ivi_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(ivi_t_spatial_raster_lower_res), na.rm = TRUE))
+#ivi_overlap_coefficient
+saveRDS(ivi_overlap_coefficient, "ivi_overlap_coefficient.rds")
+
+
 
