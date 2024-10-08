@@ -782,15 +782,15 @@ plot(ivi_rmse)
 #                Fuzzy Jaccard Index (Continuous Jaccard)
 ################################################################################
 
-library(terra)
+#library(terra)
 
 # Get the minimum and maximum values cell by cell
-min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
-max_vals_ivi <- pmax(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+#min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+#max_vals_ivi <- pmax(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
 
 # Calculate the Fuzzy Jaccard Index
-fuzzy_jaccard_ivi <- sum(min_vals_ivi, na.rm = TRUE) / sum(max_vals_ivi, na.rm = TRUE)
-fuzzy_jaccard_ivi
+#fuzzy_jaccard_ivi <- sum(min_vals_ivi, na.rm = TRUE) / sum(max_vals_ivi, na.rm = TRUE)
+#fuzzy_jaccard_ivi
 
 ################################################################################
 #          Overlap Coefficient (Sørensen-Dice for Continuous Data)
@@ -803,11 +803,45 @@ fuzzy_jaccard_ivi
 library(terra)
 
 min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_centrality <- pmin(values(centrality_nt_spatial_raster_lower_res), values(centrality_t_spatial_raster_lower_res), na.rm = TRUE)
+
+min_vals_outdegree <- pmin(values(outdegree_nt_spatial_raster_lower_res), values(outdegree_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_indegree <- pmin(values(indegree_nt_spatial_raster_lower_res), values(indegree_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_closeness <- pmin(values(closeness_nt_spatial_raster_lower_res), values(closeness_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_tl <- pmin(values(tl_nt_spatial_raster_lower_res), values(tl_t_spatial_raster_lower_res), na.rm = TRUE)
+
 
 # Calculate the Overlap Coefficient
 ivi_overlap_coefficient <- 2 * sum(min_vals_ivi, na.rm = TRUE) / (sum(values(ivi_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(ivi_t_spatial_raster_lower_res), na.rm = TRUE))
 #ivi_overlap_coefficient
-saveRDS(ivi_overlap_coefficient, "ivi_overlap_coefficient.rds")
+centrality_overlap_coefficient <- 2 * sum(min_vals_centrality, na.rm = TRUE) / (sum(values(centrality_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(centrality_t_spatial_raster_lower_res), na.rm = TRUE))
+#centrality_overlap_coefficient
 
+outdegree_overlap_coefficient <- 2 * sum(min_vals_outdegree, na.rm = TRUE) / (sum(values(outdegree_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(outdegree_t_spatial_raster_lower_res), na.rm = TRUE))
+#outdegree_overlap_coefficient
+indegree_overlap_coefficient <- 2 * sum(min_vals_indegree, na.rm = TRUE) / (sum(values(indegree_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(indegree_t_spatial_raster_lower_res), na.rm = TRUE))
+#outdegree_overlap_coefficient
+closeness_overlap_coefficient <- 2 * sum(min_vals_closeness, na.rm = TRUE) / (sum(values(closeness_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(closeness_t_spatial_raster_lower_res), na.rm = TRUE))
+#outdegree_overlap_coefficient
+tl_overlap_coefficient <- 2 * sum(min_vals_tl, na.rm = TRUE) / (sum(values(tl_nt_spatial_raster_lower_res), na.rm = TRUE) + sum(values(tl_t_spatial_raster_lower_res), na.rm = TRUE))
+#outdegree_overlap_coefficient
+
+#Save
+saveRDS(ivi_overlap_coefficient, "ivi_overlap_coefficient.rds")
+saveRDS(centrality_overlap_coefficient, "centrality_overlap_coefficient.rds")
+
+saveRDS(outdegree_overlap_coefficient, "outdegree_overlap_coefficient.rds")
+saveRDS(indegree_overlap_coefficient, "indegree_overlap_coefficient.rds")
+saveRDS(closeness_overlap_coefficient, "closeness_overlap_coefficient.rds")
+saveRDS(tl_overlap_coefficient, "tl_overlap_coefficient.rds")
+
+#Load
+ivi_overlap_coefficient <- readRDS("~/github/red_listed_networks/ivi_overlap_coefficient.rds")
+centralty_overlap_coefficient <- readRDS("~/github/red_listed_networks/centralty_overlap_coefficient.rds")
+outdegree_overlap_coefficient <- readRDS("~/github/red_listed_networks/outdegree_overlap_coefficient.rds")
+
+indegree_overlap_coefficient <- readRDS("~/github/red_listed_networks/indegree_overlap_coefficient.rds")
+closeness_overlap_coefficient <- readRDS("~/github/red_listed_networks/closeness_overlap_coefficient.rds")
+tl_overlap_coefficient <- readRDS("~/github/red_listed_networks/tl_overlap_coefficient.rds")
 
 
