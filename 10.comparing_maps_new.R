@@ -782,15 +782,37 @@ plot(ivi_rmse)
 #                Fuzzy Jaccard Index (Continuous Jaccard)
 ################################################################################
 
-#library(terra)
+library(terra)
 
+'
 # Get the minimum and maximum values cell by cell
-#min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
-#max_vals_ivi <- pmax(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_ivi <- pmin(values(ivi_nt_spatial_raster_lower_res), values(ivi_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_centrality <- pmin(values(centrality_nt_spatial_raster_lower_res), values(centrality_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_outdegree <- pmin(values(outdegree_nt_spatial_raster_lower_res), values(outdegree_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_indegree <- pmin(values(indegree_nt_spatial_raster_lower_res), values(indegree_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_closeness <- pmin(values(closeness_nt_spatial_raster_lower_res), values(closeness_t_spatial_raster_lower_res), na.rm = TRUE)
+min_vals_tl <- pmin(values(tl_nt_spatial_raster_lower_res), values(tl_t_spatial_raster_lower_res), na.rm = TRUE)
+
+#Save
+saveRDS(min_vals_ivi, "min_vals_ivi.rds")
+saveRDS(min_vals_centrality, "min_vals_centrality.rds")
+saveRDS(min_vals_outdegree, "min_vals_outdegree.rds")
+saveRDS(min_vals_indegree, "min_vals_indegree.rds")
+saveRDS(min_vals_closeness, "min_vals_closeness.rds")
+saveRDS(min_vals_tl, "min_vals_tl.rds")
+
+#Load
+min_vals_ivi <- readRDS("min_vals_ivi.rds")
+min_vals_centrality <- readRDS("min_vals_centrality.rds")
+min_vals_outdegree <- readRDS("min_vals_outdegree.rds")
+min_vals_indegree <- readRDS("min_vals_indegree.rds")
+min_vals_closeness <- readRDS("min_vals_closeness.rds")
+min_vals_tl <-readRDS("min_vals_tl.rds")
 
 # Calculate the Fuzzy Jaccard Index
-#fuzzy_jaccard_ivi <- sum(min_vals_ivi, na.rm = TRUE) / sum(max_vals_ivi, na.rm = TRUE)
+fuzzy_jaccard_ivi <- sum(min_vals_ivi, na.rm = TRUE) / sum(max_vals_ivi, na.rm = TRUE)
 #fuzzy_jaccard_ivi
+'
 
 ################################################################################
 #          Overlap Coefficient (Sørensen-Dice for Continuous Data)
@@ -849,10 +871,63 @@ saveRDS(tl_overlap_coefficient, "tl_overlap_coefficient.rds")
 
 #Load
 ivi_overlap_coefficient <- readRDS("~/github/red_listed_networks/ivi_overlap_coefficient.rds")
-centralty_overlap_coefficient <- readRDS("~/github/red_listed_networks/centralty_overlap_coefficient.rds")
-outdegree_overlap_coefficient <- readRDS("~/github/red_listed_networks/outdegree_overlap_coefficient.rds")
-indegree_overlap_coefficient <- readRDS("~/github/red_listed_networks/indegree_overlap_coefficient.rds")
-closeness_overlap_coefficient <- readRDS("~/github/red_listed_networks/closeness_overlap_coefficient.rds")
 tl_overlap_coefficient <- readRDS("~/github/red_listed_networks/tl_overlap_coefficient.rds")
+closeness_overlap_coefficient <- readRDS("~/github/red_listed_networks/closeness_overlap_coefficient.rds")
+indegree_overlap_coefficient <- readRDS("~/github/red_listed_networks/indegree_overlap_coefficient.rds")
+outdegree_overlap_coefficient <- readRDS("~/github/red_listed_networks/outdegree_overlap_coefficient.rds")
+centrality_overlap_coefficient <- readRDS("~/github/red_listed_networks/centrality_overlap_coefficient.rds")
+
+################################################################################
+#                               Using SpatialPack
+################################################################################
+
+#Load package
+library(SpatialPack)
+
+#Load aggregated
+ivi_nt_spatial_raster_lower_res <- terra::rast("ivi_nt_spatial_raster_lower_res.tif")
+ivi_t_spatial_raster_lower_res <- terra::rast("ivi_t_spatial_raster_lower_res.tif")
+centrality_nt_spatial_raster_lower_res <- terra::rast("centrality_nt_spatial_raster_lower_res.tif")
+centrality_t_spatial_raster_lower_res <- terra::rast("centrality_t_spatial_raster_lower_res.tif")
+outdegree_nt_spatial_raster_lower_res <- terra::rast("outdegree_nt_spatial_raster_lower_res.tif")
+outdegree_t_spatial_raster_lower_res <- terra::rast("outdegree_t_spatial_raster_lower_res.tif")
+indegree_nt_spatial_raster_lower_res <- terra::rast("indegree_nt_spatial_raster_lower_res.tif")
+indegree_t_spatial_raster_lower_res <- terra::rast("indegree_t_spatial_raster_lower_res.tif")
+closeness_nt_spatial_raster_lower_res <- terra::rast("closeness_nt_spatial_raster_lower_res.tif")
+closeness_t_spatial_raster_lower_res <- terra::rast("closeness_t_spatial_raster_lower_res.tif")
+tl_nt_spatial_raster_lower_res <- terra::rast("tl_nt_spatial_raster_lower_res.tif")
+tl_t_spatial_raster_lower_res <- terra::rast("tl_t_spatial_raster_lower_res.tif")
+
+n_cells <- ncell(ivi_nt_spatial_raster_lower_res)
+
+# Get the coordinates of the pixel centroids
+ivi_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(ivi_nt_spatial_raster_lower_res, 1:n_cells)
+ivi_nt_spatial_raster_lower_res_VALUES <- terra::values(ivi_nt_spatial_raster_lower_res)
+ivi_t_spatial_raster_lower_res_VALUES <- terra::values(ivi_t_spatial_raster_lower_res)
+
+#?matrix
+#ivi_matrix <- data.frame(ivi_nt_spatial_raster_lower_res_COORDS, 
+#      ivi_nt_spatial_raster_lower_res_VALUES,
+#      ivi_t_spatial_raster_lower_res_VALUES)
+
+#Save
+saveRDS(ivi_nt_spatial_raster_lower_res_COORDS, "ivi_nt_spatial_raster_lower_res_COORDS.rds")
+saveRDS(ivi_nt_spatial_raster_lower_res_VALUES, "ivi_nt_spatial_raster_lower_res_VALUES.rds")
+saveRDS(ivi_t_spatial_raster_lower_res_VALUES, "ivi_t_spatial_raster_lower_res_VALUES.rds")
+
+#Load
+ivi_nt_spatial_raster_lower_res_COORDS <- readRDS("ivi_nt_spatial_raster_lower_res_COORDS.rds")
+ivi_nt_spatial_raster_lower_res_VALUES <- readRDS("ivi_nt_spatial_raster_lower_res_VALUES.rds")
+ivi_t_spatial_raster_lower_res_VALUES <- readRDS("ivi_t_spatial_raster_lower_res_VALUES.rds")
+
+ivi_nt_spatial_raster_lower_res_COORDS2 <- ivi_nt_spatial_raster_lower_res_COORDS[as.vector(!is.na(ivi_nt_spatial_raster_lower_res_VALUES)),]
+ivi_nt_spatial_raster_lower_res_VALUES2 <- ivi_nt_spatial_raster_lower_res_VALUES[as.vector(!is.na(ivi_nt_spatial_raster_lower_res_VALUES))]
+ivi_t_spatial_raster_lower_res_VALUES2 <- ivi_t_spatial_raster_lower_res_VALUES[as.vector(!is.na(ivi_t_spatial_raster_lower_res_VALUES))]
+
+#Modified t-test
+ivi_ttest <- modified.ttest(ivi_t_spatial_raster_lower_res_VALUES[1:247027625], 
+                            ivi_nt_spatial_raster_lower_res_VALUES[1:247027625], 
+                            ivi_nt_spatial_raster_lower_res_COORDS[1:247027625,]
+                            )
 
 
