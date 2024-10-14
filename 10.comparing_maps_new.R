@@ -884,15 +884,6 @@ centrality_overlap_coefficient <- readRDS("~/github/red_listed_networks/centrali
 #Load package
 library(SpatialPack)
 
-#Load aggregated
-
-outdegree_nt_spatial_raster_lower_res <- terra::rast("outdegree_nt_spatial_raster_lower_res.tif")
-outdegree_t_spatial_raster_lower_res <- terra::rast("outdegree_t_spatial_raster_lower_res.tif")
-indegree_nt_spatial_raster_lower_res <- terra::rast("indegree_nt_spatial_raster_lower_res.tif")
-indegree_t_spatial_raster_lower_res <- terra::rast("indegree_t_spatial_raster_lower_res.tif")
-
-
-
 ##### ivi #####
 
 ivi_nt_spatial_raster_lower_res <- terra::rast("ivi_nt_spatial_raster_lower_res.tif")
