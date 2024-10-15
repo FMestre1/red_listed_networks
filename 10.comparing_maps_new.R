@@ -6,14 +6,8 @@
 #26-07-2024
 
 #Load package
+library(SpatialPack)
 library(terra)
-library(SSIMmap)
-library(textGrob)
-library(gridExtra)
-library(grid)
-library(RColorBrewer)
-#library(spatialEco)
-library(SSIMmap)
 
 #################### LOAD RASTERS #################### 
 
@@ -61,9 +55,6 @@ terra::writeRaster(tl_t_spatial_raster_lower_res, "tl_t_spatial_raster_lower_res
 ################################################################################
 #                               Using SpatialPack
 ################################################################################
-
-#Load package
-library(SpatialPack)
 
 ##### ivi #####
 
