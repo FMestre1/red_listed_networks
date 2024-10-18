@@ -235,3 +235,35 @@ outdegree_ttest <- modified.ttest(outdegree_t_spatial_raster_lower_res_VALUES,
 )
 #save
 saveRDS(outdegree_ttest, "outdegree_ttest.rds")
+
+
+############################################################################################
+#Test
+############################################################################################
+
+outdegree_nt_spatial_raster_lower_res <- terra::rast("outdegree_nt_spatial_raster_lower_res.tif")
+outdegree_t_spatial_raster_lower_res <- terra::rast("outdegree_t_spatial_raster_lower_res.tif")
+
+sample_area <- terra::vect("C:\\Users\\mestr\\Desktop\\CAOP_Continente_2022-shp\\sample_area.shp")
+plot(sample_area)
+crs(sample_area)
+
+sample_area <- terra::project(sample_area, crs(outdegree_nt_spatial_raster_lower_res))
+
+map1 <- terra::crop(outdegree_nt_spatial_raster_lower_res, sample_area)
+map2 <- terra::crop(outdegree_t_spatial_raster_lower_res, sample_area)
+
+#
+n_cells2 <- ncell(map1)
+
+# Get the coordinates of the pixel centroids
+map_COORDS <- terra::xyFromCell(map1, 1:n_cells2)
+map1_VALUES <- terra::values(map1)
+map2_VALUES <- terra::values(map2)
+
+#Modified t-test
+test_ttest <- modified.ttest(map1_VALUES, 
+                             map2_VALUES, 
+                             map_COORDS
+)
+
