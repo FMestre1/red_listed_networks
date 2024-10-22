@@ -24,246 +24,39 @@ closeness_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.ti
 tl_nt_spatial_raster <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
 tl_t_spatial_raster <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 
-#reduce resolution to avoid memory issues
-ivi_nt_spatial_raster_lower_res <- aggregate(ivi_nt_spatial_raster, fact = 2, fun = mean)
-ivi_t_spatial_raster_lower_res <- aggregate(ivi_t_spatial_raster, fact = 2, fun = mean)
-centrality_nt_spatial_raster_lower_res <- aggregate(centrality_nt_spatial_raster, fact = 2, fun = mean)
-centrality_t_spatial_raster_lower_res <- aggregate(centrality_t_spatial_raster, fact = 2, fun = mean)
-outdegree_nt_spatial_raster_lower_res <- aggregate(outdegree_nt_spatial_raster, fact = 2, fun = mean)
-outdegree_t_spatial_raster_lower_res <- aggregate(outdegree_t_spatial_raster, fact = 2, fun = mean)
-indegree_nt_spatial_raster_lower_res <- aggregate(indegree_nt_spatial_raster, fact = 2, fun = mean)
-indegree_t_spatial_raster_lower_res <- aggregate(indegree_t_spatial_raster, fact = 2, fun = mean)
-closeness_nt_spatial_raster_lower_res <- aggregate(closeness_nt_spatial_raster, fact = 2, fun = mean)
-closeness_t_spatial_raster_lower_res <- aggregate(closeness_t_spatial_raster, fact = 2, fun = mean)
-tl_nt_spatial_raster_lower_res <- aggregate(tl_nt_spatial_raster, fact = 2, fun = mean)
-tl_t_spatial_raster_lower_res <- aggregate(tl_t_spatial_raster, fact = 2, fun = mean)
-
-#Save aggregated
-terra::writeRaster(ivi_nt_spatial_raster_lower_res, "ivi_nt_spatial_raster_lower_res.tif")
-terra::writeRaster(ivi_t_spatial_raster_lower_res, "ivi_t_spatial_raster_lower_res.tif")
-terra::writeRaster(centrality_nt_spatial_raster_lower_res, "centrality_nt_spatial_raster_lower_res.tif")
-terra::writeRaster(centrality_t_spatial_raster_lower_res, "centrality_t_spatial_raster_lower_res.tif")
-terra::writeRaster(outdegree_nt_spatial_raster_lower_res, "outdegree_nt_spatial_raster_lower_res.tif")
-terra::writeRaster(outdegree_t_spatial_raster_lower_res, "outdegree_t_spatial_raster_lower_res.tif")
-terra::writeRaster(indegree_nt_spatial_raster_lower_res, "indegree_nt_spatial_raster_lower_res.tif")
-terra::writeRaster(indegree_t_spatial_raster_lower_res, "indegree_t_spatial_raster_lower_res.tif")
-terra::writeRaster(closeness_nt_spatial_raster_lower_res, "closeness_nt_spatial_raster_lower_res.tif")
-terra::writeRaster(closeness_t_spatial_raster_lower_res, "closeness_t_spatial_raster_lower_res.tif")
-terra::writeRaster(tl_nt_spatial_raster_lower_res, "tl_nt_spatial_raster_lower_res.tif")
-terra::writeRaster(tl_t_spatial_raster_lower_res, "tl_t_spatial_raster_lower_res.tif")
 
 ################################################################################
-#                               Using SpatialPack
+#                             PEARSON CORRELATION
 ################################################################################
 
-##### ivi #####
-
-ivi_nt_spatial_raster_lower_res <- terra::rast("ivi_nt_spatial_raster_lower_res.tif")
-ivi_t_spatial_raster_lower_res <- terra::rast("ivi_t_spatial_raster_lower_res.tif")
+#?terra::layerCor
+cor_tl <- terra::layerCor(c(tl_nt_spatial_raster, tl_t_spatial_raster), fun = "cor")
+cor_indegree <- terra::layerCor(c(indegree_nt_spatial_raster, indegree_t_spatial_raster), fun = "cor")
+cor_outdegree <- terra::layerCor(c(outdegree_nt_spatial_raster, outdegree_t_spatial_raster), fun = "cor")
+cor_centrality <- terra::layerCor(c(centrality_nt_spatial_raster, centrality_t_spatial_raster), fun = "cor")
+cor_closeness <- terra::layerCor(c(closeness_nt_spatial_raster, closeness_t_spatial_raster), fun = "cor")
+cor_ivi <- terra::layerCor(c(ivi_nt_spatial_raster, ivi_t_spatial_raster), fun = "cor")
 #
-n_cells <- ncell(ivi_nt_spatial_raster_lower_res)
 
-# Get the coordinates of the pixel centroids
-ivi_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(ivi_nt_spatial_raster_lower_res, 1:n_cells)
-ivi_nt_spatial_raster_lower_res_VALUES <- terra::values(ivi_nt_spatial_raster_lower_res)
-ivi_t_spatial_raster_lower_res_VALUES <- terra::values(ivi_t_spatial_raster_lower_res)
-
-#Save
-saveRDS(ivi_nt_spatial_raster_lower_res_COORDS, "ivi_nt_spatial_raster_lower_res_COORDS.rds")
-saveRDS(ivi_nt_spatial_raster_lower_res_VALUES, "ivi_nt_spatial_raster_lower_res_VALUES.rds")
-saveRDS(ivi_t_spatial_raster_lower_res_VALUES, "ivi_t_spatial_raster_lower_res_VALUES.rds")
-
-#Load
-#ivi_nt_spatial_raster_lower_res_COORDS <- readRDS("ivi_nt_spatial_raster_lower_res_COORDS.rds")
-#ivi_nt_spatial_raster_lower_res_VALUES <- readRDS("ivi_nt_spatial_raster_lower_res_VALUES.rds")
-#ivi_t_spatial_raster_lower_res_VALUES <- readRDS("ivi_t_spatial_raster_lower_res_VALUES.rds")
-
-#Modified t-test
-ivi_ttest <- modified.ttest(ivi_t_spatial_raster_lower_res_VALUES, 
-                            ivi_nt_spatial_raster_lower_res_VALUES, 
-                            ivi_nt_spatial_raster_lower_res_COORDS
-                            )
-#save
-saveRDS(ivi_ttest, "ivi_ttest.rds")
-
-##### tl #####
-
-tl_nt_spatial_raster_lower_res <- terra::rast("tl_nt_spatial_raster_lower_res.tif")
-tl_t_spatial_raster_lower_res <- terra::rast("tl_t_spatial_raster_lower_res.tif")
-#
-n_cells <- ncell(tl_nt_spatial_raster_lower_res)
-
-# Get the coordinates of the pixel centroids
-tl_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(tl_nt_spatial_raster_lower_res, 1:n_cells)
-tl_nt_spatial_raster_lower_res_VALUES <- terra::values(tl_nt_spatial_raster_lower_res)
-tl_t_spatial_raster_lower_res_VALUES <- terra::values(tl_t_spatial_raster_lower_res)
-
-#Save
-saveRDS(tl_nt_spatial_raster_lower_res_COORDS, "tl_nt_spatial_raster_lower_res_COORDS.rds")
-saveRDS(tl_nt_spatial_raster_lower_res_VALUES, "tl_nt_spatial_raster_lower_res_VALUES.rds")
-saveRDS(tl_t_spatial_raster_lower_res_VALUES, "tl_t_spatial_raster_lower_res_VALUES.rds")
-
-#Load
-#tl_nt_spatial_raster_lower_res_COORDS <- readRDS("tl_nt_spatial_raster_lower_res_COORDS.rds")
-#tl_nt_spatial_raster_lower_res_VALUES <- readRDS("tl_nt_spatial_raster_lower_res_VALUES.rds")
-#tl_t_spatial_raster_lower_res_VALUES <- readRDS("tl_t_spatial_raster_lower_res_VALUES.rds")
-
-#Modified t-test
-tl_ttest <- modified.ttest(tl_t_spatial_raster_lower_res_VALUES, 
-                           tl_nt_spatial_raster_lower_res_VALUES, 
-                           tl_nt_spatial_raster_lower_res_COORDS
-)
-#save
-saveRDS(tl_ttest, "tl_ttest.rds")
-
-##### centrality #####
-
-centrality_nt_spatial_raster_lower_res <- terra::rast("centrality_nt_spatial_raster_lower_res.tif")
-centrality_t_spatial_raster_lower_res <- terra::rast("centrality_t_spatial_raster_lower_res.tif")
-#
-n_cells <- ncell(centrality_nt_spatial_raster_lower_res)
-
-# Get the coordinates of the pixel centroids
-centrality_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(centrality_nt_spatial_raster_lower_res, 1:n_cells)
-centrality_nt_spatial_raster_lower_res_VALUES <- terra::values(centrality_nt_spatial_raster_lower_res)
-centrality_t_spatial_raster_lower_res_VALUES <- terra::values(centrality_t_spatial_raster_lower_res)
-
-#Save
-saveRDS(centrality_nt_spatial_raster_lower_res_COORDS, "centrality_nt_spatial_raster_lower_res_COORDS.rds")
-saveRDS(centrality_nt_spatial_raster_lower_res_VALUES, "centrality_nt_spatial_raster_lower_res_VALUES.rds")
-saveRDS(centrality_t_spatial_raster_lower_res_VALUES, "centrality_t_spatial_raster_lower_res_VALUES.rds")
-
-#Load
-#centrality_nt_spatial_raster_lower_res_COORDS <- readRDS("centrality_nt_spatial_raster_lower_res_COORDS.rds")
-#centrality_nt_spatial_raster_lower_res_VALUES <- readRDS("centrality_nt_spatial_raster_lower_res_VALUES.rds")
-#centrality_t_spatial_raster_lower_res_VALUES <- readRDS("centrality_t_spatial_raster_lower_res_VALUES.rds")
-
-#Modified t-test
-centrality_ttest <- modified.ttest(centrality_t_spatial_raster_lower_res_VALUES, 
-                                   centrality_nt_spatial_raster_lower_res_VALUES, 
-                                   centrality_nt_spatial_raster_lower_res_COORDS
-)
-#save
-saveRDS(centrality_ttest, "centrality_ttest.rds")
-
-##### closeness #####
-
-closeness_nt_spatial_raster_lower_res <- terra::rast("closeness_nt_spatial_raster_lower_res.tif")
-closeness_t_spatial_raster_lower_res <- terra::rast("closeness_t_spatial_raster_lower_res.tif")
-#
-n_cells <- ncell(closeness_nt_spatial_raster_lower_res)
-
-# Get the coordinates of the pixel centroids
-closeness_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(closeness_nt_spatial_raster_lower_res, 1:n_cells)
-closeness_nt_spatial_raster_lower_res_VALUES <- terra::values(closeness_nt_spatial_raster_lower_res)
-closeness_t_spatial_raster_lower_res_VALUES <- terra::values(closeness_t_spatial_raster_lower_res)
-
-#Save
-saveRDS(closeness_nt_spatial_raster_lower_res_COORDS, "closeness_nt_spatial_raster_lower_res_COORDS.rds")
-saveRDS(closeness_nt_spatial_raster_lower_res_VALUES, "closeness_nt_spatial_raster_lower_res_VALUES.rds")
-saveRDS(closeness_t_spatial_raster_lower_res_VALUES, "closeness_t_spatial_raster_lower_res_VALUES.rds")
-
-#Load
-#closeness_nt_spatial_raster_lower_res_COORDS <- readRDS("closeness_nt_spatial_raster_lower_res_COORDS.rds")
-#closeness_nt_spatial_raster_lower_res_VALUES <- readRDS("closeness_nt_spatial_raster_lower_res_VALUES.rds")
-#closeness_t_spatial_raster_lower_res_VALUES <- readRDS("closeness_t_spatial_raster_lower_res_VALUES.rds")
-
-#Modified t-test
-closeness_ttest <- modified.ttest(closeness_t_spatial_raster_lower_res_VALUES, 
-                                  closeness_nt_spatial_raster_lower_res_VALUES, 
-                                  closeness_nt_spatial_raster_lower_res_COORDS
-)
-#save
-saveRDS(closeness_ttest, "closeness_ttest.rds")
-
-##### indegree #####
-
-indegree_nt_spatial_raster_lower_res <- terra::rast("indegree_nt_spatial_raster_lower_res.tif")
-indegree_t_spatial_raster_lower_res <- terra::rast("indegree_t_spatial_raster_lower_res.tif")
-#
-n_cells <- ncell(indegree_nt_spatial_raster_lower_res)
-
-# Get the coordinates of the pixel centroids
-indegree_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(indegree_nt_spatial_raster_lower_res, 1:n_cells)
-indegree_nt_spatial_raster_lower_res_VALUES <- terra::values(indegree_nt_spatial_raster_lower_res)
-indegree_t_spatial_raster_lower_res_VALUES <- terra::values(indegree_t_spatial_raster_lower_res)
-
-#Save
-saveRDS(indegree_nt_spatial_raster_lower_res_COORDS, "indegree_nt_spatial_raster_lower_res_COORDS.rds")
-saveRDS(indegree_nt_spatial_raster_lower_res_VALUES, "indegree_nt_spatial_raster_lower_res_VALUES.rds")
-saveRDS(indegree_t_spatial_raster_lower_res_VALUES, "indegree_t_spatial_raster_lower_res_VALUES.rds")
-
-#Load
-#indegree_nt_spatial_raster_lower_res_COORDS <- readRDS("indegree_nt_spatial_raster_lower_res_COORDS.rds")
-#indegree_nt_spatial_raster_lower_res_VALUES <- readRDS("indegree_nt_spatial_raster_lower_res_VALUES.rds")
-#indegree_t_spatial_raster_lower_res_VALUES <- readRDS("indegree_t_spatial_raster_lower_res_VALUES.rds")
-
-#Modified t-test
-indegree_ttest <- modified.ttest(indegree_t_spatial_raster_lower_res_VALUES, 
-                                 indegree_nt_spatial_raster_lower_res_VALUES, 
-                                 indegree_nt_spatial_raster_lower_res_COORDS
-)
-#save
-saveRDS(indegree_ttest, "indegree_ttest.rds")
-
-##### outdegree #####
-
-outdegree_nt_spatial_raster_lower_res <- terra::rast("outdegree_nt_spatial_raster_lower_res.tif")
-outdegree_t_spatial_raster_lower_res <- terra::rast("outdegree_t_spatial_raster_lower_res.tif")
-#
-n_cells <- ncell(outdegree_nt_spatial_raster_lower_res)
-
-# Get the coordinates of the pixel centroids
-outdegree_nt_spatial_raster_lower_res_COORDS <- terra::xyFromCell(outdegree_nt_spatial_raster_lower_res, 1:n_cells)
-outdegree_nt_spatial_raster_lower_res_VALUES <- terra::values(outdegree_nt_spatial_raster_lower_res)
-outdegree_t_spatial_raster_lower_res_VALUES <- terra::values(outdegree_t_spatial_raster_lower_res)
-
-#Save
-saveRDS(outdegree_nt_spatial_raster_lower_res_COORDS, "outdegree_nt_spatial_raster_lower_res_COORDS.rds")
-saveRDS(outdegree_nt_spatial_raster_lower_res_VALUES, "outdegree_nt_spatial_raster_lower_res_VALUES.rds")
-saveRDS(outdegree_t_spatial_raster_lower_res_VALUES, "outdegree_t_spatial_raster_lower_res_VALUES.rds")
-
-#Load
-#outdegree_nt_spatial_raster_lower_res_COORDS <- readRDS("outdegree_nt_spatial_raster_lower_res_COORDS.rds")
-#outdegree_nt_spatial_raster_lower_res_VALUES <- readRDS("outdegree_nt_spatial_raster_lower_res_VALUES.rds")
-#outdegree_t_spatial_raster_lower_res_VALUES <- readRDS("outdegree_t_spatial_raster_lower_res_VALUES.rds")
-
-#Modified t-test
-outdegree_ttest <- modified.ttest(outdegree_t_spatial_raster_lower_res_VALUES, 
-                                  outdegree_nt_spatial_raster_lower_res_VALUES, 
-                                  outdegree_nt_spatial_raster_lower_res_COORDS
-)
-#save
-saveRDS(outdegree_ttest, "outdegree_ttest.rds")
-
-
-############################################################################################
-#Test
-############################################################################################
-
-outdegree_nt_spatial_raster_lower_res <- terra::rast("outdegree_nt_spatial_raster_lower_res.tif")
-outdegree_t_spatial_raster_lower_res <- terra::rast("outdegree_t_spatial_raster_lower_res.tif")
-
-sample_area <- terra::vect("C:\\Users\\mestr\\Desktop\\CAOP_Continente_2022-shp\\sample_area.shp")
-plot(sample_area)
-crs(sample_area)
-
-sample_area <- terra::project(sample_area, crs(outdegree_nt_spatial_raster_lower_res))
-
-map1 <- terra::crop(outdegree_nt_spatial_raster_lower_res, sample_area)
-map2 <- terra::crop(outdegree_t_spatial_raster_lower_res, sample_area)
-
-#
-n_cells2 <- ncell(map1)
-
-# Get the coordinates of the pixel centroids
-map_COORDS <- terra::xyFromCell(map1, 1:n_cells2)
-map1_VALUES <- terra::values(map1)
-map2_VALUES <- terra::values(map2)
-
-#Modified t-test
-test_ttest <- modified.ttest(map1_VALUES, 
-                             map2_VALUES, 
-                             map_COORDS
+pearson_corr <- c(cor_tl$correlation[1,2],
+cor_indegree$correlation[1,2],
+cor_outdegree$correlation[1,2],
+cor_centrality$correlation[1,2],
+cor_closeness$correlation[1,2],
+cor_ivi$correlation[1,2]
 )
 
+indexes_compared <- c(
+  "trophic level",
+  "in degree",
+  "out degree",
+  "centrality",
+  "closeness",
+  "IVI"
+  )
+
+
+pearson_df <- data.frame(indexes_compared, pearson_corr)
+names(pearson_df) <- c("indexes", "pearson correlation")
+
+base::saveRDS(pearson_df, "pearson_df.RDS")
