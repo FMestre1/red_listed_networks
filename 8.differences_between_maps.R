@@ -58,106 +58,146 @@ ivi_diff <- t_ivi - nt_ivi
 writeRaster(ivi_diff, "rasters_15JUL\\ivi_diff.tif", overwrite=TRUE)
 
 ################################################################################
-#                   Are the maps significantly different?    
+#                           Standartize difference maps
 ################################################################################
 
-#From: 
-#https://sesync-ci.github.io/blog/raster-change-analysis.html
+indegree_diff <- terra::rast("rasters_15JUL\\indegree_diff.tif")
+outdegree_diff <- terra::rast("rasters_15JUL\\outdegree_diff.tif")
+t_level_diff <- terra::rast("rasters_15JUL\\t_level_diff.tif")
+closeness_diff <- terra::rast("rasters_15JUL\\closeness_diff.tif")
+centrality_diff <- terra::rast("rasters_15JUL\\centrality_diff.tif")
+ivi_diff <- terra::rast("rasters_15JUL\\ivi_diff.tif")
 
-#indeg_diff_mean <- as.numeric(terra::global(indegree_diff, "mean", na.rm=TRUE))# mean
-#indeg_diff_sd <- as.numeric(terra::global(indegree_diff, "sd", na.rm=TRUE))# sd
-#indegree_diff_std <- (indegree_diff - indeg_diff_mean)/indeg_diff_sd # standardized image
-#terra::writeRaster(indegree_diff_std, "rasters_15JUL\\indegree_diff_std.tif")
-#terra::plot(indegree_diff_std)
-#hist(indegree_diff_std, main="Standardized difference", xlab="Difference")
+# Calculate mean and standard deviation for the raster layer
+indegree_diff_mean <- as.numeric(terra::global(indegree_diff, "mean", na.rm = TRUE)[1])
+indegree_diff_sd <- as.numeric(terra::global(indegree_diff, "sd", na.rm = TRUE)[1])
+# Convert raster to z-scores
+indegree_diff_z_score <- (indegree_diff - indegree_diff_mean) /indegree_diff_sd
+plot(indegree_diff_z_score)
 
-#(...)
+# Calculate mean and standard deviation for the raster layer
+outdegree_diff_mean <- as.numeric(terra::global(outdegree_diff, "mean", na.rm = TRUE)[1])
+outdegree_diff_sd <- as.numeric(terra::global(outdegree_diff, "sd", na.rm = TRUE)[1])
+# Convert raster to z-scores
+outdegree_diff_z_score <- (outdegree_diff - outdegree_diff_mean) /outdegree_diff_sd
+plot(outdegree_diff_z_score)
+
+# Calculate mean and standard deviation for the raster layer
+t_level_diff_mean <- as.numeric(terra::global(t_level_diff, "mean", na.rm = TRUE)[1])
+t_level_diff_sd <- as.numeric(terra::global(t_level_diff, "sd", na.rm = TRUE)[1])
+# Convert raster to z-scores
+t_level_diff_z_score <- (t_level_diff - t_level_diff_mean) /t_level_diff_sd
+plot(t_level_diff_z_score)
+
+# Calculate mean and standard deviation for the raster layer
+closeness_diff_mean <- as.numeric(terra::global(closeness_diff, "mean", na.rm = TRUE)[1])
+closeness_diff_sd <- as.numeric(terra::global(closeness_diff, "sd", na.rm = TRUE)[1])
+# Convert raster to z-scores
+closeness_diff_z_score <- (closeness_diff - closeness_diff_mean) /closeness_diff_sd
+plot(closeness_diff_z_score)
+
+# Calculate mean and standard deviation for the raster layer
+centrality_diff_mean <- as.numeric(terra::global(centrality_diff, "mean", na.rm = TRUE)[1])
+centrality_diff_sd <- as.numeric(terra::global(centrality_diff, "sd", na.rm = TRUE)[1])
+# Convert raster to z-scores
+centrality_diff_z_score <- (centrality_diff - centrality_diff_mean) /centrality_diff_sd
+plot(centrality_diff_z_score)
+
+# Calculate mean and standard deviation for the raster layer
+ivi_diff_mean <- as.numeric(terra::global(ivi_diff, "mean", na.rm = TRUE)[1])
+ivi_diff_sd <- as.numeric(terra::global(ivi_diff, "sd", na.rm = TRUE)[1])
+# Convert raster to z-scores
+ivi_diff_z_score <- (ivi_diff - ivi_diff_mean) /ivi_diff_sd
+plot(ivi_diff_z_score)
+
+#Save
+terra::writeRaster(indegree_diff_z_score, "indegree_diff_z_score.tif")
+terra::writeRaster(outdegree_diff_z_score, "outdegree_diff_z_score.tif")
+terra::writeRaster(t_level_diff_z_score, "t_level_diff_z_score.tif")
+terra::writeRaster(closeness_diff_z_score, "closeness_diff_z_score.tif")
+terra::writeRaster(centrality_diff_z_score, "centrality_diff_z_score.tif")
+terra::writeRaster(ivi_diff_z_score, "ivi_diff_z_score.tif")
 
 ################################################################################
-#    Extract examples for the results & Discussion
+# Plot
 ################################################################################
 
-network_list <- list.files("C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3")
-pat_dataset <- "C:\\Users\\asus\\Documents\\0. Artigos\\IUCN_networks\\data\\data_nuria_3"
+#Required function obtained from https://gist.github.com/johnbaums/306e4b7e69c87b1826db
+diverge0 <- function(p, ramp) {
+  # p: a trellis object resulting from rasterVis::levelplot
+  # ramp: the name of an RColorBrewer palette (as character), a character 
+  #       vector of colour names to interpolate, or a colorRampPalette.
+  require(RColorBrewer)
+  require(rasterVis)
+  if(length(ramp)==1 && is.character(ramp) && ramp %in% 
+     row.names(brewer.pal.info)) {
+    ramp <- suppressWarnings(colorRampPalette(brewer.pal(11, ramp)))
+  } else if(length(ramp) > 1 && is.character(ramp) && all(ramp %in% colors())) {
+    ramp <- colorRampPalette(ramp)
+  } else if(!is.function(ramp)) 
+    stop('ramp should be either the name of a RColorBrewer palette, ', 
+         'a vector of colours to be interpolated, or a colorRampPalette.')
+  rng <- range(p$legend[[1]]$args$key$at)
+  s <- seq(-max(abs(rng)), max(abs(rng)), len=1001)
+  i <- findInterval(rng[which.min(abs(rng))], s)
+  zlim <- switch(which.min(abs(rng)), `1`=i:(1000+1), `2`=1:(i+1))
+  p$legend[[1]]$args$key$at <- s[zlim]
+  p[[grep('^legend', names(p))]][[1]]$args$key$col <- ramp(1000)[zlim[-length(zlim)]]
+  p$panel.args.common$col.regions <- ramp(1000)[zlim[-length(zlim)]]
+  p
+}
 
-#Svaldbard
+#Create plots
+indegree_diff_z_score_plot <- rasterVis::levelplot(indegree_diff_z_score, 
+                                        contour = FALSE, 
+                                        margin = NA,
+                                        main = "In-degree",
+                                        scales = list(draw = FALSE)
+)
 
-#C422
-which(network_list == "C422.csv")
-read.csv(paste0(pat_dataset, "\\C422.csv"))
+outdeg_diff_z_score_plot <- rasterVis::levelplot(outdegree_diff_z_score, 
+                                         contour = FALSE, 
+                                         margin = NA,
+                                         main = "Out-degree",
+                                         scales = list(draw = FALSE)
+)
 
-#IVI
-terra::global(ivi_diff, "mean", na.rm =TRUE)
+trophic_level_diff_z_score_plot <- rasterVis::levelplot(t_level_diff_z_score, 
+                                                contour = FALSE, 
+                                                margin = NA,
+                                                main = "Trophic level",
+                                                scales = list(draw = FALSE)
+)
 
-#Closeness_diff
-terra::global(closeness_diff, "mean", na.rm =TRUE)
+closeness_diff_z_score_plot <- rasterVis::levelplot(closeness_diff_z_score, 
+                                            contour = FALSE, 
+                                            margin = NA,
+                                            main = "Closeness centrality",
+                                            scales = list(draw = FALSE)
+)
 
-#(...)
+centrality_diff_z_score_plot <- rasterVis::levelplot(centrality_diff_z_score, 
+                                             contour = FALSE, 
+                                             margin = NA,
+                                             main = "Betweenness centrality",
+                                             scales = list(draw = FALSE)
+)
 
-################################################################################
-#    Combine
-################################################################################
+ivi_diff_z_score_plot <- rasterVis::levelplot(ivi_diff_z_score, 
+                                      contour = FALSE, 
+                                      margin = NA,
+                                      main = "IVI",
+                                      scales = list(draw = FALSE)
+)
 
-#indeg_diff
-#outdeg_diff
-#trophic_level_diff
-#closeness_diff
-#centrality_diff
-#ivi_diff
+pl1 <- diverge0(indegree_diff_z_score_plot, 'Spectral')
+pl2 <- diverge0(outdeg_diff_z_score_plot, 'Spectral')
+pl3 <- diverge0(trophic_level_diff_z_score_plot, 'Spectral')
+pl4 <- diverge0(closeness_diff_z_score_plot, 'Spectral')
+pl5 <- diverge0(centrality_diff_z_score_plot, 'Spectral')
+pl6 <- diverge0(ivi_diff_z_score_plot, 'Spectral')
 
-# Define minimum and maximum values (adjust based on your data)
-min_val_indeg_diff <- as.numeric(terra::global(indeg_diff, fun = "min", na.rm = TRUE))
-max_val_indeg_diff <- as.numeric(terra::global(indeg_diff, fun = "max", na.rm = TRUE))
-# Normalize values (0 to 1)
-indeg_diff_normalized_rast <- (indeg_diff - min_val_indeg_diff) / (max_val_indeg_diff - min_val_indeg_diff)
-#plot(indeg_diff_normalized_rast)
-
-#Define minimum and maximum values (adjust based on your data)
-min_val_outdeg_diff <- as.numeric(terra::global(outdeg_diff, fun = "min", na.rm = TRUE))
-max_val_outdeg_diff <- as.numeric(terra::global(outdeg_diff, fun = "max", na.rm = TRUE))
-# Normalize values (0 to 1)
-outdeg_diff_normalized_rast <- (outdeg_diff - min_val_outdeg_diff) / (max_val_outdeg_diff - min_val_outdeg_diff)
-#plot(outdeg_diff_normalized_rast)
-
-#Define minimum and maximum values (adjust based on your data)
-min_val_trophic_level_diff <- as.numeric(terra::global(trophic_level_diff, fun = "min", na.rm = TRUE))
-max_val_trophic_level_diff <- as.numeric(terra::global(trophic_level_diff, fun = "max", na.rm = TRUE))
-# Normalize values (0 to 1)
-trophic_level_diff_normalized_rast <- (trophic_level_diff - min_val_trophic_level_diff) / (max_val_trophic_level_diff - min_val_trophic_level_diff)
-#plot(trophic_level_diff_normalized_rast)
-
-#Define minimum and maximum values (adjust based on your data)
-min_val_closeness_diff <- as.numeric(terra::global(closeness_diff, fun = "min", na.rm = TRUE))
-max_val_closeness_diff <- as.numeric(terra::global(closeness_diff, fun = "max", na.rm = TRUE))
-# Normalize values (0 to 1)
-closeness_diff_normalized_rast <- (closeness_diff - min_val_closeness_diff) / (max_val_closeness_diff - min_val_closeness_diff)
-#plot(closeness_diff_normalized_rast)
-
-#Define minimum and maximum values (adjust based on your data)
-min_val_centrality_diff <- as.numeric(terra::global(centrality_diff, fun = "min", na.rm = TRUE))
-max_val_centrality_diff <- as.numeric(terra::global(centrality_diff, fun = "max", na.rm = TRUE))
-# Normalize values (0 to 1)
-centrality_diff_normalized_rast <- (centrality_diff - min_val_centrality_diff) / (max_val_centrality_diff - min_val_centrality_diff)
-#plot(centrality_diff_normalized_rast)
-
-#Define minimum and maximum values (adjust based on your data)
-min_val_ivi_diff <- as.numeric(terra::global(ivi_diff, fun = "min", na.rm = TRUE))
-max_val_ivi_diff <- as.numeric(terra::global(ivi_diff, fun = "max", na.rm = TRUE))
-# Normalize values (0 to 1)
-ivi_diff_normalized_rast <- (ivi_diff - min_val_ivi_diff) / (max_val_ivi_diff - min_val_ivi_diff)
-#plot(ivi_diff_normalized_rast)
-
-all_diffs <- c(indeg_diff_normalized_rast,
-              outdeg_diff_normalized_rast,
-              trophic_level_diff_normalized_rast,
-              closeness_diff_normalized_rast,
-              centrality_diff_normalized_rast,
-              ivi_diff_normalized_rast
-              )
-
-mean_all_diffs <- terra::app(all_diffs, mean)
-plot(mean_all_diffs)
-rasterVis::levelplot(mean_all_diffs, par.settings=BuRdTheme())
-
-#Save results
-#terra::writeRaster(mean_all_diffs, "mean_all_diffs.tif")
+#Compose pairs of maps
+grid.arrange(pl3, pl6, ncol=2)
+grid.arrange(pl1, pl4, ncol=2)
+grid.arrange(pl2, pl5, ncol=2)
