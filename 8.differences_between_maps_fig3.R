@@ -9,28 +9,29 @@
 library(terra)
 library(rasterVis)
 library(diffeR)
+library(RColorBrewer)
 
 #Load Rasters
-#nt_ivi <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
-#t_ivi <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
-#t_centrality <- terra::rast("rasters_15JUL\\t_centrality_15JUL.tif")
-#nt_centrality <- terra::rast("rasters_15JUL\\nt_centrality_15JUL.tif")
-#t_indegree <- terra::rast("rasters_15JUL\\t_indegree_15JUL.tif")
-#nt_indegree <- terra::rast("rasters_15JUL\\nt_indegree_15JUL.tif")
-#nt_outdegree <- terra::rast("rasters_15JUL\\nt_outdegree_15JUL.tif")
-#t_outdegree <- terra::rast("rasters_15JUL\\t_outdegree_15JUL.tif")
-#t_closeness <- terra::rast("rasters_15JUL\\t_closeness_15JUL.tif")
-#nt_closeness <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.tif")
-#t_tl <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
-#nt_tl <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
-#proportion_r <- terra::rast("rasters_15JUL\\proportion_r__15JUL.tif")
+nt_ivi <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
+t_ivi <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
+t_centrality <- terra::rast("rasters_15JUL\\t_centrality_15JUL.tif")
+nt_centrality <- terra::rast("rasters_15JUL\\nt_centrality_15JUL.tif")
+t_indegree <- terra::rast("rasters_15JUL\\t_indegree_15JUL.tif")
+nt_indegree <- terra::rast("rasters_15JUL\\nt_indegree_15JUL.tif")
+nt_outdegree <- terra::rast("rasters_15JUL\\nt_outdegree_15JUL.tif")
+t_outdegree <- terra::rast("rasters_15JUL\\t_outdegree_15JUL.tif")
+t_closeness <- terra::rast("rasters_15JUL\\t_closeness_15JUL.tif")
+nt_closeness <- terra::rast("rasters_15JUL\\nt_closeness_15JUL.tif")
+t_tl <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
+nt_tl <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
+proportion_r <- terra::rast("rasters_15JUL\\proportion_r__15JUL.tif")
 #
-#indeg_diff <- terra::rast("rasters_15JUL\\indeg_diff.tif")
-#outdeg_diff <- terra::rast("rasters_15JUL\\outdeg_diff.tif")
-#trophic_level_diff <- terra::rast("rasters_15JUL\\trophic_level_diff.tif")
-#closeness_diff <- terra::rast("rasters_15JUL\\closeness_diff.tif")
-#centrality_diff <- terra::rast("rasters_15JUL\\centrality_diff.tif")
-#ivi_diff <- terra::rast("rasters_15JUL\\ivi_diff.tif")
+indeg_diff <- terra::rast("rasters_15JUL\\indegree_diff.tif")
+outdeg_diff <- terra::rast("rasters_15JUL\\outdegree_diff.tif")
+trophic_level_diff <- terra::rast("rasters_15JUL\\t_level_diff.tif")
+closeness_diff <- terra::rast("rasters_15JUL\\closeness_diff.tif")
+centrality_diff <- terra::rast("rasters_15JUL\\centrality_diff.tif")
+ivi_diff <- terra::rast("rasters_15JUL\\ivi_diff.tif")
 
 ################################################################################
 #                           Differences between maps
@@ -147,6 +148,18 @@ diverge0 <- function(p, ramp) {
   p
 }
 
+#Load
+indegree_diff_z_score <- terra::rast("indegree_diff_z_score.tif")
+outdegree_diff_z_score <- terra::rast("outdegree_diff_z_score.tif")
+t_level_diff_z_score <- terra::rast("t_level_diff_z_score.tif")
+closeness_diff_z_score <- terra::rast("closeness_diff_z_score.tif")
+centrality_diff_z_score <- terra::rast("centrality_diff_z_score.tif")
+ivi_diff_z_score <- terra::rast("ivi_diff_z_score.tif")
+
+#Study area borders
+europe <- terra::vect("C:/Users/mestr/Documents/0. Artigos/IUCN_networks/shapefiles/europe_site.shp")
+plot(europe)
+
 #Create plots
 indegree_diff_z_score_plot <- rasterVis::levelplot(indegree_diff_z_score, 
                                         contour = FALSE, 
@@ -190,14 +203,28 @@ ivi_diff_z_score_plot <- rasterVis::levelplot(ivi_diff_z_score,
                                       scales = list(draw = FALSE)
 )
 
-pl1 <- diverge0(indegree_diff_z_score_plot, 'Spectral')
-pl2 <- diverge0(outdeg_diff_z_score_plot, 'Spectral')
-pl3 <- diverge0(trophic_level_diff_z_score_plot, 'Spectral')
-pl4 <- diverge0(closeness_diff_z_score_plot, 'Spectral')
-pl5 <- diverge0(centrality_diff_z_score_plot, 'Spectral')
-pl6 <- diverge0(ivi_diff_z_score_plot, 'Spectral')
+#Create custom pallete
+palette_fm <- colorRampPalette(colors = c("#67001F", "#CD2626", "#CDAD00", "#FFFFFF", "dodgerblue3", "#051A2E", "black"))(10)
+
+#Create plots
+pl1 <- diverge0(indegree_diff_z_score_plot, colorRampPalette(palette_fm))
+pl2 <- diverge0(outdeg_diff_z_score_plot, colorRampPalette(palette_fm))
+pl3 <- diverge0(trophic_level_diff_z_score_plot, colorRampPalette(palette_fm))
+pl4 <- diverge0(closeness_diff_z_score_plot, colorRampPalette(palette_fm))
+pl5 <- diverge0(centrality_diff_z_score_plot, colorRampPalette(palette_fm))
+pl6 <- diverge0(ivi_diff_z_score_plot, colorRampPalette(palette_fm))
 
 #Compose pairs of maps
-grid.arrange(pl3, pl6, ncol=2)
-grid.arrange(pl1, pl4, ncol=2)
-grid.arrange(pl2, pl5, ncol=2)
+gridExtra::grid.arrange(pl3, pl6, ncol=2)
+gridExtra::grid.arrange(pl1, pl4, ncol=2)
+gridExtra::grid.arrange(pl2, pl5, ncol=2)
+
+
+#All plots together
+#gridExtra::grid.arrange(pl3, pl6, 
+#                        pl1, pl4,
+#                        pl2, pl5,
+#                        ncol=2)
+
+
+

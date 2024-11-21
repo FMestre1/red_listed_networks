@@ -27,40 +27,52 @@ library(gridExtra)
 library(grid)
 
 #Colours
-my.cols <- viridis_pal(option = "D")(100)
+my.cols <- colorRampPalette(colors = c("#FFFFE0", "#EEDD82", "#FFA54F", "#EE4000", "#CD2626", "#67001F","#000000"))(100)
 
 #Trophic Level
 tl_min_max <- seq(0, 5, length.out = 100)
-tl1 <- rasterVis::levelplot(nt_tl, col.regions=my.cols, at=tl_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-tl2 <- rasterVis::levelplot(t_tl, col.regions=my.cols, at=tl_min_max, main = "Threatened", scales = list(draw = FALSE))
+tl1 <- rasterVis::levelplot(nt_tl, col.regions=my.cols, at=tl_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+tl2 <- rasterVis::levelplot(t_tl, col.regions=my.cols, at=tl_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(tl1, tl2, ncol=2)
 
 #IVI
 ivi_min_max <- seq(0, 100, length.out = 100)
-ivi1 <- rasterVis::levelplot(nt_ivi, col.regions=my.cols, at=ivi_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-ivi2 <- rasterVis::levelplot(t_ivi, col.regions=my.cols, at=ivi_min_max, main = "Threatened", scales = list(draw = FALSE))
+ivi1 <- rasterVis::levelplot(nt_ivi, col.regions=my.cols, at=ivi_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+ivi2 <- rasterVis::levelplot(t_ivi, col.regions=my.cols, at=ivi_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(ivi1, ivi2, ncol=2)
 
 #In-degree
 ind_min_max <- seq(0, 65, length.out = 100)
-ind1 <- rasterVis::levelplot(nt_indegree, col.regions=my.cols, at=ind_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-ind2 <- rasterVis::levelplot(t_indegree, col.regions=my.cols, at=ind_min_max, main = "Threatened", scales = list(draw = FALSE))
+ind1 <- rasterVis::levelplot(nt_indegree, col.regions=my.cols, at=ind_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+ind2 <- rasterVis::levelplot(t_indegree, col.regions=my.cols, at=ind_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(ind1, ind2, ncol=2)
 
 #Out-degree
 out_min_max <- seq(0, 35, length.out = 100)
-outd1 <- rasterVis::levelplot(nt_outdegree, col.regions=my.cols, at=out_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-outd2 <- rasterVis::levelplot(t_outdegree, col.regions=my.cols, at=out_min_max, main = "Threatened", scales = list(draw = FALSE))
+outd1 <- rasterVis::levelplot(nt_outdegree, col.regions=my.cols, at=out_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+outd2 <- rasterVis::levelplot(t_outdegree, col.regions=my.cols, at=out_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(outd1, outd2, ncol=2)
 
 #Closeness Centrality
 cl_min_max <- seq(0, 1, length.out = 100)
-cl1 <- rasterVis::levelplot(nt_closeness, col.regions=my.cols, at=cl_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-cl2 <- rasterVis::levelplot(t_closeness, col.regions=my.cols, at=cl_min_max, main = "Threatened", scales = list(draw = FALSE))
+cl1 <- rasterVis::levelplot(nt_closeness, col.regions=my.cols, at=cl_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+cl2 <- rasterVis::levelplot(t_closeness, col.regions=my.cols, at=cl_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(cl1, cl2, ncol=2)
 
 #Betweenness Centrality
 bt_min_max <- seq(0, 500, length.out = 100)
-bt1 <- rasterVis::levelplot(nt_centrality, col.regions=my.cols, at=bt_min_max, main = "Not-threatened", scales = list(draw = FALSE))
-bt2 <- rasterVis::levelplot(t_centrality, col.regions=my.cols, at=bt_min_max, main = "Threatened", scales = list(draw = FALSE))
+bt1 <- rasterVis::levelplot(nt_centrality, col.regions=my.cols, at=bt_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+bt2 <- rasterVis::levelplot(t_centrality, col.regions=my.cols, at=bt_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(bt1, bt2, ncol=2)
+
+##
+
+
+#All together...
+#grid.arrange(tl1, tl2,
+#            ivi1, ivi2,
+#            ind1, ind2,
+#            outd1, outd2,
+#            cl1, cl2,
+#            bt1, bt2, ncol=2)
+
