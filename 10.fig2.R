@@ -67,12 +67,3 @@ grid.arrange(bt1, bt2, ncol=2)
 
 ##
 
-
-#All together...
-#grid.arrange(tl1, tl2,
-#            ivi1, ivi2,
-#            ind1, ind2,
-#            outd1, outd2,
-#            cl1, cl2,
-#            bt1, bt2, ncol=2)
-
