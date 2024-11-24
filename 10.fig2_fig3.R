@@ -4,6 +4,13 @@
 
 #FMestre
 
+#Load packages
+library(terra)
+library(viridis)
+library(rasterVis)
+library(gridExtra)
+library(grid)
+
 #Load Rasters
 nt_ivi <- terra::rast("rasters_15JUL\\nt_ivi_15JUL.tif")
 t_ivi <- terra::rast("rasters_15JUL\\t_ivi_15JUL.tif")
@@ -19,13 +26,6 @@ t_tl <- terra::rast("rasters_15JUL\\t_tl_15JUL.tif")
 nt_tl <- terra::rast("rasters_15JUL\\nt_tl_15JUL.tif")
 proportion_r <- terra::rast("rasters_15JUL\\proportion_r__15JUL.tif")
 #
-#Load packages
-library(terra)
-library(viridis)
-library(rasterVis)
-library(gridExtra)
-library(grid)
-
 
 #Reclassify to quartiles - values obtained from QGIS (to derive the quantiles here got "Error: std::bad_alloc")
 
@@ -139,20 +139,20 @@ terra::writeRaster(t_outdegree_reclassified, "t_outdegree_reclassified.tif", ove
 
 
 ####TL
-nt_tl_reclass_matrix <- matrix(c(xxx, xxx, 1,    # First 
-                                 xxx, Xxx, 2,  # Second 
-                                 xxx, Xxx, 3,   # Third 
-                                 xxx, xxx, 4), # Fourth
+nt_tl_reclass_matrix <- matrix(c(1, 1.376, 1,    # First 
+                                 1.376, 1.396, 2,  # Second 
+                                 1.396, 1.417, 3,   # Third 
+                                 1.417, 2, 4), # Fourth
                                ncol = 3, 
                                byrow = TRUE)
 nt_tl_reclassified <- terra::classify(nt_tl, nt_tl_reclass_matrix)
 plot(nt_tl_reclassified)
 terra::writeRaster(nt_tl_reclassified, "nt_tl_reclassified.tif")
 #
-t_tl_reclass_matrix <- matrix(c(xxx, xxx, 1,    # First 
-                                 xxx, Xxx, 2,  # Second 
-                                 xxx, Xxx, 3,   # Third 
-                                 xxx, xxx, 4), # Fourth
+t_tl_reclass_matrix <- matrix(c(1, 1, 1,    # First 
+                                 1, 1.333, 2,  # Second 
+                                1.333, 1.500, 3,   # Third 
+                                1.500, 3, 4), # Fourth
                                ncol = 3, 
                                byrow = TRUE)
 t_tl_reclassified <- terra::classify(t_tl, t_tl_reclass_matrix)
@@ -160,48 +160,52 @@ plot(t_tl_reclassified)
 terra::writeRaster(t_tl_reclassified, "t_tl_reclassified.tif")
 
 
+#Load
+nt_ivi_reclassified <- terra::rast("nt_ivi_reclassified.tif")
+t_ivi_reclassified <- terra::rast("t_ivi_reclassified.tif")
+nt_centrality_reclassified <- terra::rast("nt_centrality_reclassified.tif")
+t_centrality_reclassified <- terra::rast("t_centrality_reclassified.tif")
+nt_closeness_reclassified <- terra::rast("nt_closeness_reclassified.tif")
+t_closeness_reclassified <- terra::rast("t_closeness_reclassified.tif")
+nt_indegree_reclassified <- terra::rast("nt_indegree_reclassified.tif")
+t_indegree_reclassified <- terra::rast("t_indegree_reclassified.tif")
+nt_outdegree_reclassified <- terra::rast("nt_outdegree_reclassified.tif")
+t_outdegree_reclassified <- terra::rast("t_outdegree_reclassified.tif")
+nt_tl_reclassified <- terra::rast("nt_tl_reclassified.tif")
+t_tl_reclassified <- terra::rast("t_tl_reclassified.tif")
+
 
 #Colours
-my.cols <- colorRampPalette(colors = c("#FFFFE0", "#EEDD82", "#FFA54F", "#EE4000", "#CD2626", "#67001F","#000000"))(100)
-my.cols <- colorRampPalette(colors = c("#FFA54F", "#EE4000", "#CD2626", "#67001F"))(4)
-
-
+my.cols <- colorRampPalette(colors = c("#FFA54F", "#EE4000", "#CD2626", "#67001F"))(100)
+my.cols <- colorRampPalette(colors = c("darkred", "grey", "darkblue"))(100)
+min_max <- seq(1, 4, length.out = 100)
 
 #Trophic Level
-tl_min_max <- seq(0, 5, length.out = 100)
-tl1 <- rasterVis::levelplot(nt_tl, col.regions=my.cols, at=tl_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
-tl2 <- rasterVis::levelplot(t_tl, col.regions=my.cols, at=tl_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
-grid.arrange(tl1, tl2, ncol=2)
+tl1_quant <- rasterVis::levelplot(nt_tl_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+tl2_quant <- rasterVis::levelplot(t_tl_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
+grid.arrange(tl1_quant, tl2_quant, ncol=2)
 
 #IVI
-ivi_min_max <- seq(0, 100, length.out = 100)
-ivi1 <- rasterVis::levelplot(nt_ivi, col.regions=my.cols, at=ivi_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
-ivi2 <- rasterVis::levelplot(t_ivi, col.regions=my.cols, at=ivi_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
+ivi1_quant <- rasterVis::levelplot(nt_ivi_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+ivi2_quant <- rasterVis::levelplot(t_ivi_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(ivi1, ivi2, ncol=2)
 
 #In-degree
-ind_min_max <- seq(0, 65, length.out = 100)
-ind1 <- rasterVis::levelplot(nt_indegree, col.regions=my.cols, at=ind_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
-ind2 <- rasterVis::levelplot(t_indegree, col.regions=my.cols, at=ind_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
+ind1_quant <- rasterVis::levelplot(nt_indegree_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+ind2_quant <- rasterVis::levelplot(t_indegree_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(ind1, ind2, ncol=2)
 
 #Out-degree
-out_min_max <- seq(0, 35, length.out = 100)
-outd1 <- rasterVis::levelplot(nt_outdegree, col.regions=my.cols, at=out_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
-outd2 <- rasterVis::levelplot(t_outdegree, col.regions=my.cols, at=out_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
+outd1_quant <- rasterVis::levelplot(nt_outdegree_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+outd2_quant <- rasterVis::levelplot(t_outdegree_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(outd1, outd2, ncol=2)
 
 #Closeness Centrality
-cl_min_max <- seq(0, 1, length.out = 100)
-cl1 <- rasterVis::levelplot(nt_closeness, col.regions=my.cols, at=cl_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
-cl2 <- rasterVis::levelplot(t_closeness, col.regions=my.cols, at=cl_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
+cl1_quant <- rasterVis::levelplot(nt_closeness_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+cl2_quant <- rasterVis::levelplot(t_closeness_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(cl1, cl2, ncol=2)
 
 #Betweenness Centrality
-bt_min_max <- seq(0, 500, length.out = 100)
-bt1 <- rasterVis::levelplot(nt_centrality, col.regions=my.cols, at=bt_min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
-bt2 <- rasterVis::levelplot(t_centrality, col.regions=my.cols, at=bt_min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
+bt1_quant <- rasterVis::levelplot(nt_centrality_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
+bt2_quant <- rasterVis::levelplot(t_centrality_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
 grid.arrange(bt1, bt2, ncol=2)
-
-##
-
