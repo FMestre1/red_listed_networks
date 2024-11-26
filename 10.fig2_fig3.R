@@ -177,7 +177,6 @@ t_tl_reclassified <- terra::rast("t_tl_reclassified.tif")
 
 #Colours
 my.cols <- colorRampPalette(colors = c("#FFA54F", "#EE4000", "#CD2626", "#67001F"))(100)
-my.cols <- colorRampPalette(colors = c("darkred", "grey", "darkblue"))(100)
 min_max <- seq(1, 4, length.out = 100)
 
 #Trophic Level
@@ -188,24 +187,24 @@ grid.arrange(tl1_quant, tl2_quant, ncol=2)
 #IVI
 ivi1_quant <- rasterVis::levelplot(nt_ivi_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
 ivi2_quant <- rasterVis::levelplot(t_ivi_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
-grid.arrange(ivi1, ivi2, ncol=2)
+grid.arrange(ivi1_quant, ivi2_quant, ncol=2)
 
 #In-degree
 ind1_quant <- rasterVis::levelplot(nt_indegree_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
 ind2_quant <- rasterVis::levelplot(t_indegree_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
-grid.arrange(ind1, ind2, ncol=2)
+grid.arrange(ind1_quant, ind2_quant, ncol=2)
 
 #Out-degree
 outd1_quant <- rasterVis::levelplot(nt_outdegree_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
 outd2_quant <- rasterVis::levelplot(t_outdegree_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
-grid.arrange(outd1, outd2, ncol=2)
+grid.arrange(outd1_quant, outd2_quant, ncol=2)
 
 #Closeness Centrality
 cl1_quant <- rasterVis::levelplot(nt_closeness_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
 cl2_quant <- rasterVis::levelplot(t_closeness_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
-grid.arrange(cl1, cl2, ncol=2)
+grid.arrange(cl1_quant, cl2_quant, ncol=2)
 
 #Betweenness Centrality
 bt1_quant <- rasterVis::levelplot(nt_centrality_reclassified, col.regions=my.cols, at=min_max, main = list("Not-threatened", cex=2), scales = list(draw = FALSE))
 bt2_quant <- rasterVis::levelplot(t_centrality_reclassified, col.regions=my.cols, at=min_max, main = list("Threatened", cex=2), scales = list(draw = FALSE))
-grid.arrange(bt1, bt2, ncol=2)
+grid.arrange(bt1_quant, bt2_quant, ncol=2)
